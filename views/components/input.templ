@@ -1,0 +1,25 @@
+package components
+
+type InputProps struct {
+	Placeholder string
+	Name        string
+	Type        string
+}
+
+templ Input(props InputProps) {
+	<div class="flex flex-col items-start w-full">
+		<div class="text-sm mb-1 text-left text-gray-500">
+			{ props.Placeholder }
+		</div>
+		<input
+			placeholder={ props.Placeholder }
+			name={ props.Name }
+			if props.Type !="" {
+				type={ props.Type }
+			}
+			class="w-auto px-2 py-2 pb-3 border border-gray-300 rounded-md shadow-sm
+         focus:outline-none focus:ring-2 focus:ring-blue-500
+         transition-colors duration-200"
+		/>
+	</div>
+}

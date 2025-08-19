@@ -3,7 +3,12 @@ module sitex
 go 1.24.5
 
 require (
+	github.com/a-h/templ v0.3.943
+	github.com/gobuffalo/validate v2.0.4+incompatible
+	github.com/gofiber/contrib/fiberzerolog v1.0.3
 	github.com/gofiber/fiber/v2 v2.52.9
+	github.com/rs/zerolog v1.34.0
+	github.com/rvflash/elapsed v0.4.1
 	github.com/spf13/viper v1.20.1
 )
 
@@ -29,7 +34,7 @@ require (
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

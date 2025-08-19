@@ -1,0 +1,52 @@
+package components
+
+import "strings"
+
+type UserProfileProps struct {
+}
+
+templ UserProfile() {
+	{{ email := ctx.Value("email").(string) }}
+	<!-- <div class="p-3 border-b border-gray-200 bg-gray-50"> -->
+	<!-- 	<div class="mb-4"> -->
+	<!-- 		<p class="font-medium mb-2 text-gray-900 text-sm truncate">{ email }</p> -->
+	<!-- 		<div class="flex items-center justify-between"> -->
+	<!-- 			<span class="text-xs text-gray-400">Ведущий инженер</span> -->
+	<!-- 			<span class="text-xs text-amber-600">В отпуске</span> -->
+	<!-- 		</div> -->
+	<!-- 	</div> -->
+	<!-- 	<div class="border-t border-gray-200 text-xs mb-6"> -->
+	<!-- 		<p class="text-gray-600 font-medium mb-2">Активные проекты:</p> -->
+	<!-- 		<ul class="space-y-2"> -->
+	<!-- 			<li class="text-gray-700"><a class="cursor-pointer" href="#">Усть луга</a> </li> -->
+	<!-- 			<li class="text-gray-700">• Уренгой</li> -->
+	<!-- 		</ul> -->
+	<!-- 	</div> -->
+	<!-- </div> -->
+	<div class="p-4 border-t border-gray-200">
+		<div class="flex items-center mb-3">
+			<div
+				class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
+			>
+				<span class="text-white font-semibold text-sm">{ strings.ToUpper(email)[0] }</span>
+			</div>
+			<div class="ml-3">
+				<p class="text-sm font-medium text-gray-900">{ email }</p>
+				<p class="text-xs text-gray-500">Ведущий инженер</p>
+			</div>
+		</div>
+		<div class="text-xs text-gray-600 mb-3">
+			<p class="font-medium mb-1">Активные проекты:</p>
+			<ul class="space-y-1">
+				<li class="flex items-center">
+					<span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+					<span>Усть луга</span>
+				</li>
+				<li class="flex items-center">
+					<span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+					<span>Уренгой</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+}
