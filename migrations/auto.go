@@ -3,19 +3,18 @@ package main
 import (
 	"os/user"
 	"sitex/config"
-	"sitex/internal/association"
-	"sitex/internal/project"
-	"sitex/pkg/db"
+	"sitex/pkg/database"
+	"sitex/pkg/logger"
 )
 
 func main() {
 	config.Init()
 
+	logConfig := config.NewLogConfig()
+	customLogger := logger.NewLogger(logConfig)
 	dbConfig := config.NewDatabaseConfig()
-	db := db.NewDb(dbConfig)
+	db := database.NewDb(dbConfig, customLogger)
 	db.AutoMigrate(
 		&user.User{},
-		&project.Project{},
-		&association.UserProject{},
 	)
 }
