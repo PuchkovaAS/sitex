@@ -1,8 +1,8 @@
 package main
 
 import (
-	"os/user"
 	"sitex/config"
+	"sitex/internal/user"
 	"sitex/pkg/database"
 	"sitex/pkg/logger"
 )
@@ -15,6 +15,9 @@ func main() {
 	dbConfig := config.NewDatabaseConfig()
 	db := database.NewDb(dbConfig, customLogger)
 	db.AutoMigrate(
-		&user.User{},
+		&user.Employee{},
+		&user.StatusType{},
+		&user.StatusPeriod{},
+		&user.OfficialHoliday{},
 	)
 }

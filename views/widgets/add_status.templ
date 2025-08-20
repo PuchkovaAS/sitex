@@ -1,0 +1,62 @@
+package widgets
+
+import "time"
+
+templ AddStatus() {
+<div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+    <!-- Заголовок -->
+    <div class="mb-6">
+        <h2 class="text-lg font-semibold text-gray-800">Добавить статус</h2>
+        <p class="text-sm text-gray-500 mt-1">Укажите новый статус работы</p>
+    </div>
+    <!-- Форма -->
+    <div id="add_status-result"></div>
+    <form hx-ext="response-targets, file-upload" class="add_news-form" hx-post="/api/user/add_status"
+        hx-trigger="submit" hx-target="#add_status-result" hx-swap="innerHTML swap:0.5s"
+        hx-encoding="multipart/form-data" hx-on::after-request="if(event.detail.successful) this.reset()"
+        class="space-y-4">
+        <!-- Выбор статуса -->
+        <div>
+            <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+                Статус
+            </label>
+            <select id="status" name="status" required
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
+                <option value="">Выберите статус...</option>
+                <option value="work_office">В офисе</option>
+                <option value="work_remote">Удаленная работа</option>
+                <option value="business_trip">Командировка</option>
+                <option value="vacation">Отпуск</option>
+                <option value="sick_leave">Больничный</option>
+                <option value="day_off">Отгул</option>
+            </select>
+        </div>
+        <!-- Дата начала -->
+        <div>
+            <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
+                Дата начала
+            </label>
+            <input type="date" id="date" name="date" value={ time.Now().Format("2006-01-02") } required
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors" />
+        </div>
+        <!-- Описание -->
+        <div>
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                Описание (необязательно)
+            </label>
+            <textarea id="description" name="description" rows="3"
+                placeholder="Например: Командировка в Москву, отпуск по семейным обстоятельствам..."
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"></textarea>
+        </div>
+        <!-- Кнопка отправки -->
+        <div class="pt-2">
+            <button type="submit"
+                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                Сохранить статус
+            </button>
+        </div>
+    </form>
+    <!-- Контейнер для уведомлений -->
+    <div id="status-notification" class="mt-4"></div>
+</div>
+}

@@ -6,44 +6,52 @@ import (
 	"gorm.io/gorm"
 )
 
+type statusAddForm struct {
+	Status      string
+	Date        string
+	Description string
+}
+
+type statusAddInfo struct {
+	Email       string
+	Status      string
+	Date        string
+	Description string
+}
+
 type Employee struct {
 	gorm.Model
-	FirstName    string `gorm:"not null"`
-	LastName     string `gorm:"not null"`
-	Email        string `gorm:"uniqueIndex;not null"`
-	PasswordHash string `gorm:"not null"`
-	Role         string `gorm:"not null;default:employee"` // employee,  admin
-	Position     string
-	Department   string
-	IsActive     bool         `gorm:"default:true"`
-	Records      []WorkRecord // Связь One-to-Many
+	FirstName     string `gorm:"not null"`
+	LastName      string `gorm:"not null"`
+	Email         string `gorm:"not null"`
+	PasswordHash  string `gorm:"not null"`
+	Role          string `gorm:"not null;default:employee"`
+	Position      string
+	Department    string
+	IsActive      bool `gorm:"default:true"`
+	StatusPeriods []StatusPeriod
 }
 
 type StatusType struct {
 	gorm.Model
-	Name string `gorm:"uniqueIndex;not null"` // "В офисе", "Отпуск"
-	Code string `gorm:"uniqueIndex;not null"` // "work_office", "vacation"
+	Name string `gorm:"not null"`
+	Code string `gorm:"not null"`
 }
 
-type WorkRecord struct {
+type StatusPeriod struct {
 	gorm.Model
-	EmployeeID uint      `gorm:"not null;uniqueIndex:idx_employee_date"` // Часть составного ключа
-	Date       time.Time `gorm:"not null;uniqueIndex:idx_employee_date"` // Часть составного ключа
+	EmployeeID uint      `gorm:"not null"`
 	StatusID   uint      `gorm:"not null"`
+	StartDate  time.Time `gorm:"not null"`
+	EndDate    *time.Time
 	Comment    string
-
-	// Связи
-	Employee   Employee   `gorm:"foreignKey:EmployeeID"`
-	StatusType StatusType `gorm:"foreignKey:StatusID"`
 }
 
-type StandardSchedule struct {
+type OfficialHoliday struct {
 	gorm.Model
-	Date        time.Time `gorm:"uniqueIndex;not null"`
-	IsWorking   bool      `gorm:"not null"`
-	Description string
-}
-
-func (Employee) TableName() string {
-	return "employee"
+	Date         time.Time `gorm:"not null"`
+	Name         string    `gorm:"not null"`
+	Type         string    `gorm:"not null;size:20"`
+	Description  string
+	OriginalDate *time.Time
 }

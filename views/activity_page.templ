@@ -1,16 +1,18 @@
 package views
 
 import "sitex/views/layout"
+import "sitex/views/widgets"
 
 templ ActivityPage() {
-	@layout.Layout(layout.LayoutProps{
-		Title:           "Активность",
-		MetaDescription: "Страница активности",
-		IsAuthenticated: true,
-	}) {
-		<div class="bg-white rounded-lg shadow p-6">
-			<h1 class="text-2xl font-bold mb-4">Hello World</h1>
-			<p>Теперь контент будет справа от sidebar</p>
-		</div>
-	}
+@layout.Layout(layout.LayoutProps{
+Title: "Активность",
+MetaDescription: "Страница активности",
+IsAuthenticated: true,
+}) {
+<div class="bg-white rounded-lg shadow p-6">
+    <h1 class="text-2xl font-bold mb-4">Hello World</h1>
+    <p>Теперь контент будет справа от sidebar</p>
+</div>
+@widgets.AddStatus()
+}
 }

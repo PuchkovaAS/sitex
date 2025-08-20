@@ -3,6 +3,7 @@ package main
 import (
 	"sitex/config"
 	"sitex/internal/pages"
+	"sitex/internal/user"
 	"sitex/pkg/database"
 	"sitex/pkg/logger"
 	"time"
@@ -21,7 +22,7 @@ func main() {
 	customLogger := logger.NewLogger(logConfig)
 
 	dbConfig := config.NewDatabaseConfig()
-	database.NewDb(dbConfig, customLogger)
+	db := database.NewDb(dbConfig, customLogger)
 
 	app := fiber.New()
 
@@ -41,12 +42,18 @@ func main() {
 		Storage: storage,
 	})
 
+	// Middleware
 	app.Use(fiberzerolog.New(fiberzerolog.Config{
 		Logger: customLogger,
 	}))
 	app.Use(recover.New())
 
+	// Repository
+	userRepository := user.NewUserRepository(db)
+
+	// Handler
 	pages.NewHandler(app, store)
+	user.NewHandler(app, customLogger, store, userRepository)
 
 	app.Listen(":3000")
 }
