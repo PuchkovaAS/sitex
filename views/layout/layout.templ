@@ -38,12 +38,9 @@ templ Layout(props LayoutProps) {
 		</head>
 		<body class="min-h-screen bg-gray-100 text-gray-900 font-sans antialiased">
 			if props.IsAuthenticated {
-				<div class="flex h-screen">
-					@components.Sidebar()
-					<main class="flex-1 p-6 overflow-auto">
-						{ children... }
-					</main>
-				</div>
+				@components.Sidebar() {
+					{ children... }
+				}
 			} else {
 				<main class="p-6">
 					{ children... }

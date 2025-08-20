@@ -1,0 +1,15 @@
+services:
+    postgres:
+        container_name: sitex_bd
+        image: postgres:16.4
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: my_pass
+            PGDATA: /var/lib/postgresql/data/pgdata # Стандартный путь в контейнере
+        volumes:
+            - pgdata:/var/lib/postgresql/data # Используем именованный том
+        ports:
+            - '5432:5432'
+
+volumes:
+    pgdata: # Декларация тома

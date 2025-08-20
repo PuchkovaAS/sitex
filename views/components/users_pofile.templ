@@ -3,39 +3,52 @@ package components
 import "strings"
 
 type UserProfileProps struct {
+	Name     string
+	Progects []string
+	Position string
+	Status   string
 }
 
-templ UserProfile() {
+templ UserProfile(userProfile UserProfileProps) {
 	{{ email := ctx.Value("email").(string) }}
-	<!-- <div class="p-3 border-b border-gray-200 bg-gray-50"> -->
-	<!-- 	<div class="mb-4"> -->
-	<!-- 		<p class="font-medium mb-2 text-gray-900 text-sm truncate">{ email }</p> -->
-	<!-- 		<div class="flex items-center justify-between"> -->
-	<!-- 			<span class="text-xs text-gray-400">Ведущий инженер</span> -->
-	<!-- 			<span class="text-xs text-amber-600">В отпуске</span> -->
-	<!-- 		</div> -->
-	<!-- 	</div> -->
-	<!-- 	<div class="border-t border-gray-200 text-xs mb-6"> -->
-	<!-- 		<p class="text-gray-600 font-medium mb-2">Активные проекты:</p> -->
-	<!-- 		<ul class="space-y-2"> -->
-	<!-- 			<li class="text-gray-700"><a class="cursor-pointer" href="#">Усть луга</a> </li> -->
-	<!-- 			<li class="text-gray-700">• Уренгой</li> -->
-	<!-- 		</ul> -->
-	<!-- 	</div> -->
-	<!-- </div> -->
+	{{
+statusClass := "text-gray-600 bg-gray-100" // по умолчанию
+statusText := "Неизвестно"
+
+switch userProfile.Status {
+case "vacation":
+	statusClass = "text-amber-600 bg-amber-100"
+	statusText = "В отпуске"
+case "sick":
+	statusClass = "text-red-600 bg-red-100"
+	statusText = "На больничном"
+case "remote":
+	statusClass = "text-blue-600 bg-blue-100"
+	statusText = "Удаленно"
+case "office":
+	statusClass = "text-green-600 bg-green-100"
+	statusText = "В офисе"
+case "business_trip":
+	statusClass = "text-purple-600 bg-purple-100"
+	statusText = "В командировке"
+}
+	}}
 	<div class="p-4 border-t border-gray-200">
 		<div class="flex items-center mb-3">
 			<div
 				class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
 			>
-				<span class="text-white font-semibold text-sm">{ strings.ToUpper(email)[0] }</span>
+				<span class="text-white font-semibold text-sm">{ strings.ToUpper(string(email[0])) }</span>
 			</div>
-			<div class="ml-3">
-				<p class="text-sm font-medium text-gray-900">{ email }</p>
-				<p class="text-xs text-gray-500">Ведущий инженер</p>
+			<div class="ml-3 flex flex-col items-start">
+				<p class="text-sm font-medium text-gray-900 mb-1">{ userProfile.Name }</p>
+				<span class="text-xs text-gray-600 mb-1">{ userProfile.Position }</span>
+				<span class={ "inline-flex items-start px-2.5 py-0.5 rounded-full text-xs font-medium " + statusClass }>
+					{ statusText }
+				</span>
 			</div>
 		</div>
-		<div class="text-xs text-gray-600 mb-3">
+		<div class=" text-xs text-gray-600 mb-3">
 			<p class="font-medium mb-1">Активные проекты:</p>
 			<ul class="space-y-1">
 				<li class="flex items-center">

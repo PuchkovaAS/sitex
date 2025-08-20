@@ -11,9 +11,13 @@ import templruntime "github.com/a-h/templ/runtime"
 import "strings"
 
 type UserProfileProps struct {
+	Name     string
+	Progects []string
+	Position string
+	Status   string
 }
 
-func UserProfile() templ.Component {
+func UserProfile(userProfile UserProfileProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -35,33 +39,102 @@ func UserProfile() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		email := ctx.Value("email").(string)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- <div class=\"p-3 border-b border-gray-200 bg-gray-50\"> --><!-- \t<div class=\"mb-4\"> --><!-- \t\t<p class=\"font-medium mb-2 text-gray-900 text-sm truncate\">{ email }</p> --><!-- \t\t<div class=\"flex items-center justify-between\"> --><!-- \t\t\t<span class=\"text-xs text-gray-400\">Ведущий инженер</span> --><!-- \t\t\t<span class=\"text-xs text-amber-600\">В отпуске</span> --><!-- \t\t</div> --><!-- \t</div> --><!-- \t<div class=\"border-t border-gray-200 text-xs mb-6\"> --><!-- \t\t<p class=\"text-gray-600 font-medium mb-2\">Активные проекты:</p> --><!-- \t\t<ul class=\"space-y-2\"> --><!-- \t\t\t<li class=\"text-gray-700\"><a class=\"cursor-pointer\" href=\"#\">Усть луга</a> </li> --><!-- \t\t\t<li class=\"text-gray-700\">• Уренгой</li> --><!-- \t\t</ul> --><!-- \t</div> --><!-- </div> --><div class=\"p-4 border-t border-gray-200\"><div class=\"flex items-center mb-3\"><div class=\"w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center\"><span class=\"text-white font-semibold text-sm\">")
+
+		statusClass := "text-gray-600 bg-gray-100" // по умолчанию
+		statusText := "Неизвестно"
+
+		switch userProfile.Status {
+		case "vacation":
+			statusClass = "text-amber-600 bg-amber-100"
+			statusText = "В отпуске"
+		case "sick":
+			statusClass = "text-red-600 bg-red-100"
+			statusText = "На больничном"
+		case "remote":
+			statusClass = "text-blue-600 bg-blue-100"
+			statusText = "Удаленно"
+		case "office":
+			statusClass = "text-green-600 bg-green-100"
+			statusText = "В офисе"
+		case "business_trip":
+			statusClass = "text-purple-600 bg-purple-100"
+			statusText = "В командировке"
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"p-4 border-t border-gray-200\"><div class=\"flex items-center mb-3\"><div class=\"w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center\"><span class=\"text-white font-semibold text-sm\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strings.ToUpper(email)[0])
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strings.ToUpper(string(email[0])))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 31, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 41, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span></div><div class=\"ml-3\"><p class=\"text-sm font-medium text-gray-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span></div><div class=\"ml-3 flex flex-col items-start\"><p class=\"text-sm font-medium text-gray-900 mb-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(email)
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(userProfile.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 34, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 44, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><p class=\"text-xs text-gray-500\">Ведущий инженер</p></div></div><div class=\"text-xs text-gray-600 mb-3\"><p class=\"font-medium mb-1\">Активные проекты:</p><ul class=\"space-y-1\"><li class=\"flex items-center\"><span class=\"w-2 h-2 bg-green-400 rounded-full mr-2\"></span> <span>Усть луга</span></li><li class=\"flex items-center\"><span class=\"w-2 h-2 bg-blue-400 rounded-full mr-2\"></span> <span>Уренгой</span></li></ul></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><span class=\"text-xs text-gray-600 mb-1\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(userProfile.Position)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 45, Col: 67}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 = []any{"inline-flex items-start px-2.5 py-0.5 rounded-full text-xs font-medium " + statusClass}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<span class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var5).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(statusText)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 47, Col: 17}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></div></div><div class=\" text-xs text-gray-600 mb-3\"><p class=\"font-medium mb-1\">Активные проекты:</p><ul class=\"space-y-1\"><li class=\"flex items-center\"><span class=\"w-2 h-2 bg-green-400 rounded-full mr-2\"></span> <span>Усть луга</span></li><li class=\"flex items-center\"><span class=\"w-2 h-2 bg-blue-400 rounded-full mr-2\"></span> <span>Уренгой</span></li></ul></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

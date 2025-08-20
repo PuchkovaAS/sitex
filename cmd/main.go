@@ -3,6 +3,7 @@ package main
 import (
 	"sitex/config"
 	"sitex/internal/pages"
+	"sitex/pkg/database"
 	"sitex/pkg/logger"
 
 	"github.com/gofiber/contrib/fiberzerolog"
@@ -16,6 +17,9 @@ func main() {
 
 	logConfig := config.NewLogConfig()
 	customLogger := logger.NewLogger(logConfig)
+
+	dbConfig := config.NewDatabaseConfig()
+	database.NewDb(dbConfig, customLogger)
 
 	app := fiber.New()
 

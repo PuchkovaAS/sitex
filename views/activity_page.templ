@@ -4,12 +4,13 @@ import "sitex/views/layout"
 
 templ ActivityPage() {
 	@layout.Layout(layout.LayoutProps{
-		Title:           "Вход на сайт",
-		MetaDescription: "Войти на сайт",
+		Title:           "Активность",
+		MetaDescription: "Страница активности",
 		IsAuthenticated: true,
-	})
-	<div class="bg-white rounded-lg shadow p-6">
-		<h1 class="text-2xl font-bold mb-4">Hello World</h1>
-		<p>Теперь контент будет справа от sidebar</p>
-	</div>
+	}) {
+		<div class="bg-white rounded-lg shadow p-6">
+			<h1 class="text-2xl font-bold mb-4">Hello World</h1>
+			<p>Теперь контент будет справа от sidebar</p>
+		</div>
+	}
 }
