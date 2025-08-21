@@ -59,13 +59,16 @@ func (h *PagesHandler) login(c *fiber.Ctx) error {
 func (h *PagesHandler) home(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	status, err := h.repository.GetCurrentStatus(email)
-	h.customLogger.Info().Msg(status)
 
 	if err != nil {
 		c.Locals("user_status", "office")
 	} else {
 		c.Locals("user_status", status)
 	}
+	userInfo, _ := h.repository.GetUserInfo(email)
+	h.customLogger.Info().Msg(userInfo.FirstName)
+
+	c.Locals("user_info", userInfo)
 
 	component := views.ActivityPage()
 	return templeadapter.Render(c, component, http.StatusOK)

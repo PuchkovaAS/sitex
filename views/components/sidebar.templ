@@ -90,12 +90,7 @@ templ Sidebar() {
 				</ul>
 			</nav>
 			<!-- Профиль пользователя -->
-			@UserProfile(UserProfileProps{
-				Name:     "Пучкова Анастасия",
-				Progects: []string{"sda", "asfdf"}, // Обратите внимание на скобки
-				Position: "Ведущий инженер",
-				Status:   "vacation",
-			})
+			@UserProfile()
 			<!-- Выход -->
 			<div class="p-4 border-t border-gray-200">
 				<a

@@ -76,12 +76,7 @@ func Sidebar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = UserProfile(UserProfileProps{
-			Name:     "Пучкова Анастасия",
-			Progects: []string{"sda", "asfdf"}, // Обратите внимание на скобки
-			Position: "Ведущий инженер",
-			Status:   "vacation",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = UserProfile().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

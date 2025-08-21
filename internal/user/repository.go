@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"sitex/internal/dt"
 	"sitex/pkg/database"
 	"time"
 )
@@ -52,6 +53,27 @@ func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 	return nil
 }
 
+func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
+	var user Employee
+
+	// Получаем только нужные поля
+	err := repo.DataBase.DB.
+		Where("email = ?", email).
+		Select("first_name, last_name, role, position").
+		First(&user).Error
+	if err != nil {
+		return dt.UserInfo{}, err
+	}
+
+	// Создаем структуру с нужными полями
+	return dt.UserInfo{
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Role:      user.Role,
+		Position:  user.Position,
+	}, nil
+}
+
 func (repo *UserRepository) GetCurrentStatus(email string) (string, error) {
 	// Находим сотрудника
 	var employee Employee
@@ -76,7 +98,6 @@ func (repo *UserRepository) GetCurrentStatus(email string) (string, error) {
 	return statusCode, nil
 }
 
-// GetStatusHistory возвращает историю статусов сотрудника
 func (repo *UserRepository) GetStatusHistory(employeeID uint) ([]StatusPeriod, error) {
 	var history []StatusPeriod
 	err := repo.DataBase.DB.
