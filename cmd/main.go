@@ -52,8 +52,16 @@ func main() {
 	userRepository := user.NewUserRepository(db)
 
 	// Handler
-	pages.NewHandler(app, store)
-	user.NewHandler(app, customLogger, store, userRepository)
+	pages.NewHandler(app, pages.PagesHandlerDeps{
+		Store:        store,
+		Repository:   userRepository,
+		CustomLogger: customLogger,
+	})
+	user.NewHandler(app, user.UserHandlerDeps{
+		CustomLogger: customLogger,
+		Store:        store,
+		Repository:   userRepository,
+	})
 
 	app.Listen(":3000")
 }

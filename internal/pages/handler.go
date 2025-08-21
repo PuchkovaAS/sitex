@@ -2,25 +2,37 @@ package pages
 
 import (
 	"net/http"
+	"sitex/internal/user"
 	"sitex/pkg/middleware"
 	"sitex/views"
 	"sitex/views/components"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/rs/zerolog"
 
 	templeadapter "sitex/pkg/temple_adapter"
 )
 
-type PagesHandler struct {
-	router fiber.Router
-	store  *session.Store
+type PagesHandlerDeps struct {
+	Store        *session.Store
+	Repository   *user.UserRepository
+	CustomLogger *zerolog.Logger
 }
 
-func NewHandler(router fiber.Router, store *session.Store) {
+type PagesHandler struct {
+	router       fiber.Router
+	store        *session.Store
+	repository   *user.UserRepository
+	customLogger *zerolog.Logger
+}
+
+func NewHandler(router fiber.Router, deps PagesHandlerDeps) {
 	h := &PagesHandler{
-		router: router,
-		store:  store,
+		router:       router,
+		store:        deps.Store,
+		repository:   deps.Repository,
+		customLogger: deps.CustomLogger,
 	}
 	h.setupPublicRoutes()
 	h.setupPrivateRoutes()
@@ -36,6 +48,7 @@ func (h *PagesHandler) setupPrivateRoutes() {
 	private := h.router.Group("/", middleware.AuthMiddleware(h.store))
 
 	private.Get("/", h.home)
+	private.Get("/api/logout", h.apiLogout)
 }
 
 func (h *PagesHandler) login(c *fiber.Ctx) error {
@@ -44,8 +57,30 @@ func (h *PagesHandler) login(c *fiber.Ctx) error {
 }
 
 func (h *PagesHandler) home(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	status, err := h.repository.GetCurrentStatus(email)
+	h.customLogger.Info().Msg(status)
+
+	if err != nil {
+		c.Locals("user_status", "office")
+	} else {
+		c.Locals("user_status", status)
+	}
+
 	component := views.ActivityPage()
 	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) apiLogout(c *fiber.Ctx) error {
+	sess, err := h.store.Get(c)
+	if err != nil {
+		panic(err)
+	}
+	sess.Delete("email")
+	if err := sess.Save(); err != nil {
+		panic(err)
+	}
+	return c.Redirect("/login", http.StatusFound)
 }
 
 func (h *PagesHandler) apiLogin(c *fiber.Ctx) error {

@@ -39,26 +39,41 @@ func UserProfile(userProfile UserProfileProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		email := ctx.Value("email").(string)
+		status := ctx.Value("user_status")
 
 		statusClass := "text-gray-600 bg-gray-100" // по умолчанию
 		statusText := "Неизвестно"
 
-		switch userProfile.Status {
-		case "vacation":
-			statusClass = "text-amber-600 bg-amber-100"
-			statusText = "В отпуске"
-		case "sick":
-			statusClass = "text-red-600 bg-red-100"
-			statusText = "На больничном"
-		case "remote":
-			statusClass = "text-blue-600 bg-blue-100"
-			statusText = "Удаленно"
-		case "office":
-			statusClass = "text-green-600 bg-green-100"
-			statusText = "В офисе"
-		case "business_trip":
-			statusClass = "text-purple-600 bg-purple-100"
-			statusText = "В командировке"
+		if status != nil {
+			switch status.(string) {
+			case "vacation":
+				statusClass = "text-amber-600 bg-amber-100"
+				statusText = "В отпуске"
+			case "sick_leave":
+				statusClass = "text-red-600 bg-red-100"
+				statusText = "На больничном"
+			case "work_remote":
+				statusClass = "text-blue-600 bg-blue-100"
+				statusText = "Удаленная работа"
+			case "work_office":
+				statusClass = "text-green-600 bg-green-100"
+				statusText = "В офисе"
+			case "business_trip":
+				statusClass = "text-purple-600 bg-purple-100"
+				statusText = "В командировке"
+			case "weekend":
+				statusClass = "text-gray-600 bg-gray-200"
+				statusText = "Выходной"
+			case "day_off":
+				statusClass = "text-orange-600 bg-orange-100"
+				statusText = "Отгул"
+			default:
+				statusClass = "text-gray-600 bg-gray-100"
+				statusText = "Неизвестно"
+			}
+		} else {
+			statusClass = "text-gray-600 bg-gray-100"
+			statusText = "Неизвестно"
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"p-4 border-t border-gray-200\"><div class=\"flex items-center mb-3\"><div class=\"w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center\"><span class=\"text-white font-semibold text-sm\">")
 		if templ_7745c5c3_Err != nil {
@@ -67,7 +82,7 @@ func UserProfile(userProfile UserProfileProps) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strings.ToUpper(string(email[0])))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 41, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 56, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -80,7 +95,7 @@ func UserProfile(userProfile UserProfileProps) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(userProfile.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 44, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 59, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -93,7 +108,7 @@ func UserProfile(userProfile UserProfileProps) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(userProfile.Position)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 45, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 60, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -128,7 +143,7 @@ func UserProfile(userProfile UserProfileProps) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(statusText)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 47, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 62, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {

@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"sitex/pkg/database"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type UserRepository struct {
@@ -38,17 +36,11 @@ func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 		return fmt.Errorf("неверный формат даты: %w", err)
 	}
 
-	// 4. Завершаем предыдущий активный статус
-	if err := repo.closePreviousStatus(employee.ID, startDate); err != nil {
-		return fmt.Errorf("ошибка завершения предыдущего статуса: %w", err)
-	}
-
 	// 5. Создаем новый статус
 	newStatus := StatusPeriod{
 		EmployeeID: employee.ID,
 		StatusID:   statusType.ID, // Используем найденный ID
 		StartDate:  startDate,
-		EndDate:    nil,
 		Comment:    status.Description,
 	}
 
@@ -60,59 +52,28 @@ func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 	return nil
 }
 
-// closePreviousStatus завершает предыдущий активный статус
-func (repo *UserRepository) closePreviousStatus(employeeID uint, newStartDate time.Time) error {
-	// Находим активный статус (без EndDate)
-	var activeStatus StatusPeriod
-	result := repo.DataBase.DB.
-		Where("employee_id = ? AND end_date IS NULL", employeeID).
-		Order("start_date DESC").
-		First(&activeStatus)
-
-	if result.Error != nil {
-		// Нет активного статуса - это нормально для первого статуса
-		if result.Error == gorm.ErrRecordNotFound {
-			return nil
-		}
-		return result.Error
+func (repo *UserRepository) GetCurrentStatus(email string) (string, error) {
+	// Находим сотрудника
+	var employee Employee
+	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
+		return "", err
 	}
 
-	// Проверяем, что новая дата не раньше начала текущего статуса
-	if newStartDate.Before(activeStatus.StartDate) {
-		return fmt.Errorf("новая дата не может быть раньше начала текущего статуса")
-	}
-
-	// Если новая дата равна началу текущего статуса - обновляем текущий
-	if newStartDate.Equal(activeStatus.StartDate) {
-		return repo.DataBase.DB.
-			Model(&StatusPeriod{}).
-			Where("id = ?", activeStatus.ID).
-			Updates(map[string]interface{}{
-				"status_id": activeStatus.StatusID, // или новый statusID если нужно
-				"comment":   "Обновлен",
-			}).Error
-	}
-
-	// Завершаем предыдущий статус (устанавливаем EndDate за день до нового)
-	endDate := newStartDate.AddDate(0, 0, -1)
-	return repo.DataBase.DB.
-		Model(&StatusPeriod{}).
-		Where("id = ?", activeStatus.ID).
-		Update("end_date", endDate).Error
-}
-
-// GetCurrentStatus возвращает текущий активный статус сотрудника
-func (repo *UserRepository) GetCurrentStatus(employeeID uint) (*StatusPeriod, error) {
-	var status StatusPeriod
+	// Находим последний статус с JOIN к status_types
+	var statusCode string
 	err := repo.DataBase.DB.
-		Preload("StatusType").
-		Where("employee_id = ? AND end_date IS NULL", employeeID).
-		Order("start_date DESC").
-		First(&status).Error
+		Table("status_periods").
+		Select("status_types.code").
+		Joins("LEFT JOIN status_types ON status_types.id = status_periods.status_id").
+		Where("status_periods.employee_id = ?", employee.ID).
+		Order("status_periods.start_date DESC").
+		Limit(1).
+		Scan(&statusCode).Error
 	if err != nil {
-		return nil, err
+		return "office", nil
 	}
-	return &status, nil
+
+	return statusCode, nil
 }
 
 // GetStatusHistory возвращает историю статусов сотрудника

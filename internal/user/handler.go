@@ -10,6 +10,12 @@ import (
 	templeadapter "sitex/pkg/temple_adapter"
 )
 
+type UserHandlerDeps struct {
+	CustomLogger *zerolog.Logger
+	Store        *session.Store
+	Repository   *UserRepository
+}
+
 type UserHandler struct {
 	router       fiber.Router
 	customLogger *zerolog.Logger
@@ -17,17 +23,12 @@ type UserHandler struct {
 	repository   *UserRepository
 }
 
-func NewHandler(
-	router fiber.Router,
-	customLogger *zerolog.Logger,
-	store *session.Store,
-	repository *UserRepository,
-) {
+func NewHandler(router fiber.Router, deps UserHandlerDeps) {
 	h := &UserHandler{
 		router:       router,
-		customLogger: customLogger,
-		store:        store,
-		repository:   repository,
+		customLogger: deps.CustomLogger,
+		store:        deps.Store,
+		repository:   deps.Repository,
 	}
 
 	authGroup := router.Group("/api")
@@ -58,7 +59,7 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 
 	return templeadapter.Render(c,
 		components.Notification(
-			"Новость успешно создана",
+			"Статус добавлен",
 			components.NotificationSuccess,
 		),
 		fiber.StatusCreated,

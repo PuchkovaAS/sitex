@@ -20,4 +20,5 @@ func main() {
 		&user.StatusPeriod{},
 		&user.OfficialHoliday{},
 	)
+	customLogger.Info().Msg("Мигрция прошла успешно")
 }

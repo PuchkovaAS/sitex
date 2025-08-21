@@ -78,6 +78,15 @@ templ Sidebar() {
 							<span>Задачи</span>
 						</a>
 					</li>
+					<br class="mt-6 border-t border-gray-200 dark:border-gray-600 w-full"/>
+					<li>
+						<a
+							href="/dashboard"
+							class="flex items-center p-3 text-sm font-medium text-gray-900 rounded-lg  hover:bg-gray-100 transition-colors"
+						>
+							<span>Добавить пользователя</span>
+						</a>
+					</li>
 				</ul>
 			</nav>
 			<!-- Профиль пользователя -->
@@ -90,7 +99,7 @@ templ Sidebar() {
 			<!-- Выход -->
 			<div class="p-4 border-t border-gray-200">
 				<a
-					href="/logout"
+					href="/api/logout"
 					class="flex items-center p-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
 				>
 					<i class="fas fa-sign-out-alt w-5 h-5 text-gray-500 mr-3"></i>

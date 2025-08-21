@@ -43,7 +43,6 @@ type StatusPeriod struct {
 	EmployeeID uint      `gorm:"not null"`
 	StatusID   uint      `gorm:"not null"`
 	StartDate  time.Time `gorm:"not null"`
-	EndDate    *time.Time
 	Comment    string
 }
 

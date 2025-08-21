@@ -11,26 +11,41 @@ type UserProfileProps struct {
 
 templ UserProfile(userProfile UserProfileProps) {
 	{{ email := ctx.Value("email").(string) }}
+	{{ status := ctx.Value("user_status") }}
 	{{
 statusClass := "text-gray-600 bg-gray-100" // по умолчанию
 statusText := "Неизвестно"
 
-switch userProfile.Status {
-case "vacation":
-	statusClass = "text-amber-600 bg-amber-100"
-	statusText = "В отпуске"
-case "sick":
-	statusClass = "text-red-600 bg-red-100"
-	statusText = "На больничном"
-case "remote":
-	statusClass = "text-blue-600 bg-blue-100"
-	statusText = "Удаленно"
-case "office":
-	statusClass = "text-green-600 bg-green-100"
-	statusText = "В офисе"
-case "business_trip":
-	statusClass = "text-purple-600 bg-purple-100"
-	statusText = "В командировке"
+if status != nil {
+	switch status.(string) {
+	case "vacation":
+		statusClass = "text-amber-600 bg-amber-100"
+		statusText = "В отпуске"
+	case "sick_leave":
+		statusClass = "text-red-600 bg-red-100"
+		statusText = "На больничном"
+	case "work_remote":
+		statusClass = "text-blue-600 bg-blue-100"
+		statusText = "Удаленная работа"
+	case "work_office":
+		statusClass = "text-green-600 bg-green-100"
+		statusText = "В офисе"
+	case "business_trip":
+		statusClass = "text-purple-600 bg-purple-100"
+		statusText = "В командировке"
+	case "weekend":
+		statusClass = "text-gray-600 bg-gray-200"
+		statusText = "Выходной"
+	case "day_off":
+		statusClass = "text-orange-600 bg-orange-100"
+		statusText = "Отгул"
+	default:
+		statusClass = "text-gray-600 bg-gray-100"
+		statusText = "Неизвестно"
+	}
+} else {
+	statusClass = "text-gray-600 bg-gray-100"
+	statusText = "Неизвестно"
 }
 	}}
 	<div class="p-4 border-t border-gray-200">
