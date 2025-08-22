@@ -1,0 +1,58 @@
+package components
+
+import "sitex/internal/dt"
+
+templ UserInfo() {
+	{{ status := ctx.Value("user_status") }}
+	{{ userInfo := ctx.Value("user_info").(dt.UserInfo) }}
+	{{
+statusClass := "text-gray-600 bg-gray-100" // по умолчанию
+statusText := "Неизвестно"
+
+if status != nil {
+	switch status.(string) {
+	case "vacation":
+		statusClass = "text-amber-600 bg-amber-50 border border-amber-200"
+		statusText = "В отпуске"
+	case "sick_leave":
+		statusClass = "text-rose-600 bg-rose-50 border border-rose-200"
+		statusText = "На больничном"
+	case "work_remote":
+		statusClass = "text-indigo-600 bg-indigo-50 border border-indigo-200"
+		statusText = "Удалённая работа"
+	case "work_office":
+		statusClass = "text-emerald-600 bg-emerald-50 border border-emerald-200"
+		statusText = "В офисе"
+	case "business_trip":
+		statusClass = "text-violet-600 bg-violet-50 border border-violet-200"
+		statusText = "В командировке"
+	case "weekend":
+		statusClass = "text-slate-600 bg-slate-100 border border-slate-300"
+		statusText = "Выходной"
+	case "day_off":
+		statusClass = "text-orange-500 bg-orange-50 border border-orange-200"
+		statusText = "Отгул"
+	default:
+		statusClass = "text-gray-500 bg-gray-100 border border-gray-300"
+		statusText = "Неизвестно"
+	}
+} else {
+	statusClass = "text-gray-400 bg-gray-100 border border-gray-300"
+	statusText = "Не указано"
+}
+	}}
+	<div class="ml-3 flex flex-col items-start">
+		<!-- ФИО -->
+		<p class="text-sm font-medium text-gray-900 mb-1">
+			{ userInfo.LastName } { userInfo.FirstName }
+		</p>
+		<!-- Должность -->
+		<span class="text-xs text-gray-600 mb-2">
+			{ userInfo.Position }
+		</span>
+		<!-- Статус -->
+		<span class={ "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium " + statusClass }>
+			{ statusText }
+		</span>
+	</div>
+}

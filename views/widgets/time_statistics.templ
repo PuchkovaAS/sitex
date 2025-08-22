@@ -1,0 +1,64 @@
+package widgets
+
+import "sitex/views/components"
+
+templ TimeStatistics() {
+	<div class="bg-white rounded-lg shadow p-6  flex items-center align-top">
+		<!-- Информация пользователя -->
+		<div class="mb-6 mr-6">
+			@components.UserInfo()
+		</div>
+		<!-- Статистика в виде горизонтальных карточек -->
+		<div class="grid grid-cols-7 gap-2">
+			<!-- В отпуске -->
+			<div
+				class="flex flex-col items-center justify-center bg-amber-50 border border-amber-200 rounded-lg p-3 min-h-[30px]"
+			>
+				<span class="text-amber-700 text-sm font-bold">1</span>
+				<span class="text-xs text-amber-700 text-center leading-tight mt-1">В отпуске</span>
+			</div>
+			<!-- На больничном -->
+			<div
+				class="flex flex-col items-center justify-center bg-rose-50 border border-rose-200 rounded-lg p-3 min-h-[30px]"
+			>
+				<span class="text-rose-700 text-sm font-bold">1</span>
+				<span class="text-xs text-rose-700 text-center leading-tight mt-1">На больничном</span>
+			</div>
+			<!-- Удалённая работа -->
+			<div
+				class="flex flex-col items-center justify-center bg-indigo-50 border border-indigo-200 rounded-lg p-3 min-h-[30px]"
+			>
+				<span class="text-indigo-700 text-sm font-bold">1</span>
+				<span class="text-xs text-indigo-700 text-center leading-tight mt-1">Удалённо</span>
+			</div>
+			<!-- В офисе -->
+			<div
+				class="flex flex-col items-center justify-center bg-emerald-50 border border-emerald-200 rounded-lg p-3 min-h-[30px]"
+			>
+				<span class="text-emerald-700 text-sm font-bold">1</span>
+				<span class="text-xs text-emerald-700 text-center leading-tight mt-1">В офисе</span>
+			</div>
+			<!-- В командировке -->
+			<div
+				class="flex flex-col items-center justify-center bg-violet-50 border border-violet-200 rounded-lg p-3 min-h-[30px]"
+			>
+				<span class="text-violet-700 text-sm font-bold">1</span>
+				<span class="text-xs text-violet-700 text-center leading-tight mt-1">Командировка</span>
+			</div>
+			<!-- Выходной -->
+			<div
+				class="flex flex-col items-center justify-center bg-slate-100 border border-slate-300 rounded-lg p-3 min-h-[30px]"
+			>
+				<span class="text-slate-700 text-sm font-bold">1</span>
+				<span class="text-xs text-slate-700 text-center leading-tight mt-1">Выходной</span>
+			</div>
+			<!-- Отгул -->
+			<div
+				class="flex flex-col items-center justify-center bg-orange-50 border border-orange-200 rounded-lg p-3 min-h-[30px]"
+			>
+				<span class="text-orange-700 text-sm font-bold">1</span>
+				<span class="text-xs text-orange-700 text-center leading-tight mt-1">Отгул</span>
+			</div>
+		</div>
+	</div>
+}

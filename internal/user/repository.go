@@ -5,6 +5,8 @@ import (
 	"sitex/internal/dt"
 	"sitex/pkg/database"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type UserRepository struct {
@@ -37,20 +39,34 @@ func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 		return fmt.Errorf("неверный формат даты: %w", err)
 	}
 
-	// 5. Создаем новый статус
-	newStatus := StatusPeriod{
-		EmployeeID: employee.ID,
-		StatusID:   statusType.ID, // Используем найденный ID
-		StartDate:  startDate,
-		Comment:    status.Description,
-	}
+	// 4. Проверяем, есть ли уже запись на эту дату
+	var existingRecord StatusPeriod
+	result = repo.DataBase.DB.
+		Where("employee_id = ? AND start_date = ?", employee.ID, startDate.Format("2006-01-02")).
+		First(&existingRecord)
 
-	// 6. Сохраняем
-	if err := repo.DataBase.DB.Create(&newStatus).Error; err != nil {
-		return fmt.Errorf("ошибка при создании статуса: %w", err)
+	if result.Error == nil {
+		// Запись существует - ОБНОВЛЯЕМ
+		return repo.DataBase.DB.
+			Model(&StatusPeriod{}).
+			Where("id = ?", existingRecord.ID).
+			Updates(map[string]any{
+				"status_id":  statusType.ID,
+				"comment":    status.Description,
+				"updated_at": time.Now(),
+			}).Error
+	} else if result.Error == gorm.ErrRecordNotFound {
+		// Записи нет - СОЗДАЕМ новую
+		newStatus := StatusPeriod{
+			EmployeeID: employee.ID,
+			StatusID:   statusType.ID,
+			StartDate:  startDate,
+			Comment:    status.Description,
+		}
+		return repo.DataBase.DB.Create(&newStatus).Error
+	} else {
+		return result.Error
 	}
-
-	return nil
 }
 
 func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
@@ -81,18 +97,20 @@ func (repo *UserRepository) GetCurrentStatus(email string) (string, error) {
 		return "", err
 	}
 
-	// Находим последний статус с JOIN к status_types
 	var statusCode string
+	today := time.Now().Truncate(24 * time.Hour) // Обрезаем время, оставляем только дату
+
 	err := repo.DataBase.DB.
 		Table("status_periods").
 		Select("status_types.code").
 		Joins("LEFT JOIN status_types ON status_types.id = status_periods.status_id").
 		Where("status_periods.employee_id = ?", employee.ID).
+		Where("status_periods.start_date <= ?", today).
 		Order("status_periods.start_date DESC").
 		Limit(1).
 		Scan(&statusCode).Error
 	if err != nil {
-		return "office", nil
+		return "work_office", nil
 	}
 
 	return statusCode, nil

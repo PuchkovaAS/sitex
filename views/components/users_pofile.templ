@@ -1,102 +1,63 @@
 package components
 
-import "sitex/internal/dt"
-import "strings"
+import (
+	"sitex/internal/dt"
+	"strings"
+)
 
 templ UserProfile() {
-{{ status := ctx.Value("user_status") }}
-{{ userInfo := ctx.Value("user_info").(dt.UserInfo) }}
-{{
-statusClass := "text-gray-600 bg-gray-100" // по умолчанию
-statusText := "Неизвестно"
-
-if status != nil {
-switch status.(string) {
-case "vacation":
-statusClass = "text-amber-600 bg-amber-100"
-statusText = "В отпуске"
-case "sick_leave":
-statusClass = "text-red-600 bg-red-100"
-statusText = "На больничном"
-case "work_remote":
-statusClass = "text-blue-600 bg-blue-100"
-statusText = "Удаленная работа"
-case "work_office":
-statusClass = "text-green-600 bg-green-100"
-statusText = "В офисе"
-case "business_trip":
-statusClass = "text-purple-600 bg-purple-100"
-statusText = "В командировке"
-case "weekend":
-statusClass = "text-gray-600 bg-gray-200"
-statusText = "Выходной"
-case "day_off":
-statusClass = "text-orange-600 bg-orange-100"
-statusText = "Отгул"
-default:
-statusClass = "text-gray-600 bg-gray-100"
-statusText = "Неизвестно"
-}
-} else {
-statusClass = "text-gray-600 bg-gray-100"
-statusText = "Неизвестно"
-}
-}}
-{{
+	{{userInfo := ctx.Value("user_info").(dt.UserInfo)
 // Безопасное получение инициалов
 initials := ""
 
 // Получаем первую руну имени
 if userInfo.FirstName != "" {
-runes := []rune(userInfo.FirstName)
-if len(runes) > 0 {
-initials += string(runes[0])
-}
+	runes := []rune(userInfo.FirstName)
+	if len(runes) > 0 {
+		initials += string(runes[0])
+	}
 }
 
 // Получаем первую руну фамилии
 if userInfo.LastName != "" {
-runes := []rune(userInfo.LastName)
-if len(runes) > 0 {
-initials += string(runes[0])
-}
+	runes := []rune(userInfo.LastName)
+	if len(runes) > 0 {
+		initials += string(runes[0])
+	}
 }
 
 // Если оба поля пустые
 if initials == "" {
-initials = "U" // User по умолчанию
+	initials = "U" // User по умолчанию
 }
 
 initials = strings.ToUpper(initials)
-}}
-<div class="p-4 border-t border-gray-200">
-    <div class="flex items-center mb-3">
-        <div
-            class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-            <span class="text-white font-semibold text-sm">
-                { initials }
-            </span>
-        </div>
-        <div class="ml-3 flex flex-col items-start">
-            <p class="text-sm font-medium text-gray-900 mb-1">{ userInfo.LastName } { userInfo.FirstName }</p>
-            <span class="text-xs text-gray-600 mb-1">{ userInfo.Position }</span>
-            <span class={ "inline-flex items-start px-2.5 py-0.5 rounded-full text-xs font-medium " + statusClass }>
-                { statusText }
-            </span>
-        </div>
-    </div>
-    <div class=" text-xs text-gray-600 mb-3">
-        <p class="font-medium mb-1">Активные проекты:</p>
-        <ul class="space-y-1">
-            <li class="flex items-center">
-                <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                <span>Усть луга</span>
-            </li>
-            <li class="flex items-center">
-                <span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
-                <span>Уренгой</span>
-            </li>
-        </ul>
-    </div>
-</div>
+	}}
+	<div class="p-4 border-t border-gray-200">
+		<div class="flex items-center mb-3">
+			<div
+				class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
+			>
+				<span class="text-white font-semibold text-sm">
+					{ initials }
+				</span>
+			</div>
+			<div class="ml-3 flex flex-col items-start">
+				@UserInfo()
+			</div>
+		</div>
+		<div class=" text-xs text-gray-600 mb-3">
+			<p class="font-medium mb-1">Активные проекты:</p>
+			<ul class="space-y-1">
+				<li class="flex items-center">
+					<span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+					<span>Усть луга</span>
+				</li>
+				<li class="flex items-center">
+					<span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+					<span>Уренгой</span>
+				</li>
+			</ul>
+		</div>
+	</div>
 }

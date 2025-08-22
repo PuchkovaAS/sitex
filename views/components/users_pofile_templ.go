@@ -8,8 +8,10 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "sitex/internal/dt"
-import "strings"
+import (
+	"sitex/internal/dt"
+	"strings"
+)
 
 func UserProfile() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -32,44 +34,7 @@ func UserProfile() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		status := ctx.Value("user_status")
 		userInfo := ctx.Value("user_info").(dt.UserInfo)
-
-		statusClass := "text-gray-600 bg-gray-100" // по умолчанию
-		statusText := "Неизвестно"
-
-		if status != nil {
-			switch status.(string) {
-			case "vacation":
-				statusClass = "text-amber-600 bg-amber-100"
-				statusText = "В отпуске"
-			case "sick_leave":
-				statusClass = "text-red-600 bg-red-100"
-				statusText = "На больничном"
-			case "work_remote":
-				statusClass = "text-blue-600 bg-blue-100"
-				statusText = "Удаленная работа"
-			case "work_office":
-				statusClass = "text-green-600 bg-green-100"
-				statusText = "В офисе"
-			case "business_trip":
-				statusClass = "text-purple-600 bg-purple-100"
-				statusText = "В командировке"
-			case "weekend":
-				statusClass = "text-gray-600 bg-gray-200"
-				statusText = "Выходной"
-			case "day_off":
-				statusClass = "text-orange-600 bg-orange-100"
-				statusText = "Отгул"
-			default:
-				statusClass = "text-gray-600 bg-gray-100"
-				statusText = "Неизвестно"
-			}
-		} else {
-			statusClass = "text-gray-600 bg-gray-100"
-			statusText = "Неизвестно"
-		}
-
 		// Безопасное получение инициалов
 		initials := ""
 
@@ -102,87 +67,21 @@ func UserProfile() templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(initials)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 77, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 42, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span></div><div class=\"ml-3 flex flex-col items-start\"><p class=\"text-sm font-medium text-gray-900 mb-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span></div><div class=\"ml-3 flex flex-col items-start\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.LastName)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 81, Col: 81}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		templ_7745c5c3_Err = UserInfo().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.FirstName)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 81, Col: 104}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p><span class=\"text-xs text-gray-600 mb-1\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.Position)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 82, Col: 72}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span> ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var6 = []any{"inline-flex items-start px-2.5 py-0.5 rounded-full text-xs font-medium " + statusClass}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<span class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var6).String())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 1, Col: 0}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(statusText)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 84, Col: 28}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</span></div></div><div class=\" text-xs text-gray-600 mb-3\"><p class=\"font-medium mb-1\">Активные проекты:</p><ul class=\"space-y-1\"><li class=\"flex items-center\"><span class=\"w-2 h-2 bg-green-400 rounded-full mr-2\"></span> <span>Усть луга</span></li><li class=\"flex items-center\"><span class=\"w-2 h-2 bg-blue-400 rounded-full mr-2\"></span> <span>Уренгой</span></li></ul></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div><div class=\" text-xs text-gray-600 mb-3\"><p class=\"font-medium mb-1\">Активные проекты:</p><ul class=\"space-y-1\"><li class=\"flex items-center\"><span class=\"w-2 h-2 bg-green-400 rounded-full mr-2\"></span> <span>Усть луга</span></li><li class=\"flex items-center\"><span class=\"w-2 h-2 bg-blue-400 rounded-full mr-2\"></span> <span>Уренгой</span></li></ul></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

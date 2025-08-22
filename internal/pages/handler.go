@@ -66,7 +66,6 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		c.Locals("user_status", status)
 	}
 	userInfo, _ := h.repository.GetUserInfo(email)
-	h.customLogger.Info().Msg(userInfo.FirstName)
 
 	c.Locals("user_info", userInfo)
 
