@@ -18,6 +18,7 @@ type PagesHandlerDeps struct {
 	Store        *session.Store
 	Repository   *user.UserRepository
 	CustomLogger *zerolog.Logger
+	UserService  *user.UserService
 }
 
 type PagesHandler struct {
@@ -25,6 +26,7 @@ type PagesHandler struct {
 	store        *session.Store
 	repository   *user.UserRepository
 	customLogger *zerolog.Logger
+	userService  *user.UserService
 }
 
 func NewHandler(router fiber.Router, deps PagesHandlerDeps) {
@@ -33,6 +35,7 @@ func NewHandler(router fiber.Router, deps PagesHandlerDeps) {
 		store:        deps.Store,
 		repository:   deps.Repository,
 		customLogger: deps.CustomLogger,
+		userService:  deps.UserService,
 	}
 	h.setupPublicRoutes()
 	h.setupPrivateRoutes()
@@ -69,7 +72,12 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 
 	c.Locals("user_info", userInfo)
 
-	component := views.ActivityPage()
+	timeTo, timeFrom := h.userService.GetDateRange()
+
+	_, statusCount, err := h.userService.GetDaysStatus(email, timeTo, timeFrom)
+	component := views.ActivityPage(views.ActivityPageProps{
+		StatusCount: statusCount,
+	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
 

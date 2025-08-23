@@ -51,11 +51,17 @@ func main() {
 	// Repository
 	userRepository := user.NewUserRepository(db)
 
+	// Service
+	userService := user.NewUserService(&user.UserServiceDeps{
+		UserRepository: *userRepository,
+	})
+
 	// Handler
 	pages.NewHandler(app, pages.PagesHandlerDeps{
 		Store:        store,
 		Repository:   userRepository,
 		CustomLogger: customLogger,
+		UserService:  userService,
 	})
 	user.NewHandler(app, user.UserHandlerDeps{
 		CustomLogger: customLogger,

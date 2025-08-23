@@ -2,14 +2,19 @@ package views
 
 import "sitex/views/layout"
 import "sitex/views/widgets"
+import "sitex/internal/user"
 
-templ ActivityPage() {
+type ActivityPageProps struct {
+	StatusCount []user.StatusCount
+}
+
+templ ActivityPage(props ActivityPageProps) {
 	@layout.Layout(layout.LayoutProps{
 		Title:           "Активность",
 		MetaDescription: "Страница активности",
 		IsAuthenticated: true,
 	}) {
-		@widgets.TimeStatistics()
+		@widgets.TimeStatistics(props.StatusCount)
 		@widgets.AddStatus()
 	}
 }

@@ -9,8 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import "sitex/views/components"
+import "sitex/internal/user"
 
-func TimeStatistics() templ.Component {
+func TimeStatistics(stats []user.StatusCount) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -31,7 +32,22 @@ func TimeStatistics() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg shadow p-6  flex items-center align-top\"><!-- Информация пользователя --><div class=\"mb-6 mr-6\">")
+
+		// Создаем мапу для быстрого доступа
+		statMap := make(map[string]int)
+		for _, stat := range stats {
+			statMap[stat.Status] = stat.Count
+		}
+
+		// Получаем counts
+		vacationCount := statMap["В отпуске"]
+		sickCount := statMap["На больничном"]
+		remoteCount := statMap["Удалённо"]
+		officeCount := statMap["В офисе"]
+		businessCount := statMap["В командировке"]
+		weekendCount := statMap["Выходной"]
+		dayoffCount := statMap["Отгул"]
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg shadow p-6 flex items-start space-x-6\"><div class=\"flex-shrink-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -39,7 +55,98 @@ func TimeStatistics() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><!-- Статистика в виде горизонтальных карточек --><div class=\"grid grid-cols-7 gap-2\"><!-- В отпуске --><div class=\"flex flex-col items-center justify-center bg-amber-50 border border-amber-200 rounded-lg p-3 min-h-[30px]\"><span class=\"text-amber-700 text-sm font-bold\">1</span> <span class=\"text-xs text-amber-700 text-center leading-tight mt-1\">В отпуске</span></div><!-- На больничном --><div class=\"flex flex-col items-center justify-center bg-rose-50 border border-rose-200 rounded-lg p-3 min-h-[30px]\"><span class=\"text-rose-700 text-sm font-bold\">1</span> <span class=\"text-xs text-rose-700 text-center leading-tight mt-1\">На больничном</span></div><!-- Удалённая работа --><div class=\"flex flex-col items-center justify-center bg-indigo-50 border border-indigo-200 rounded-lg p-3 min-h-[30px]\"><span class=\"text-indigo-700 text-sm font-bold\">1</span> <span class=\"text-xs text-indigo-700 text-center leading-tight mt-1\">Удалённо</span></div><!-- В офисе --><div class=\"flex flex-col items-center justify-center bg-emerald-50 border border-emerald-200 rounded-lg p-3 min-h-[30px]\"><span class=\"text-emerald-700 text-sm font-bold\">1</span> <span class=\"text-xs text-emerald-700 text-center leading-tight mt-1\">В офисе</span></div><!-- В командировке --><div class=\"flex flex-col items-center justify-center bg-violet-50 border border-violet-200 rounded-lg p-3 min-h-[30px]\"><span class=\"text-violet-700 text-sm font-bold\">1</span> <span class=\"text-xs text-violet-700 text-center leading-tight mt-1\">Командировка</span></div><!-- Выходной --><div class=\"flex flex-col items-center justify-center bg-slate-100 border border-slate-300 rounded-lg p-3 min-h-[30px]\"><span class=\"text-slate-700 text-sm font-bold\">1</span> <span class=\"text-xs text-slate-700 text-center leading-tight mt-1\">Выходной</span></div><!-- Отгул --><div class=\"flex flex-col items-center justify-center bg-orange-50 border border-orange-200 rounded-lg p-3 min-h-[30px]\"><span class=\"text-orange-700 text-sm font-bold\">1</span> <span class=\"text-xs text-orange-700 text-center leading-tight mt-1\">Отгул</span></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div class=\"grid grid-cols-7 gap-2 flex-1\"><!-- В отпуске --><div class=\"flex flex-col items-center justify-center bg-amber-50 border border-amber-200 rounded-lg p-3 min-h-[80px]\"><span class=\"text-amber-700 text-lg font-bold\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 string
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(vacationCount)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 32, Col: 66}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</span> <span class=\"text-xs text-amber-700 text-center\">Отпуск</span></div><!-- На больничном --><div class=\"flex flex-col items-center justify-center bg-rose-50 border border-rose-200 rounded-lg p-3 min-h-[80px]\"><span class=\"text-rose-700 text-lg font-bold\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(sickCount)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 39, Col: 61}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span> <span class=\"text-xs text-rose-700 text-center\">Больничный</span></div><!-- Удалённая работа --><div class=\"flex flex-col items-center justify-center bg-indigo-50 border border-indigo-200 rounded-lg p-3 min-h-[80px]\"><span class=\"text-indigo-700 text-lg font-bold\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(remoteCount)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 46, Col: 65}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span> <span class=\"text-xs text-indigo-700 text-center\">Удалённо</span></div><!-- В офисе --><div class=\"flex flex-col items-center justify-center bg-emerald-50 border border-emerald-200 rounded-lg p-3 min-h-[80px]\"><span class=\"text-emerald-700 text-lg font-bold\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(officeCount)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 53, Col: 66}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span> <span class=\"text-xs text-emerald-700 text-center\">Офис</span></div><!-- В командировке --><div class=\"flex flex-col items-center justify-center bg-violet-50 border border-violet-200 rounded-lg p-3 min-h-[80px]\"><span class=\"text-violet-700 text-lg font-bold\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(businessCount)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 60, Col: 67}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span> <span class=\"text-xs text-violet-700 text-center\">Командировка</span></div><!-- Выходной --><div class=\"flex flex-col items-center justify-center bg-slate-100 border border-slate-300 rounded-lg p-3 min-h-[80px]\"><span class=\"text-slate-700 text-lg font-bold\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(weekendCount)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 67, Col: 65}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</span> <span class=\"text-xs text-slate-700 text-center\">Выходной</span></div><!-- Отгул --><div class=\"flex flex-col items-center justify-center bg-orange-50 border border-orange-200 rounded-lg p-3 min-h-[80px]\"><span class=\"text-orange-700 text-lg font-bold\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(dayoffCount)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 74, Col: 65}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</span> <span class=\"text-xs text-orange-700 text-center\">Отгул</span></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

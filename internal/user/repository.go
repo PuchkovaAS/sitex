@@ -116,13 +116,22 @@ func (repo *UserRepository) GetCurrentStatus(email string) (string, error) {
 	return statusCode, nil
 }
 
-func (repo *UserRepository) GetStatusHistory(employeeID uint) ([]StatusPeriod, error) {
+func (repo *UserRepository) GetStatusHistory(
+	email string,
+	timeFrom, timeTo time.Time,
+) ([]StatusPeriod, error) {
 	var history []StatusPeriod
+
 	err := repo.DataBase.DB.
-		Preload("StatusType").
-		Where("employee_id = ?", employeeID).
+		Preload("Employee").
+		Preload("StatusType"). // Загружаем связанный StatusType
+		Joins("INNER JOIN employees ON status_periods.employee_id = employees.id").
+		Where("employees.email = ?", email).
+		Where("start_date >= ?", timeFrom).
+		Where("start_date <= ?", timeTo).
 		Order("start_date DESC").
-		Find(&history).Error
+		Find(&history).
+		Error
 
 	return history, err
 }

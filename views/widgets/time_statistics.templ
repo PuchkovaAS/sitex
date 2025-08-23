@@ -1,63 +1,78 @@
 package widgets
 
 import "sitex/views/components"
+import "sitex/internal/user"
 
-templ TimeStatistics() {
-	<div class="bg-white rounded-lg shadow p-6  flex items-center align-top">
-		<!-- Информация пользователя -->
-		<div class="mb-6 mr-6">
+templ TimeStatistics(stats []user.StatusCount) {
+	{{
+// Создаем мапу для быстрого доступа
+statMap := make(map[string]int)
+for _, stat := range stats {
+	statMap[stat.Status] = stat.Count
+}
+
+// Получаем counts
+vacationCount := statMap["В отпуске"]
+sickCount := statMap["На больничном"]
+remoteCount := statMap["Удалённо"]
+officeCount := statMap["В офисе"]
+businessCount := statMap["В командировке"]
+weekendCount := statMap["Выходной"]
+dayoffCount := statMap["Отгул"]
+	}}
+	<div class="bg-white rounded-lg shadow p-6 flex items-start space-x-6">
+		<div class="flex-shrink-0">
 			@components.UserInfo()
 		</div>
-		<!-- Статистика в виде горизонтальных карточек -->
-		<div class="grid grid-cols-7 gap-2">
+		<div class="grid grid-cols-7 gap-2 flex-1">
 			<!-- В отпуске -->
 			<div
-				class="flex flex-col items-center justify-center bg-amber-50 border border-amber-200 rounded-lg p-3 min-h-[30px]"
+				class="flex flex-col items-center justify-center bg-amber-50 border border-amber-200 rounded-lg p-3 min-h-[80px]"
 			>
-				<span class="text-amber-700 text-sm font-bold">1</span>
-				<span class="text-xs text-amber-700 text-center leading-tight mt-1">В отпуске</span>
+				<span class="text-amber-700 text-lg font-bold">{ vacationCount }</span>
+				<span class="text-xs text-amber-700 text-center">Отпуск</span>
 			</div>
 			<!-- На больничном -->
 			<div
-				class="flex flex-col items-center justify-center bg-rose-50 border border-rose-200 rounded-lg p-3 min-h-[30px]"
+				class="flex flex-col items-center justify-center bg-rose-50 border border-rose-200 rounded-lg p-3 min-h-[80px]"
 			>
-				<span class="text-rose-700 text-sm font-bold">1</span>
-				<span class="text-xs text-rose-700 text-center leading-tight mt-1">На больничном</span>
+				<span class="text-rose-700 text-lg font-bold">{ sickCount }</span>
+				<span class="text-xs text-rose-700 text-center">Больничный</span>
 			</div>
 			<!-- Удалённая работа -->
 			<div
-				class="flex flex-col items-center justify-center bg-indigo-50 border border-indigo-200 rounded-lg p-3 min-h-[30px]"
+				class="flex flex-col items-center justify-center bg-indigo-50 border border-indigo-200 rounded-lg p-3 min-h-[80px]"
 			>
-				<span class="text-indigo-700 text-sm font-bold">1</span>
-				<span class="text-xs text-indigo-700 text-center leading-tight mt-1">Удалённо</span>
+				<span class="text-indigo-700 text-lg font-bold">{ remoteCount }</span>
+				<span class="text-xs text-indigo-700 text-center">Удалённо</span>
 			</div>
 			<!-- В офисе -->
 			<div
-				class="flex flex-col items-center justify-center bg-emerald-50 border border-emerald-200 rounded-lg p-3 min-h-[30px]"
+				class="flex flex-col items-center justify-center bg-emerald-50 border border-emerald-200 rounded-lg p-3 min-h-[80px]"
 			>
-				<span class="text-emerald-700 text-sm font-bold">1</span>
-				<span class="text-xs text-emerald-700 text-center leading-tight mt-1">В офисе</span>
+				<span class="text-emerald-700 text-lg font-bold">{ officeCount }</span>
+				<span class="text-xs text-emerald-700 text-center">Офис</span>
 			</div>
 			<!-- В командировке -->
 			<div
-				class="flex flex-col items-center justify-center bg-violet-50 border border-violet-200 rounded-lg p-3 min-h-[30px]"
+				class="flex flex-col items-center justify-center bg-violet-50 border border-violet-200 rounded-lg p-3 min-h-[80px]"
 			>
-				<span class="text-violet-700 text-sm font-bold">1</span>
-				<span class="text-xs text-violet-700 text-center leading-tight mt-1">Командировка</span>
+				<span class="text-violet-700 text-lg font-bold">{ businessCount }</span>
+				<span class="text-xs text-violet-700 text-center">Командировка</span>
 			</div>
 			<!-- Выходной -->
 			<div
-				class="flex flex-col items-center justify-center bg-slate-100 border border-slate-300 rounded-lg p-3 min-h-[30px]"
+				class="flex flex-col items-center justify-center bg-slate-100 border border-slate-300 rounded-lg p-3 min-h-[80px]"
 			>
-				<span class="text-slate-700 text-sm font-bold">1</span>
-				<span class="text-xs text-slate-700 text-center leading-tight mt-1">Выходной</span>
+				<span class="text-slate-700 text-lg font-bold">{ weekendCount }</span>
+				<span class="text-xs text-slate-700 text-center">Выходной</span>
 			</div>
 			<!-- Отгул -->
 			<div
-				class="flex flex-col items-center justify-center bg-orange-50 border border-orange-200 rounded-lg p-3 min-h-[30px]"
+				class="flex flex-col items-center justify-center bg-orange-50 border border-orange-200 rounded-lg p-3 min-h-[80px]"
 			>
-				<span class="text-orange-700 text-sm font-bold">1</span>
-				<span class="text-xs text-orange-700 text-center leading-tight mt-1">Отгул</span>
+				<span class="text-orange-700 text-lg font-bold">{ dayoffCount }</span>
+				<span class="text-xs text-orange-700 text-center">Отгул</span>
 			</div>
 		</div>
 	</div>
