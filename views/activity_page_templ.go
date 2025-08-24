@@ -13,7 +13,9 @@ import "sitex/views/widgets"
 import "sitex/internal/user"
 
 type ActivityPageProps struct {
-	StatusCount []user.StatusCount
+	StatusCount       map[string]int
+	HistoryStatus     []user.DayStatus
+	WeekdayFirstMonth int
 }
 
 func ActivityPage(props ActivityPageProps) templ.Component {
@@ -58,6 +60,18 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = widgets.AddStatus().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = widgets.Calendar(widgets.CalendarProps{
+				MonthName:     "August",
+				FirstDay:      props.WeekdayFirstMonth,
+				HistoryStatus: props.HistoryStatus,
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

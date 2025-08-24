@@ -90,35 +90,34 @@ func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
 	}, nil
 }
 
-func (repo *UserRepository) GetCurrentStatus(email string) (string, error) {
+func (repo *UserRepository) GetCurrentStatus(email string, date time.Time) (string, error) {
 	// Находим сотрудника
 	var employee Employee
 	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
 		return "", err
 	}
 
-	var statusCode string
-	today := time.Now().Truncate(24 * time.Hour) // Обрезаем время, оставляем только дату
+	var statusName string
 
 	err := repo.DataBase.DB.
 		Table("status_periods").
-		Select("status_types.code").
+		Select("status_types.name").
 		Joins("LEFT JOIN status_types ON status_types.id = status_periods.status_id").
 		Where("status_periods.employee_id = ?", employee.ID).
-		Where("status_periods.start_date <= ?", today).
+		Where("status_periods.start_date <= ?", date).
 		Order("status_periods.start_date DESC").
 		Limit(1).
-		Scan(&statusCode).Error
+		Scan(&statusName).Error
 	if err != nil {
-		return "work_office", nil
+		return "В офисе", nil
 	}
 
-	return statusCode, nil
+	return statusName, nil
 }
 
 func (repo *UserRepository) GetStatusHistory(
 	email string,
-	timeFrom, timeTo time.Time,
+	timeStart, timeEnd time.Time,
 ) ([]StatusPeriod, error) {
 	var history []StatusPeriod
 
@@ -127,8 +126,8 @@ func (repo *UserRepository) GetStatusHistory(
 		Preload("StatusType"). // Загружаем связанный StatusType
 		Joins("INNER JOIN employees ON status_periods.employee_id = employees.id").
 		Where("employees.email = ?", email).
-		Where("start_date >= ?", timeFrom).
-		Where("start_date <= ?", timeTo).
+		Where("start_date >= ?", timeStart).
+		Where("start_date <= ?", timeEnd).
 		Order("start_date DESC").
 		Find(&history).
 		Error

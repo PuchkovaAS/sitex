@@ -5,7 +5,9 @@ import "sitex/views/widgets"
 import "sitex/internal/user"
 
 type ActivityPageProps struct {
-	StatusCount []user.StatusCount
+	StatusCount       map[string]int
+	HistoryStatus     []user.DayStatus
+	WeekdayFirstMonth int
 }
 
 templ ActivityPage(props ActivityPageProps) {
@@ -16,5 +18,10 @@ templ ActivityPage(props ActivityPageProps) {
 	}) {
 		@widgets.TimeStatistics(props.StatusCount)
 		@widgets.AddStatus()
+		@widgets.Calendar(widgets.CalendarProps{
+			MonthName:     "August",
+			FirstDay:      props.WeekdayFirstMonth,
+			HistoryStatus: props.HistoryStatus,
+		})
 	}
 }

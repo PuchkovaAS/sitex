@@ -35,38 +35,28 @@ func UserInfo() templ.Component {
 		userInfo := ctx.Value("user_info").(dt.UserInfo)
 
 		statusClass := "text-gray-600 bg-gray-100" // по умолчанию
-		statusText := "Неизвестно"
-
+		statusText := status.(string)
 		if status != nil {
-			switch status.(string) {
-			case "vacation":
+			switch statusText {
+			case "В отпуске":
 				statusClass = "text-amber-600 bg-amber-50 border border-amber-200"
-				statusText = "В отпуске"
-			case "sick_leave":
+			case "Больничный":
 				statusClass = "text-rose-600 bg-rose-50 border border-rose-200"
-				statusText = "На больничном"
-			case "work_remote":
+			case "Удаленная работа":
 				statusClass = "text-indigo-600 bg-indigo-50 border border-indigo-200"
-				statusText = "Удалённая работа"
-			case "work_office":
+			case "В офисе":
 				statusClass = "text-emerald-600 bg-emerald-50 border border-emerald-200"
-				statusText = "В офисе"
-			case "business_trip":
+			case "Коммандировка":
 				statusClass = "text-violet-600 bg-violet-50 border border-violet-200"
-				statusText = "В командировке"
-			case "weekend":
+			case "Выходной":
 				statusClass = "text-slate-600 bg-slate-100 border border-slate-300"
-				statusText = "Выходной"
-			case "day_off":
+			case "Отгул":
 				statusClass = "text-orange-500 bg-orange-50 border border-orange-200"
-				statusText = "Отгул"
 			default:
 				statusClass = "text-gray-500 bg-gray-100 border border-gray-300"
-				statusText = "Неизвестно"
 			}
 		} else {
 			statusClass = "text-gray-400 bg-gray-100 border border-gray-300"
-			statusText = "Не указано"
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"ml-3 flex flex-col items-start\"><!-- ФИО --><p class=\"text-sm font-medium text-gray-900 mb-1\">")
 		if templ_7745c5c3_Err != nil {
@@ -75,7 +65,7 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.LastName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 47, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 37, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -88,7 +78,7 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.FirstName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 47, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 37, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -101,7 +91,7 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.Position)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 51, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 41, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -136,7 +126,7 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(statusText)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 55, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 45, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {

@@ -18,9 +18,9 @@ func NewUserService(deps *UserServiceDeps) *UserService {
 
 func (service *UserService) getHistory(
 	email string,
-	timeFrom, timeTo time.Time,
+	timeStart, timeEnd time.Time,
 ) ([]StatusHistoryResponse, error) {
-	history, err := service.userRepository.GetStatusHistory(email, timeFrom, timeTo)
+	history, err := service.userRepository.GetStatusHistory(email, timeStart, timeEnd)
 	if err != nil {
 		return nil, err
 	}
@@ -39,21 +39,19 @@ type DayStatus struct {
 	Comment string // Комментарий
 }
 
-type StatusCount struct {
-	Status string
-	Count  int
+type CalcDaysDeps struct {
+	Email         string
+	TimeStart     time.Time
+	TimeEnd       time.Time
+	HistoryStatus []StatusHistoryResponse
 }
 
-// Метод для расчета дней
-func (service *UserService) calcDays(
-	timeFrom, timeTo time.Time,
-	historyStatus []StatusHistoryResponse,
-) ([]DayStatus, []StatusCount) {
+func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string]int) {
 	// Используем полную дату как ключ (год-месяц-день)
 	statusMap := make(map[string]DayStatus)
 
 	// Заполняем мапу данными из истории
-	for _, status := range historyStatus {
+	for _, status := range deps.HistoryStatus {
 		key := status.StartDate.Format("2006-01-02")
 		statusMap[key] = DayStatus{
 			Date:    status.StartDate.Day(),
@@ -64,11 +62,19 @@ func (service *UserService) calcDays(
 
 	// Создаем слайс для хранения всех дней периода
 	var result []DayStatus
-	currentDate := timeFrom
-	lastStatus := "В офисе"
+	currentDate := deps.TimeStart
+
+	var lastStatus string
+	lastStatus, err := service.userRepository.GetCurrentStatus(
+		deps.Email,
+		deps.TimeStart.Add(-24*time.Hour).Truncate(24*time.Hour),
+	)
+	if err != nil {
+		lastStatus = "В офисе"
+	}
 
 	// Проходим по всем дням в диапазоне
-	for currentDate.Before(timeTo) || currentDate.Equal(timeTo) {
+	for currentDate.Before(deps.TimeEnd) || currentDate.Equal(deps.TimeEnd) {
 		key := currentDate.Format("2006-01-02")
 
 		// Если день есть в мапе - берем его статус
@@ -100,27 +106,23 @@ func (service *UserService) calcDays(
 		statusCounter[day.Status]++
 	}
 
-	// Преобразуем счетчик в слайс
-	var statusCounts []StatusCount
-	for status, count := range statusCounter {
-		statusCounts = append(statusCounts, StatusCount{
-			Status: status,
-			Count:  count,
-		})
-	}
-
-	return result, statusCounts
+	return result, statusCounter
 }
 
 func (service *UserService) GetDaysStatus(
 	email string,
-	timeTo, timeFrom time.Time,
-) ([]DayStatus, []StatusCount, error) {
-	history, err := service.getHistory(email, timeTo, timeFrom)
+	timeStart, timeEnd time.Time,
+) ([]DayStatus, map[string]int, error) {
+	history, err := service.getHistory(email, timeStart, timeEnd)
 	if err != nil {
 		return nil, nil, err
 	}
-	dayStatus, statusCount := service.calcDays(timeTo, timeFrom, history)
+	dayStatus, statusCount := service.calcDays(CalcDaysDeps{
+		Email:         email,
+		TimeStart:     timeStart,
+		TimeEnd:       timeEnd,
+		HistoryStatus: history,
+	})
 	return dayStatus, statusCount, nil
 }
 

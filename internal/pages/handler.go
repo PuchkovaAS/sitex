@@ -6,6 +6,7 @@ import (
 	"sitex/pkg/middleware"
 	"sitex/views"
 	"sitex/views/components"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
@@ -61,7 +62,9 @@ func (h *PagesHandler) login(c *fiber.Ctx) error {
 
 func (h *PagesHandler) home(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
-	status, err := h.repository.GetCurrentStatus(email)
+
+	today := time.Now().Truncate(24 * time.Hour)
+	status, err := h.repository.GetCurrentStatus(email, today)
 
 	if err != nil {
 		c.Locals("user_status", "office")
@@ -72,11 +75,14 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 
 	c.Locals("user_info", userInfo)
 
-	timeTo, timeFrom := h.userService.GetDateRange()
+	timeStart, timeEnd := h.userService.GetDateRange()
+	// weekdayFirstDayMonth := timeStart.Weekday()
 
-	_, statusCount, err := h.userService.GetDaysStatus(email, timeTo, timeFrom)
+	daysStatus, statusCount, err := h.userService.GetDaysStatus(email, timeStart, timeEnd)
 	component := views.ActivityPage(views.ActivityPageProps{
-		StatusCount: statusCount,
+		StatusCount:       statusCount,
+		HistoryStatus:     daysStatus,
+		WeekdayFirstMonth: 4,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
