@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import "sitex/internal/user"
+import "sitex/views/view_utils"
 
 type CalendarProps struct {
 	MonthName     string
@@ -47,7 +48,7 @@ func Calendar(props CalendarProps) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.MonthName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/calendar.templ`, Line: 18, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/calendar.templ`, Line: 19, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -65,7 +66,7 @@ func Calendar(props CalendarProps) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(day)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/calendar.templ`, Line: 24, Col: 10}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/calendar.templ`, Line: 25, Col: 10}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -88,26 +89,8 @@ func Calendar(props CalendarProps) templ.Component {
 		}
 		for _, day := range props.HistoryStatus {
 
-			statusClass := "text-gray-400 bg-gray-100 border border-gray-300"
-			switch day.Status {
-			case "В отпуске":
-				statusClass = "text-amber-600 bg-amber-50 border border-amber-200"
-			case "Больничный":
-				statusClass = "text-rose-600 bg-rose-50 border border-rose-200"
-			case "Удаленная работа":
-				statusClass = "text-indigo-600 bg-indigo-50 border border-indigo-200"
-			case "В офисе":
-				statusClass = "text-emerald-600 bg-emerald-50 border border-emerald-200"
-			case "Коммандировка":
-				statusClass = "text-violet-600 bg-violet-50 border border-violet-200"
-			case "Выходной":
-				statusClass = "text-slate-600 bg-slate-100 border border-slate-300"
-			case "Отгул":
-				statusClass = "text-orange-500 bg-orange-50 border border-orange-200"
-			default:
-				statusClass = "text-gray-500 bg-gray-100 border border-gray-300"
-			}
-			var templ_7745c5c3_Var4 = []any{"h-7 rounded text-xs flex items-center justify-center " + statusClass}
+			statusClass := viewutils.GetStatusClass(day.Status)
+			var templ_7745c5c3_Var4 = []any{"h-7 rounded text-xs flex items-center justify-center " + statusClass + " cursor-pointer"}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -125,25 +108,38 @@ func Calendar(props CalendarProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" title=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(day.Date)
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(day.Status + ":  " + day.Comment)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/calendar.templ`, Line: 56, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/calendar.templ`, Line: 40, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(day.Date)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/calendar.templ`, Line: 42, Col: 15}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

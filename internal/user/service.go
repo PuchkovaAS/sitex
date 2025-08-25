@@ -73,6 +73,8 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 		lastStatus = "В офисе"
 	}
 
+	lastComment := ""
+
 	// Проходим по всем дням в диапазоне
 	for currentDate.Before(deps.TimeEnd) || currentDate.Equal(deps.TimeEnd) {
 		key := currentDate.Format("2006-01-02")
@@ -81,19 +83,22 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 		if status, ok := statusMap[key]; ok {
 			result = append(result, status)
 			lastStatus = status.Status
+			lastComment = status.Comment
 		} else {
 			// Если статуса нет - определяем статус по умолчанию
 			statusName := lastStatus
+			statusComment := lastComment
 
 			// Проверяем выходные
 			if currentDate.Weekday() == time.Saturday || currentDate.Weekday() == time.Sunday {
 				statusName = "Выходной"
+				statusComment = ""
 			}
 
 			result = append(result, DayStatus{
 				Date:    currentDate.Day(),
 				Status:  statusName,
-				Comment: "",
+				Comment: statusComment,
 			})
 		}
 

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"net/http"
 	"sitex/views/components"
 
 	"github.com/gofiber/fiber/v2"
@@ -52,16 +53,15 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 		Description: form.Description,
 	})
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return templeadapter.Render(c,
+			components.Notification(
+				err.Error(),
+				components.NotificationFail,
+			),
+			fiber.StatusInternalServerError,
+		)
 	}
 
-	return templeadapter.Render(c,
-		components.Notification(
-			"Статус добавлен",
-			components.NotificationSuccess,
-		),
-		fiber.StatusCreated,
-	)
+	c.Response().Header.Add("Hx-Redirect", "/")
+	return c.Redirect("/", http.StatusOK)
 }

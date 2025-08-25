@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import "sitex/views/layout"
 import "sitex/views/widgets"
 import "sitex/internal/user"
+import "sitex/views/components"
 
 type ActivityPageProps struct {
 	StatusCount       map[string]int
@@ -51,11 +52,47 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-1\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			templ_7745c5c3_Err = widgets.TimeStatistics(props.StatusCount).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<!-- Кнопка раскрытия --><div class=\"flex justify-center\"><button id=\"toggle-activity\" class=\"p-1 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors\" onclick=\"toggleActivity()\"><svg id=\"toggle-icon\" class=\"w-3 h-3 text-gray-500 transform rotate-180 transition-transform\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 9l-7 7-7-7\"></path></svg></button></div><!-- Блок активности пользователя (изначально показан) --><div id=\"activity-block\" class=\"bg-white rounded-lg shadow p-4 \"><div class=\"flex items-center justify-between mb-3\"><!-- Левая часть: Управление активностью и пагинация --><div class=\"flex items-center gap-6\"><h2 class=\"text-lg font-semibold text-gray-800\">Управление активность</h2>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Paggination().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Правая часть: Добавить статус --><div class=\"w-sm\"><h2 class=\"text-xl font-semibold text-gray-800\">Добавить статус</h2></div></div><div><div class=\"grid grid-cols-1 lg:grid-cols-4 gap-2\"><!-- Два календаря (занимают 3 колонки) --><div class=\"lg:col-span-3 mt-4\"><div class=\"grid grid-cols-1 md:grid-cols-2 gap-2\"><!-- Первый календарь (текущий месяц) --><div class=\"bg-white rounded-lg p-2\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = widgets.Calendar(widgets.CalendarProps{
+				MonthName:     "Июль",
+				FirstDay:      3,
+				HistoryStatus: props.HistoryStatus,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- Второй календарь (следующий месяц) --><div class=\"bg-white rounded-lg p-2\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = widgets.Calendar(widgets.CalendarProps{
+				MonthName:     "Август",
+				FirstDay:      props.WeekdayFirstMonth,
+				HistoryStatus: props.HistoryStatus,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></div><!-- Форма добавления статуса (1 колонка) --><div class=\"bg-white rounded-lg px-3\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -63,15 +100,11 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = widgets.Calendar(widgets.CalendarProps{
-				MonthName:     "August",
-				FirstDay:      props.WeekdayFirstMonth,
-				HistoryStatus: props.HistoryStatus,
-			}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ActivityPageScript().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -82,6 +115,35 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			MetaDescription: "Страница активности",
 			IsAuthenticated: true,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func ActivityPageScript() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<script>\n    function toggleActivity() {\n        const block = document.getElementById('activity-block');\n        const icon = document.getElementById('toggle-icon');\n\n        block.classList.toggle('hidden');\n        icon.classList.toggle('rotate-0');\n        icon.classList.toggle('rotate-180');\n    }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

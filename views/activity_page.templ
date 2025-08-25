@@ -3,6 +3,7 @@ package views
 import "sitex/views/layout"
 import "sitex/views/widgets"
 import "sitex/internal/user"
+import "sitex/views/components"
 
 type ActivityPageProps struct {
 	StatusCount       map[string]int
@@ -16,12 +17,85 @@ templ ActivityPage(props ActivityPageProps) {
 		MetaDescription: "Страница активности",
 		IsAuthenticated: true,
 	}) {
-		@widgets.TimeStatistics(props.StatusCount)
-		@widgets.AddStatus()
-		@widgets.Calendar(widgets.CalendarProps{
-			MonthName:     "August",
-			FirstDay:      props.WeekdayFirstMonth,
-			HistoryStatus: props.HistoryStatus,
-		})
+		<div class="space-y-1">
+			@widgets.TimeStatistics(props.StatusCount)
+			<!-- Кнопка раскрытия -->
+			<div class="flex justify-center">
+				<button
+					id="toggle-activity"
+					class="p-1 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+					onclick="toggleActivity()"
+				>
+					<svg
+						id="toggle-icon"
+						class="w-3 h-3 text-gray-500 transform rotate-180 transition-transform"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+					</svg>
+				</button>
+			</div>
+			<!-- Блок активности пользователя (изначально показан) -->
+			<div id="activity-block" class="bg-white rounded-lg shadow p-4 ">
+				<div class="flex items-center justify-between mb-3">
+					<!-- Левая часть: Управление активностью и пагинация -->
+					<div class="flex items-center gap-6">
+						<h2 class="text-lg font-semibold text-gray-800">
+							Управление активность
+						</h2>
+						@components.Paggination()
+					</div>
+					<!-- Правая часть: Добавить статус -->
+					<div class="w-sm">
+						<h2 class="text-xl font-semibold text-gray-800">Добавить статус</h2>
+					</div>
+				</div>
+				<div>
+					<div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
+						<!-- Два календаря (занимают 3 колонки) -->
+						<div class="lg:col-span-3 mt-4">
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+								<!-- Первый календарь (текущий месяц) -->
+								<div class="bg-white rounded-lg p-2">
+									@widgets.Calendar(widgets.CalendarProps{
+										MonthName:     "Июль",
+										FirstDay:      3,
+										HistoryStatus: props.HistoryStatus,
+									})
+								</div>
+								<!-- Второй календарь (следующий месяц) -->
+								<div class="bg-white rounded-lg p-2">
+									@widgets.Calendar(widgets.CalendarProps{
+										MonthName:     "Август",
+										FirstDay:      props.WeekdayFirstMonth,
+										HistoryStatus: props.HistoryStatus,
+									})
+								</div>
+							</div>
+						</div>
+						<!-- Форма добавления статуса (1 колонка) -->
+						<div class="bg-white rounded-lg px-3">
+							@widgets.AddStatus()
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		@ActivityPageScript()
 	}
+}
+
+templ ActivityPageScript() {
+	<script>
+    function toggleActivity() {
+        const block = document.getElementById('activity-block');
+        const icon = document.getElementById('toggle-icon');
+
+        block.classList.toggle('hidden');
+        icon.classList.toggle('rotate-0');
+        icon.classList.toggle('rotate-180');
+    }
+</script>
 }

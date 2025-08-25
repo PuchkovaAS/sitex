@@ -1,35 +1,14 @@
 package components
 
 import "sitex/internal/dt"
+import "sitex/views/view_utils"
 
 templ UserInfo() {
 	{{ status := ctx.Value("user_status") }}
 	{{ userInfo := ctx.Value("user_info").(dt.UserInfo) }}
 	{{
-statusClass := "text-gray-600 bg-gray-100" // по умолчанию
 statusText := status.(string)
-if status != nil {
-	switch statusText {
-	case "В отпуске":
-		statusClass = "text-amber-600 bg-amber-50 border border-amber-200"
-	case "Больничный":
-		statusClass = "text-rose-600 bg-rose-50 border border-rose-200"
-	case "Удаленная работа":
-		statusClass = "text-indigo-600 bg-indigo-50 border border-indigo-200"
-	case "В офисе":
-		statusClass = "text-emerald-600 bg-emerald-50 border border-emerald-200"
-	case "Коммандировка":
-		statusClass = "text-violet-600 bg-violet-50 border border-violet-200"
-	case "Выходной":
-		statusClass = "text-slate-600 bg-slate-100 border border-slate-300"
-	case "Отгул":
-		statusClass = "text-orange-500 bg-orange-50 border border-orange-200"
-	default:
-		statusClass = "text-gray-500 bg-gray-100 border border-gray-300"
-	}
-} else {
-	statusClass = "text-gray-400 bg-gray-100 border border-gray-300"
-}
+statusClass := viewutils.GetStatusClass(statusText)
 	}}
 	<div class="ml-3 flex flex-col items-start">
 		<!-- ФИО -->

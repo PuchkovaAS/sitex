@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import "sitex/internal/dt"
+import "sitex/views/view_utils"
 
 func UserInfo() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -34,30 +35,8 @@ func UserInfo() templ.Component {
 		status := ctx.Value("user_status")
 		userInfo := ctx.Value("user_info").(dt.UserInfo)
 
-		statusClass := "text-gray-600 bg-gray-100" // по умолчанию
 		statusText := status.(string)
-		if status != nil {
-			switch statusText {
-			case "В отпуске":
-				statusClass = "text-amber-600 bg-amber-50 border border-amber-200"
-			case "Больничный":
-				statusClass = "text-rose-600 bg-rose-50 border border-rose-200"
-			case "Удаленная работа":
-				statusClass = "text-indigo-600 bg-indigo-50 border border-indigo-200"
-			case "В офисе":
-				statusClass = "text-emerald-600 bg-emerald-50 border border-emerald-200"
-			case "Коммандировка":
-				statusClass = "text-violet-600 bg-violet-50 border border-violet-200"
-			case "Выходной":
-				statusClass = "text-slate-600 bg-slate-100 border border-slate-300"
-			case "Отгул":
-				statusClass = "text-orange-500 bg-orange-50 border border-orange-200"
-			default:
-				statusClass = "text-gray-500 bg-gray-100 border border-gray-300"
-			}
-		} else {
-			statusClass = "text-gray-400 bg-gray-100 border border-gray-300"
-		}
+		statusClass := viewutils.GetStatusClass(statusText)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"ml-3 flex flex-col items-start\"><!-- ФИО --><p class=\"text-sm font-medium text-gray-900 mb-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -65,7 +44,7 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.LastName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 37, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 16, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -78,7 +57,7 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.FirstName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 37, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 16, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -91,7 +70,7 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.Position)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 41, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 20, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -126,7 +105,7 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(statusText)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 45, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 24, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
