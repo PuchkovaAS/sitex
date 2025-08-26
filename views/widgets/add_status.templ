@@ -3,7 +3,7 @@ package widgets
 import "time"
 
 templ AddStatus() {
-	<div class="bg-white rounded-lg  max-w-md mx-auto">
+	<div class="bg-white rounded-lg max-w-md mx-auto p-4 shadow-sm">
 		<!-- Заголовок -->
 		<!-- Форма -->
 		<div id="add_status-result"></div>
@@ -53,9 +53,22 @@ templ AddStatus() {
 					class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
 				/>
 			</div>
+			<!-- Чекбокс однократного события -->
+			<div class="mb-2 flex items-center">
+				<input
+					type="checkbox"
+					id="onetimeevent"
+					name="onetimeevent"
+					value="true"
+					class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+				/>
+				<label for="onetimeevent" class="ml-2 block text-xs font-medium text-gray-700 px-2">
+					Однократное событие
+				</label>
+			</div>
 			<!-- Описание -->
 			<div class="mb-2">
-				<label for="description" class="block text-xs  font-medium text-gray-700 mb-1">
+				<label for="description" class="block text-xs font-medium text-gray-700 mb-1">
 					Описание (необязательно)
 				</label>
 				<textarea

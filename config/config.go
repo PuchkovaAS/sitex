@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"sitex/pkg/calendar"
 	"time"
 
 	"github.com/spf13/viper"
@@ -19,13 +20,23 @@ func Init() {
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			log.Println("No .env file found, using environment variables only")
+			log.Println(
+				"Файл конфигурации .env не найден, используются только переменные окружения",
+			)
 		} else {
-			log.Printf("Error reading config file: %v\n", err)
+			log.Printf("Ошибка чтения файла конфигурации: %v\n", err)
 		}
 	} else {
-		log.Println("Using config file:", viper.ConfigFileUsed())
+		log.Println("Используется файл конфигурации:", viper.ConfigFileUsed())
 	}
+}
+
+func InitCalendar(filename string) *calendar.HolidayCalendar {
+	calendar, err := calendar.LoadHolidays(filename)
+	if err != nil {
+		panic("Календарь на год не удалось загрузить")
+	}
+	return calendar
 }
 
 type DatabaseConfig struct {

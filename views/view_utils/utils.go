@@ -27,7 +27,7 @@ func GetStatusClass(status string) string {
 
 	// Работа в выходной - фиолетовые оттенки
 	case "Работа в выходной день":
-		return "text-gray-600 bg-gray-100 border border-gray-300"
+		return "text-purple-700 bg-purple-100 border border-purple-300"
 	// Командировка - розовые оттенки
 	case "Командировка":
 		return "text-pink-700 bg-pink-100 border border-pink-300"

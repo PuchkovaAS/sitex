@@ -75,14 +75,10 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 
 	c.Locals("user_info", userInfo)
 
-	timeStart, timeEnd := h.userService.GetDateRange()
-	// weekdayFirstDayMonth := timeStart.Weekday()
-
-	daysStatus, statusCount, err := h.userService.GetDaysStatus(email, timeStart, timeEnd)
+	monthHistory, statusCount, err := h.userService.GetMonthHistory(email, 2)
 	component := views.ActivityPage(views.ActivityPageProps{
-		StatusCount:       statusCount,
-		HistoryStatus:     daysStatus,
-		WeekdayFirstMonth: 4,
+		StatusCount:  statusCount,
+		MonthHistory: monthHistory,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

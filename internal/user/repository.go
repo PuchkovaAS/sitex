@@ -51,17 +51,19 @@ func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 			Model(&StatusPeriod{}).
 			Where("id = ?", existingRecord.ID).
 			Updates(map[string]any{
-				"status_id":  statusType.ID,
-				"comment":    status.Description,
-				"updated_at": time.Now(),
+				"status_id":      statusType.ID,
+				"one_time_event": status.OneTimeEvent,
+				"comment":        status.Description,
+				"updated_at":     time.Now(),
 			}).Error
 	} else if result.Error == gorm.ErrRecordNotFound {
 		// Записи нет - СОЗДАЕМ новую
 		newStatus := StatusPeriod{
-			EmployeeID: employee.ID,
-			StatusID:   statusType.ID,
-			StartDate:  startDate,
-			Comment:    status.Description,
+			EmployeeID:   employee.ID,
+			StatusID:     statusType.ID,
+			StartDate:    startDate,
+			OneTimeEvent: status.OneTimeEvent,
+			Comment:      status.Description,
 		}
 		return repo.DataBase.DB.Create(&newStatus).Error
 	} else {
@@ -90,8 +92,7 @@ func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
 	}, nil
 }
 
-func (repo *UserRepository) GetCurrentStatus(email string, date time.Time) (string, error) {
-	// Находим сотрудника
+func (repo *UserRepository) GetLastStatus(email string, date time.Time) (string, error) {
 	var employee Employee
 	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
 		return "", err
@@ -105,6 +106,7 @@ func (repo *UserRepository) GetCurrentStatus(email string, date time.Time) (stri
 		Joins("LEFT JOIN status_types ON status_types.id = status_periods.status_id").
 		Where("status_periods.employee_id = ?", employee.ID).
 		Where("status_periods.start_date <= ?", date).
+		Where("status_periods.one_time_event = ?", false).
 		Order("status_periods.start_date DESC").
 		Limit(1).
 		Scan(&statusName).Error
@@ -113,6 +115,32 @@ func (repo *UserRepository) GetCurrentStatus(email string, date time.Time) (stri
 	}
 
 	return statusName, nil
+}
+
+func (repo *UserRepository) GetCurrentStatus(email string, date time.Time) (string, error) {
+	var employee Employee
+	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
+		return "", err
+	}
+
+	var statusName string
+
+	err := repo.DataBase.DB.
+		Table("status_periods").
+		Select("status_types.name").
+		Joins("LEFT JOIN status_types ON status_types.id = status_periods.status_id").
+		Where("status_periods.employee_id = ?", employee.ID).
+		Where("status_periods.start_date = ?", date).
+		Order("status_periods.start_date DESC").
+		Limit(1).
+		Scan(&statusName).Error
+
+	if err == nil && statusName != "" {
+		return statusName, nil
+	}
+
+	statusName, err = repo.GetLastStatus(email, date)
+	return statusName, err
 }
 
 func (repo *UserRepository) GetStatusHistory(

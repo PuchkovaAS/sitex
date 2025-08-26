@@ -14,9 +14,8 @@ import "sitex/internal/user"
 import "sitex/views/components"
 
 type ActivityPageProps struct {
-	StatusCount       map[string]int
-	HistoryStatus     []user.DayStatus
-	WeekdayFirstMonth int
+	StatusCount  map[string]int
+	MonthHistory []user.MonthHistory
 }
 
 func ActivityPage(props ActivityPageProps) templ.Component {
@@ -73,9 +72,9 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = widgets.Calendar(widgets.CalendarProps{
-				MonthName:     "Июль",
-				FirstDay:      3,
-				HistoryStatus: props.HistoryStatus,
+				MonthName:     props.MonthHistory[0].Name,
+				FirstDay:      props.MonthHistory[0].WeekdayFirstMonth,
+				HistoryStatus: props.MonthHistory[0].HistoryStatus,
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -85,9 +84,9 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = widgets.Calendar(widgets.CalendarProps{
-				MonthName:     "Август",
-				FirstDay:      props.WeekdayFirstMonth,
-				HistoryStatus: props.HistoryStatus,
+				MonthName:     props.MonthHistory[1].Name,
+				FirstDay:      props.MonthHistory[1].WeekdayFirstMonth,
+				HistoryStatus: props.MonthHistory[1].HistoryStatus,
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

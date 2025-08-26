@@ -6,9 +6,8 @@ import "sitex/internal/user"
 import "sitex/views/components"
 
 type ActivityPageProps struct {
-	StatusCount       map[string]int
-	HistoryStatus     []user.DayStatus
-	WeekdayFirstMonth int
+	StatusCount  map[string]int
+	MonthHistory []user.MonthHistory
 }
 
 templ ActivityPage(props ActivityPageProps) {
@@ -60,17 +59,17 @@ templ ActivityPage(props ActivityPageProps) {
 								<!-- Первый календарь (текущий месяц) -->
 								<div class="bg-white rounded-lg p-2">
 									@widgets.Calendar(widgets.CalendarProps{
-										MonthName:     "Июль",
-										FirstDay:      3,
-										HistoryStatus: props.HistoryStatus,
+										MonthName:     props.MonthHistory[0].Name,
+										FirstDay:      props.MonthHistory[0].WeekdayFirstMonth,
+										HistoryStatus: props.MonthHistory[0].HistoryStatus,
 									})
 								</div>
 								<!-- Второй календарь (следующий месяц) -->
 								<div class="bg-white rounded-lg p-2">
 									@widgets.Calendar(widgets.CalendarProps{
-										MonthName:     "Август",
-										FirstDay:      props.WeekdayFirstMonth,
-										HistoryStatus: props.HistoryStatus,
+										MonthName:     props.MonthHistory[1].Name,
+										FirstDay:      props.MonthHistory[1].WeekdayFirstMonth,
+										HistoryStatus: props.MonthHistory[1].HistoryStatus,
 									})
 								</div>
 							</div>

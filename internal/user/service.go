@@ -1,19 +1,30 @@
 package user
 
 import (
+	"sitex/pkg/calendar"
 	"time"
+
+	"github.com/rs/zerolog"
 )
 
 type UserServiceDeps struct {
 	UserRepository UserRepository
+	CustomLogger   *zerolog.Logger
+	WorkCalendar   *calendar.HolidayCalendar
 }
 
 type UserService struct {
 	userRepository UserRepository
+	customLogger   *zerolog.Logger
+	workCalendar   *calendar.HolidayCalendar
 }
 
 func NewUserService(deps *UserServiceDeps) *UserService {
-	return &UserService{userRepository: deps.UserRepository}
+	return &UserService{
+		userRepository: deps.UserRepository,
+		customLogger:   deps.CustomLogger,
+		workCalendar:   deps.WorkCalendar,
+	}
 }
 
 func (service *UserService) getHistory(
@@ -34,9 +45,10 @@ func (service *UserService) getHistory(
 }
 
 type DayStatus struct {
-	Date    int    // День месяца
-	Status  string // Статус
-	Comment string // Комментарий
+	Date         int
+	Status       string
+	Comment      string
+	OneTimeEvent bool
 }
 
 type CalcDaysDeps struct {
@@ -54,9 +66,10 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 	for _, status := range deps.HistoryStatus {
 		key := status.StartDate.Format("2006-01-02")
 		statusMap[key] = DayStatus{
-			Date:    status.StartDate.Day(),
-			Status:  status.StatusName,
-			Comment: status.Comment,
+			Date:         status.StartDate.Day(),
+			Status:       status.StatusName,
+			Comment:      status.Comment,
+			OneTimeEvent: status.OneTimeEvent,
 		}
 	}
 
@@ -65,7 +78,7 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 	currentDate := deps.TimeStart
 
 	var lastStatus string
-	lastStatus, err := service.userRepository.GetCurrentStatus(
+	lastStatus, err := service.userRepository.GetLastStatus(
 		deps.Email,
 		deps.TimeStart.Add(-24*time.Hour).Truncate(24*time.Hour),
 	)
@@ -82,17 +95,23 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 		// Если день есть в мапе - берем его статус
 		if status, ok := statusMap[key]; ok {
 			result = append(result, status)
-			lastStatus = status.Status
-			lastComment = status.Comment
+			if !status.OneTimeEvent {
+
+				lastStatus = status.Status
+				lastComment = status.Comment
+			}
 		} else {
 			// Если статуса нет - определяем статус по умолчанию
 			statusName := lastStatus
 			statusComment := lastComment
 
-			// Проверяем выходные
-			if currentDate.Weekday() == time.Saturday || currentDate.Weekday() == time.Sunday {
+			isWeekday, comment := service.workCalendar.IsWorkingDay(currentDate)
+
+			if !isWeekday {
 				statusName = "Выходной"
-				statusComment = ""
+				statusComment = comment
+			} else if statusComment != "" {
+				statusComment = statusComment + "\n" + comment
 			}
 
 			result = append(result, DayStatus{
@@ -131,9 +150,7 @@ func (service *UserService) GetDaysStatus(
 	return dayStatus, statusCount, nil
 }
 
-func (service *UserService) GetDateRange() (time.Time, time.Time) {
-	now := time.Now()
-
+func (service *UserService) GetDateRange(now time.Time) (time.Time, time.Time) {
 	// Первый день текущего месяца
 	firstDay := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
 
@@ -141,4 +158,59 @@ func (service *UserService) GetDateRange() (time.Time, time.Time) {
 	lastDay := time.Date(now.Year(), now.Month()+1, 0, 23, 59, 59, 999999999, now.Location())
 
 	return firstDay, lastDay
+}
+
+func (service *UserService) GetMonthHistory(
+	email string,
+	countMonth int,
+) ([]MonthHistory, map[string]int, error) {
+	var resultHistory []MonthHistory
+	statusCount := make(map[string]int)
+
+	currentTime := time.Now()
+
+	for i := range countMonth {
+		// Вычисляем начало месяца (смещение на i месяцев назад)
+		targetDate := currentTime.AddDate(0, -countMonth+i+1, 0)
+		startOfMonth := time.Date(targetDate.Year(), targetDate.Month(), 1, 0, 0, 0, 0, time.UTC)
+
+		timeStart, timeEnd := service.GetDateRange(startOfMonth)
+
+		daysStatus, monthStatusCount, err := service.GetDaysStatus(email, timeStart, timeEnd)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		statusCount = monthStatusCount
+
+		// Получаем русское название месяца
+		monthName := getRussianMonthName(startOfMonth.Month())
+
+		resultHistory = append(resultHistory, MonthHistory{
+			Name:              monthName,
+			Number:            int(startOfMonth.Month()),
+			WeekdayFirstMonth: int(startOfMonth.Weekday()) - 1,
+			HistoryStatus:     daysStatus,
+		})
+	}
+
+	return resultHistory, statusCount, nil
+}
+
+func getRussianMonthName(month time.Month) string {
+	months := map[time.Month]string{
+		time.January:   "Январь",
+		time.February:  "Февраль",
+		time.March:     "Март",
+		time.April:     "Апрель",
+		time.May:       "Май",
+		time.June:      "Июнь",
+		time.July:      "Июль",
+		time.August:    "Август",
+		time.September: "Сентябрь",
+		time.October:   "Октябрь",
+		time.November:  "Ноябрь",
+		time.December:  "Декабрь",
+	}
+	return months[month]
 }

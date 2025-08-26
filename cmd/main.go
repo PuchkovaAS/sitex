@@ -18,6 +18,8 @@ import (
 func main() {
 	config.Init()
 
+	workCalendar := config.InitCalendar("./calendar_data/2025/calendar.json")
+
 	logConfig := config.NewLogConfig()
 	customLogger := logger.NewLogger(logConfig)
 
@@ -54,6 +56,8 @@ func main() {
 	// Service
 	userService := user.NewUserService(&user.UserServiceDeps{
 		UserRepository: *userRepository,
+		CustomLogger:   customLogger,
+		WorkCalendar:   workCalendar,
 	})
 
 	// Handler

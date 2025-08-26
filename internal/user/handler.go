@@ -47,10 +47,11 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 
 	err := h.repository.AddStatus(statusAddInfo{
-		Email:       email,
-		Status:      form.Status,
-		Date:        form.Date,
-		Description: form.Description,
+		Email:        email,
+		Status:       form.Status,
+		Date:         form.Date,
+		Description:  form.Description,
+		OneTimeEvent: form.OneTimeEvent,
 	})
 	if err != nil {
 		return templeadapter.Render(c,
