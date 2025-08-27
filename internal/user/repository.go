@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"fmt"
 	"sitex/internal/dt"
 	"sitex/pkg/database"
@@ -45,30 +46,33 @@ func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 		Where("employee_id = ? AND start_date = ?", employee.ID, startDate.Format("2006-01-02")).
 		First(&existingRecord)
 
-	if result.Error == nil {
-		// Запись существует - ОБНОВЛЯЕМ
-		return repo.DataBase.DB.
-			Model(&StatusPeriod{}).
-			Where("id = ?", existingRecord.ID).
-			Updates(map[string]any{
-				"status_id":      statusType.ID,
-				"one_time_event": status.OneTimeEvent,
-				"comment":        status.Description,
-				"updated_at":     time.Now(),
-			}).Error
-	} else if result.Error == gorm.ErrRecordNotFound {
-		// Записи нет - СОЗДАЕМ новую
-		newStatus := StatusPeriod{
-			EmployeeID:   employee.ID,
-			StatusID:     statusType.ID,
-			StartDate:    startDate,
-			OneTimeEvent: status.OneTimeEvent,
-			Comment:      status.Description,
+	// Правильная обработка ошибок
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			// Записи нет - СОЗДАЕМ новую
+			newStatus := StatusPeriod{
+				EmployeeID:   employee.ID,
+				StatusID:     statusType.ID,
+				StartDate:    startDate,
+				OneTimeEvent: status.OneTimeEvent,
+				Comment:      status.Description,
+			}
+			return repo.DataBase.DB.Create(&newStatus).Error
 		}
-		return repo.DataBase.DB.Create(&newStatus).Error
-	} else {
-		return result.Error
+		// Другая ошибка базы данных
+		return fmt.Errorf("ошибка при поиске существующей записи: %w", result.Error)
 	}
+
+	// Запись существует - ОБНОВЛЯЕМ
+	return repo.DataBase.DB.
+		Model(&StatusPeriod{}).
+		Where("id = ?", existingRecord.ID).
+		Updates(map[string]any{
+			"status_id":      statusType.ID,
+			"one_time_event": status.OneTimeEvent,
+			"comment":        status.Description,
+			"updated_at":     time.Now(),
+		}).Error
 }
 
 func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {

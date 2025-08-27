@@ -65,7 +65,10 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Pagination(props.CurrentMonth).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Pagination(components.PaginationProps{
+				CurrentMonth: props.CurrentMonth,
+				NextDisable:  props.CurrentMonth >= 12,
+				PrevDisable:  props.CurrentMonth <= 1}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -144,7 +147,7 @@ func ActivityPageScript() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<script>\n    function toggleActivity() {\n        const block = document.getElementById('activity-block');\n        const icon = document.getElementById('toggle-icon');\n\n        block.classList.toggle('hidden');\n        icon.classList.toggle('rotate-0');\n        icon.classList.toggle('rotate-180');\n    }\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<script>\n        function toggleActivity() {\n            const block = document.getElementById('activity-block');\n            const icon = document.getElementById('toggle-icon');\n\n            block.classList.toggle('hidden');\n            icon.classList.toggle('rotate-0');\n            icon.classList.toggle('rotate-180');\n        }\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

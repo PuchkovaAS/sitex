@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"sitex/config"
 	"sitex/internal/pages"
 	"sitex/internal/user"
 	"sitex/pkg/database"
 	"sitex/pkg/logger"
+	"sitex/pkg/middleware"
 	"time"
 
 	"github.com/gofiber/contrib/fiberzerolog"
@@ -18,7 +20,9 @@ import (
 func main() {
 	config.Init()
 
-	workCalendar := config.InitCalendar("./calendar_data/2025/calendar.json")
+	workCalendar := config.InitCalendar(
+		fmt.Sprintf("./calendar_data/%d/calendar.json", time.Now().Year()),
+	)
 
 	logConfig := config.NewLogConfig()
 	customLogger := logger.NewLogger(logConfig)
@@ -49,6 +53,7 @@ func main() {
 		Logger: customLogger,
 	}))
 	app.Use(recover.New())
+	app.Use(middleware.CurrentURLMiddleware())
 
 	// Repository
 	userRepository := user.NewUserRepository(db)

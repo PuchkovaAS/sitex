@@ -1,8 +1,10 @@
 package user
 
 import (
+	"fmt"
 	"net/http"
 	"sitex/views/components"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
@@ -63,6 +65,14 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 		)
 	}
 
-	c.Response().Header.Add("Hx-Redirect", "/")
-	return c.Redirect("/", http.StatusOK)
+	// Парсим дату и получаем месяц
+	date, err := time.Parse("2006-01-02", form.Date)
+	if err != nil {
+		date = time.Now()
+	}
+	month := date.Month()
+
+	redirectURL := fmt.Sprintf("/?month=%d", month)
+	c.Response().Header.Add("Hx-Redirect", redirectURL)
+	return c.Redirect(redirectURL, http.StatusOK)
 }

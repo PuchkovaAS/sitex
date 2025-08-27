@@ -3,49 +3,50 @@ package layout
 import "sitex/views/components"
 
 type LayoutProps struct {
-	Title           string
-	MetaDescription string
-	IsAuthenticated bool
+Title string
+MetaDescription string
+IsAuthenticated bool
 }
 
 templ Layout(props LayoutProps) {
-	<!DOCTYPE html>
-	<html lang="ru">
-		<head>
-			<meta charset="UTF-8"/>
-			<title>{ props.Title }</title>
-			<link rel="preconnect" href="https://fonts.googleapis.com"/>
-			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-			<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
-			<script src="https://cdn.jsdelivr.net/npm/htmx-ext-response-targets@2.0.2"></script>
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
-			<link
-				href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
-				rel="stylesheet"
-			/>
-			<link rel="icon" type="image/png" href="/public/favicon/favicon-32x32.png"/>
-			<link rel="apple-touch-icon" sizes="48x48" href="/public/favicon/favicon-48x48.png"/>
-			<link rel="apple-touch-icon" sizes="72x72" href="/public/favicon//favicon-72x72.png"/>
-			<link rel="apple-touch-icon" sizes="96x96" href="/public/favicon//favicon-96x96.png"/>
-			<link rel="apple-touch-icon" sizes="256x256" href="/public/favicon//favicon-256x256.png"/>
-			<link rel="apple-touch-icon" sizes="384x384" href="/public/favicon//favicon-384x384.png"/>
-			<link rel="apple-touch-icon" sizes="512x512" href="/public/favicon//favicon-512x512.png"/>
-			<link rel="manifest" href="/public/favicon/manifest.webmanifest" crossorigin="anonymous"/>
-			<link href="./public/output.css" rel="stylesheet"/>
-			<meta name="description" content={ props.MetaDescription }/>
-			<meta property="og:title" content={ props.Title }/>
-			<meta property="og:description" content={ props.MetaDescription }/>
-		</head>
-		<body class="min-h-screen bg-gray-100 text-gray-900 font-sans antialiased">
-			if props.IsAuthenticated {
-				@components.Sidebar() {
-					{ children... }
-				}
-			} else {
-				<main class="p-6">
-					{ children... }
-				</main>
-			}
-		</body>
-	</html>
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>{ props.Title }</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx-ext-response-targets@2.0.2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/public/favicon/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="48x48" href="/public/favicon/favicon-48x48.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/public/favicon//favicon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="96x96" href="/public/favicon//favicon-96x96.png" />
+    <link rel="apple-touch-icon" sizes="256x256" href="/public/favicon//favicon-256x256.png" />
+    <link rel="apple-touch-icon" sizes="384x384" href="/public/favicon//favicon-384x384.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/public/favicon//favicon-512x512.png" />
+    <link rel="manifest" href="/public/favicon/manifest.webmanifest" crossorigin="anonymous" />
+    <link href="./public/output.css" rel="stylesheet" />
+    <meta name="description" content={ props.MetaDescription } />
+    <meta property="og:title" content={ props.Title } />
+    <meta property="og:description" content={ props.MetaDescription } />
+</head>
+
+<body class="min-h-screen bg-gray-100 text-gray-900 font-sans antialiased">
+    if props.IsAuthenticated {
+    @components.Sidebar() {
+    { children... }
+    }
+    } else {
+    <main class="p-6">
+        { children... }
+    </main>
+    }
+</body>
+
+</html>
 }

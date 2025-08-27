@@ -46,7 +46,10 @@ templ ActivityPage(props ActivityPageProps) {
 						<h2 class="text-lg font-semibold text-gray-800">
 							Управление активность
 						</h2>
-						@components.Pagination(props.CurrentMonth)
+						@components.Pagination(components.PaginationProps{
+							CurrentMonth: props.CurrentMonth,
+							NextDisable:  props.CurrentMonth >= 12,
+							PrevDisable:  props.CurrentMonth <= 1})
 					</div>
 					<!-- Правая часть: Добавить статус -->
 					<div class="w-sm">
@@ -94,13 +97,13 @@ templ ActivityPage(props ActivityPageProps) {
 
 templ ActivityPageScript() {
 	<script>
-    function toggleActivity() {
-        const block = document.getElementById('activity-block');
-        const icon = document.getElementById('toggle-icon');
+        function toggleActivity() {
+            const block = document.getElementById('activity-block');
+            const icon = document.getElementById('toggle-icon');
 
-        block.classList.toggle('hidden');
-        icon.classList.toggle('rotate-0');
-        icon.classList.toggle('rotate-180');
-    }
-</script>
+            block.classList.toggle('hidden');
+            icon.classList.toggle('rotate-0');
+            icon.classList.toggle('rotate-180');
+        }
+    </script>
 }
