@@ -61,6 +61,7 @@ func (h *PagesHandler) login(c *fiber.Ctx) error {
 }
 
 func (h *PagesHandler) home(c *fiber.Ctx) error {
+	month := c.QueryInt("month", int(time.Now().Month()))
 	email := c.Locals("email").(string)
 
 	today := time.Now().Truncate(24 * time.Hour)
@@ -75,10 +76,11 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 
 	c.Locals("user_info", userInfo)
 
-	monthHistory, statusCount, err := h.userService.GetMonthHistory(email, 2)
+	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, email, 2)
 	component := views.ActivityPage(views.ActivityPageProps{
 		StatusCount:  statusCount,
 		MonthHistory: monthHistory,
+		CurrentMonth: month,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

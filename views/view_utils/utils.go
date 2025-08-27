@@ -1,38 +1,47 @@
 package viewutils
 
+func GetMonthName(monthNum int) string {
+	months := []string{
+		"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+		"Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
+	}
+	return months[monthNum-1]
+}
+
 func GetStatusClass(status string) string {
 	switch status {
-	// Отдых - серые оттенки
-	case "В отпуске":
-		return "text-purple-700 bg-purple-100 border border-purple-300"
+	// Отдых - спокойные синие
+	case "Отпуск":
+		return "text-blue-700 bg-blue-100 border border-blue-200"
 
 	case "Выходной":
-		return "text-gray-500 bg-gray-200 border border-gray-400"
+		return "text-gray-500 bg-gray-100 border border-gray-200"
 
-	// Работа - зеленые оттенки
+	// Работа - естественные зеленые
 	case "В офисе":
-		return "text-green-700 bg-green-100 border border-green-300"
+		return "text-emerald-700 bg-emerald-100 border border-emerald-200"
 
-	// Больничный - красные оттенки
+	// Больничный - мягкие красные
 	case "Больничный":
-		return "text-red-700 bg-red-100 border border-red-300"
+		return "text-rose-700 bg-rose-100 border border-rose-200"
 
-	// Отгул - желтые оттенки
+	// Отгул - теплые янтарные
 	case "Отгул":
-		return "text-yellow-700 bg-yellow-100 border border-yellow-300"
+		return "text-amber-700 bg-amber-100 border border-amber-200"
 
-	// Удаленная работа - оранжевые оттенки
+	// Удаленная работа - терракотовые
 	case "Удаленная работа":
-		return "text-orange-700 bg-orange-100 border border-orange-300"
+		return "text-orange-600 bg-orange-100 border border-orange-200"
 
-	// Работа в выходной - фиолетовые оттенки
+	// Работа в выходной - лавандовые
 	case "Работа в выходной день":
-		return "text-purple-700 bg-purple-100 border border-purple-300"
-	// Командировка - розовые оттенки
+		return "text-indigo-600 bg-indigo-100 border border-indigo-200"
+
+	// Командировка - коралловые
 	case "Командировка":
-		return "text-pink-700 bg-pink-100 border border-pink-300"
+		return "text-coral-600 bg-coral-100 border border-coral-200"
 
 	default:
-		return "text-gray-400 bg-gray-100 border border-gray-300"
+		return "text-gray-400 bg-white border border-gray-200"
 	}
 }

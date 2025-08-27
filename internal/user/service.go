@@ -88,8 +88,20 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 
 	lastComment := ""
 
+	today := time.Now()
 	// Проходим по всем дням в диапазоне
 	for currentDate.Before(deps.TimeEnd) || currentDate.Equal(deps.TimeEnd) {
+		if currentDate.After(today) {
+			result = append(result, DayStatus{
+				Date:    currentDate.Day(),
+				Status:  "",
+				Comment: "",
+			})
+
+			currentDate = currentDate.AddDate(0, 0, 1) // Следующий день
+			continue
+		}
+
 		key := currentDate.Format("2006-01-02")
 
 		// Если день есть в мапе - берем его статус
@@ -161,14 +173,14 @@ func (service *UserService) GetDateRange(now time.Time) (time.Time, time.Time) {
 }
 
 func (service *UserService) GetMonthHistory(
+	month int,
 	email string,
 	countMonth int,
 ) ([]MonthHistory, map[string]int, error) {
 	var resultHistory []MonthHistory
 	statusCount := make(map[string]int)
 
-	currentTime := time.Now()
-
+	currentTime := time.Date(time.Now().Year(), time.Month(month), 1, 0, 0, 0, 0, time.UTC)
 	for i := range countMonth {
 		// Вычисляем начало месяца (смещение на i месяцев назад)
 		targetDate := currentTime.AddDate(0, -countMonth+i+1, 0)

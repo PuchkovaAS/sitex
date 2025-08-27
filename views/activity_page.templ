@@ -4,10 +4,12 @@ import "sitex/views/layout"
 import "sitex/views/widgets"
 import "sitex/internal/user"
 import "sitex/views/components"
+import "sitex/views/view_utils"
 
 type ActivityPageProps struct {
 	StatusCount  map[string]int
 	MonthHistory []user.MonthHistory
+	CurrentMonth int
 }
 
 templ ActivityPage(props ActivityPageProps) {
@@ -17,7 +19,7 @@ templ ActivityPage(props ActivityPageProps) {
 		IsAuthenticated: true,
 	}) {
 		<div class="space-y-1">
-			@widgets.TimeStatistics(props.StatusCount)
+			@widgets.TimeStatistics(viewutils.GetMonthName(props.CurrentMonth), props.StatusCount)
 			<!-- Кнопка раскрытия -->
 			<div class="flex justify-center">
 				<button
@@ -44,7 +46,7 @@ templ ActivityPage(props ActivityPageProps) {
 						<h2 class="text-lg font-semibold text-gray-800">
 							Управление активность
 						</h2>
-						@components.Paggination()
+						@components.Pagination(props.CurrentMonth)
 					</div>
 					<!-- Правая часть: Добавить статус -->
 					<div class="w-sm">
@@ -52,30 +54,34 @@ templ ActivityPage(props ActivityPageProps) {
 					</div>
 				</div>
 				<div>
-					<div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
+					<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 						<!-- Два календаря (занимают 3 колонки) -->
-						<div class="lg:col-span-3 mt-4">
-							<div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-								<!-- Первый календарь (текущий месяц) -->
-								<div class="bg-white rounded-lg p-2">
-									@widgets.Calendar(widgets.CalendarProps{
-										MonthName:     props.MonthHistory[0].Name,
-										FirstDay:      props.MonthHistory[0].WeekdayFirstMonth,
-										HistoryStatus: props.MonthHistory[0].HistoryStatus,
-									})
-								</div>
-								<!-- Второй календарь (следующий месяц) -->
-								<div class="bg-white rounded-lg p-2">
-									@widgets.Calendar(widgets.CalendarProps{
-										MonthName:     props.MonthHistory[1].Name,
-										FirstDay:      props.MonthHistory[1].WeekdayFirstMonth,
-										HistoryStatus: props.MonthHistory[1].HistoryStatus,
-									})
+						<div class="lg:col-span-3">
+							<div class="flex flex-col items-center justify-center h-full">
+								<!-- Добавлено justify-center и h-full -->
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto">
+									<!-- Календари -->
+									<div class="flex items-center justify-center">
+										<!-- Добавлен контейнер с центрированием -->
+										@widgets.Calendar(widgets.CalendarProps{
+											MonthName:     props.MonthHistory[0].Name,
+											FirstDay:      props.MonthHistory[0].WeekdayFirstMonth,
+											HistoryStatus: props.MonthHistory[0].HistoryStatus,
+										})
+									</div>
+									<div class="flex items-center justify-center">
+										<!-- Добавлен контейнер с центрированием -->
+										@widgets.Calendar(widgets.CalendarProps{
+											MonthName:     props.MonthHistory[1].Name,
+											FirstDay:      props.MonthHistory[1].WeekdayFirstMonth,
+											HistoryStatus: props.MonthHistory[1].HistoryStatus,
+										})
+									</div>
 								</div>
 							</div>
 						</div>
-						<!-- Форма добавления статуса (1 колонка) -->
-						<div class="bg-white rounded-lg px-3">
+						<!-- Форма добавления статуса -->
+						<div>
 							@widgets.AddStatus()
 						</div>
 					</div>

@@ -12,10 +12,12 @@ import "sitex/views/layout"
 import "sitex/views/widgets"
 import "sitex/internal/user"
 import "sitex/views/components"
+import "sitex/views/view_utils"
 
 type ActivityPageProps struct {
 	StatusCount  map[string]int
 	MonthHistory []user.MonthHistory
+	CurrentMonth int
 }
 
 func ActivityPage(props ActivityPageProps) templ.Component {
@@ -55,7 +57,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = widgets.TimeStatistics(props.StatusCount).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = widgets.TimeStatistics(viewutils.GetMonthName(props.CurrentMonth), props.StatusCount).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -63,11 +65,11 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Paggination().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Pagination(props.CurrentMonth).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Правая часть: Добавить статус --><div class=\"w-sm\"><h2 class=\"text-xl font-semibold text-gray-800\">Добавить статус</h2></div></div><div><div class=\"grid grid-cols-1 lg:grid-cols-4 gap-2\"><!-- Два календаря (занимают 3 колонки) --><div class=\"lg:col-span-3 mt-4\"><div class=\"grid grid-cols-1 md:grid-cols-2 gap-2\"><!-- Первый календарь (текущий месяц) --><div class=\"bg-white rounded-lg p-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Правая часть: Добавить статус --><div class=\"w-sm\"><h2 class=\"text-xl font-semibold text-gray-800\">Добавить статус</h2></div></div><div><div class=\"grid grid-cols-1 lg:grid-cols-4 gap-6\"><!-- Два календаря (занимают 3 колонки) --><div class=\"lg:col-span-3\"><div class=\"flex flex-col items-center justify-center h-full\"><!-- Добавлено justify-center и h-full --><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto\"><!-- Календари --><div class=\"flex items-center justify-center\"><!-- Добавлен контейнер с центрированием -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -79,7 +81,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- Второй календарь (следующий месяц) --><div class=\"bg-white rounded-lg p-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div class=\"flex items-center justify-center\"><!-- Добавлен контейнер с центрированием -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -91,7 +93,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></div><!-- Форма добавления статуса (1 колонка) --><div class=\"bg-white rounded-lg px-3\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></div></div><!-- Форма добавления статуса --><div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

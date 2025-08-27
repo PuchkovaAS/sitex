@@ -1,23 +1,35 @@
 package components
 
-templ Paggination() {
-	<!-- Переключатели месяцев (статический дизайн) -->
+import "fmt"
+import "sitex/views/view_utils"
+
+templ Pagination(currentMonth int) {
+	{{
+prevMonth := currentMonth - 1
+nextMonth := currentMonth + 1
+	}}
 	<div class="flex items-center space-x-2">
 		<!-- Кнопка предыдущего месяца -->
-		<button class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+		<a
+			href={ fmt.Sprintf("/?month=%d", prevMonth) }
+			class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+		>
 			<svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
 			</svg>
-		</button>
+		</a>
 		<!-- Текущий период -->
 		<span class="text-sm font-medium text-gray-700">
-			Август
+			{ viewutils.GetMonthName(currentMonth) }
 		</span>
 		<!-- Кнопка следующего месяца -->
-		<button class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+		<a
+			href={ fmt.Sprintf("/?month=%d", nextMonth) }
+			class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+		>
 			<svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
 			</svg>
-		</button>
+		</a>
 	</div>
 }

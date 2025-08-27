@@ -41,7 +41,7 @@ func Calendar(props CalendarProps) templ.Component {
 
 		var weekdays []string
 		weekdays = []string{"Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg p-3 w-xl shadow-sm\"><h3 class=\"text-md font-medium text-gray-700 mb-3 text-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg p-3 w-md shadow-sm\"><h3 class=\"text-md font-medium text-gray-700 mb-3 text-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -90,7 +90,7 @@ func Calendar(props CalendarProps) templ.Component {
 		for _, day := range props.HistoryStatus {
 
 			statusClass := viewutils.GetStatusClass(day.Status)
-			var templ_7745c5c3_Var4 = []any{"h-7 rounded text-xs flex items-center justify-center " + statusClass + " cursor-pointer"}
+			var templ_7745c5c3_Var4 = []any{"h-7 rounded text-xs flex items-center justify-center " + statusClass + " cursor-help"}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
