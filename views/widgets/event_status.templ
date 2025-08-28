@@ -1,0 +1,82 @@
+package widgets
+
+import (
+	"fmt"
+	"sitex/views/view_utils"
+	"time"
+)
+
+type StatusEventProps struct {
+	ID           int
+	Status       string
+	Date         time.Time
+	DateAdd      time.Time
+	Description  string
+	UserName     string
+	OneTimeEvent bool
+}
+
+templ StatusEventWidget(props StatusEventProps) {
+	{{
+// Формируем сообщение для подтверждения
+confirmMessage := fmt.Sprintf("Удалить событие от %s? Статус: %s",
+	props.Date.Format("02.01.2006"),
+	props.Status)
+
+if props.Description != "" {
+	confirmMessage += ". Описание: " + props.Description
+}
+	}}
+	<div id="delete-result"></div>
+	<div
+		id={ "status-event-" + fmt.Sprintf("%d", props.ID) }
+		class="bg-white rounded-lg shadow-sm border border-gray-100 p-3"
+	>
+		<div class="flex items-center justify-between gap-6">
+			<!-- Даты -->
+			<div class="flex flex-col text-center bg-gray-50 rounded-lg p-2 min-w-[100px]">
+				<div class="text-sm font-medium text-gray-700">{ props.Date.Format("02.01.2006") }</div>
+				<div class="text-xs text-gray-500 mt-1">добавлено: { props.DateAdd.Format("02.01 15:04") }</div>
+			</div>
+			<!-- Статус -->
+			<div class="flex-shrink-0">
+				<div class={ "px-3 py-2 rounded-lg text-sm font-medium" , viewutils.GetStatusClass(props.Status) }>
+					{ props.Status }
+					if props.OneTimeEvent {
+						<span class="text-xs ml-1">• Единоразово</span>
+					}
+				</div>
+			</div>
+			<!-- Пользователь -->
+			<div class="flex-1 min-w-0">
+				<p class="text-sm text-gray-700 font-medium truncate">{ props.UserName }</p>
+			</div>
+			<!-- Описание -->
+			if props.Description != "" {
+				<div class="flex-1 min-w-0">
+					<p class="text-xs text-gray-500 truncate">{ props.Description }</p>
+				</div>
+			}
+			<!-- Кнопка удаления -->
+			if props.ID != 0 {
+				<button
+					type="button"
+					class="flex-shrink-0 text-red-500 hover:text-red-700 transition-colors p-2 rounded-lg hover:bg-red-50"
+					hx-delete={ "/api/user/delete_status/" + fmt.Sprintf("%d", props.ID) }
+					hx-target="#delete-result"
+					hx-swap="outerHTML"
+					hx-confirm={ confirmMessage }
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+						></path>
+					</svg>
+				</button>
+			}
+		</div>
+	</div>
+}

@@ -147,6 +147,45 @@ func (repo *UserRepository) GetCurrentStatus(email string, date time.Time) (stri
 	return statusName, err
 }
 
+func (repo *UserRepository) DeleteStatus(statusID int, email string) error {
+	// Находим сотрудника
+	var employee Employee
+	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
+		return fmt.Errorf("сотрудник не найден: %w", err)
+	}
+
+	// Удаляем статус с проверкой принадлежности сотруднику
+	result := repo.DataBase.DB.
+		Where("id = ? AND employee_id = ?", statusID, employee.ID).
+		Delete(&StatusPeriod{})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("статус не найден или нет прав для удаления")
+	}
+
+	return nil
+}
+
+func (repo *UserRepository) GetLastAddStatus(email string, count int) ([]StatusPeriod, error) {
+	var history []StatusPeriod
+
+	err := repo.DataBase.DB.
+		Preload("Employee").
+		Preload("StatusType"). // Загружаем связанный StatusType
+		Joins("INNER JOIN employees ON status_periods.employee_id = employees.id").
+		Where("employees.email = ?", email).
+		Order("updated_at DESC").
+		Limit(count).
+		Find(&history).
+		Error
+
+	return history, err
+}
+
 func (repo *UserRepository) GetStatusHistory(
 	email string,
 	timeStart, timeEnd time.Time,

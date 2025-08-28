@@ -77,10 +77,12 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 	c.Locals("user_info", userInfo)
 
 	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, email, 2)
+	lastAddStatus, err := h.repository.GetLastAddStatus(email, 6)
 	component := views.ActivityPage(views.ActivityPageProps{
-		StatusCount:  statusCount,
-		MonthHistory: monthHistory,
-		CurrentMonth: month,
+		StatusCount:   statusCount,
+		MonthHistory:  monthHistory,
+		CurrentMonth:  month,
+		LastAddStatus: lastAddStatus,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

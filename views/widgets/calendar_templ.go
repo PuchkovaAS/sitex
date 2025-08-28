@@ -41,7 +41,7 @@ func Calendar(props CalendarProps) templ.Component {
 
 		var weekdays []string
 		weekdays = []string{"Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg p-3 w-md shadow-sm\"><h3 class=\"text-md font-medium text-gray-700 mb-3 text-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg p-3 w-md shadow-sm\"><h3 class=\"text-lg font-medium text-gray-700 mb-3 text-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

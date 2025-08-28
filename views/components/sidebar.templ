@@ -87,6 +87,15 @@ templ Sidebar() {
 					</li>
 					<li>
 						<a
+							href="/users"
+							class={ "flex items-center p-3 text-sm font-medium rounded-lg transition-colors" ,
+                        viewutils.IsActivePrefix(currentPath, "/users" ) }
+						>
+							<span>Истории пользователей</span>
+						</a>
+					</li>
+					<li>
+						<a
 							href="/ad_user"
 							class={ "flex items-center p-3 text-sm font-medium rounded-lg transition-colors" ,
                         viewutils.IsActive(currentPath, "/add_user" ) }

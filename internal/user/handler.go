@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"net/http"
+	"sitex/pkg/middleware"
 	"sitex/views/components"
 	"time"
 
@@ -34,8 +35,38 @@ func NewHandler(router fiber.Router, deps UserHandlerDeps) {
 		repository:   deps.Repository,
 	}
 
-	authGroup := router.Group("/api")
+	authGroup := router.Group("/api", middleware.AuthMiddleware(h.store))
 	authGroup.Post("/user/add_status", h.addStatus)
+	authGroup.Delete("/user/delete_status/:id", h.deleteStatus)
+}
+
+func (h *UserHandler) deleteStatus(c *fiber.Ctx) error {
+	statusID, err := c.ParamsInt("id")
+	if err != nil {
+		return templeadapter.Render(c,
+			components.Notification(
+				"Неверный id статуса",
+				components.NotificationFail,
+			),
+			fiber.StatusInternalServerError,
+		)
+	}
+
+	// Проверяем, что пользователь удаляет только свой статус
+	email := c.Locals("email").(string)
+
+	err = h.repository.DeleteStatus(statusID, email)
+	if err != nil {
+		return templeadapter.Render(c,
+			components.Notification(
+				"Ошибка при удаление статуса",
+				components.NotificationFail,
+			),
+			fiber.StatusInternalServerError,
+		)
+	}
+	c.Response().Header.Add("Hx-Redirect", "/")
+	return c.Redirect("/", http.StatusOK)
 }
 
 func (h *UserHandler) addStatus(c *fiber.Ctx) error {

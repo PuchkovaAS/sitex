@@ -45,7 +45,7 @@ func TimeStatistics(monthName string, stats map[string]int) templ.Component {
 			"Работа в выходной день",
 			"Командировка",
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-xl shadow-sm border border-gray-100 p-6\"><!-- Заголовок --><div class=\"flex items-center justify-between mb-6\"><h2 class=\"text-xl font-semibold text-gray-900\">Статистика активности за <span class=\"text-blue-600\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg shadow-sm border border-gray-100 p-6\"><!-- Заголовок --><div class=\"flex items-center justify-between mb-6\"><h2 class=\"text-lg font-semibold text-gray-900\">Статистика активности за <span class=\"text-blue-600\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

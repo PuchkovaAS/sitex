@@ -8,16 +8,19 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "sitex/views/layout"
-import "sitex/views/widgets"
-import "sitex/internal/user"
-import "sitex/views/components"
-import "sitex/views/view_utils"
+import (
+	"sitex/internal/user"
+	"sitex/views/components"
+	"sitex/views/layout"
+	"sitex/views/view_utils"
+	"sitex/views/widgets"
+)
 
 type ActivityPageProps struct {
-	StatusCount  map[string]int
-	MonthHistory []user.MonthHistory
-	CurrentMonth int
+	StatusCount   map[string]int
+	MonthHistory  []user.MonthHistory
+	CurrentMonth  int
+	LastAddStatus []user.StatusPeriod
 }
 
 func ActivityPage(props ActivityPageProps) templ.Component {
@@ -61,7 +64,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<!-- Кнопка раскрытия --><div class=\"flex justify-center\"><button id=\"toggle-activity\" class=\"p-1 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors\" onclick=\"toggleActivity()\"><svg id=\"toggle-icon\" class=\"w-3 h-3 text-gray-500 transform rotate-180 transition-transform\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 9l-7 7-7-7\"></path></svg></button></div><!-- Блок активности пользователя (изначально показан) --><div id=\"activity-block\" class=\"bg-white rounded-lg shadow p-4 \"><div class=\"flex items-center justify-between mb-3\"><!-- Левая часть: Управление активностью и пагинация --><div class=\"flex items-center gap-6\"><h2 class=\"text-lg font-semibold text-gray-800\">Управление активность</h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<!-- Кнопка раскрытия --><div class=\"flex justify-center\"><button id=\"toggle-activity\" class=\"p-1 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors\" onclick=\"toggleActivity()\"><svg id=\"toggle-icon\" class=\"w-3 h-3 text-gray-500 transform rotate-180 transition-transform\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 9l-7 7-7-7\"></path></svg></button></div><!-- Блок активности пользователя (изначально показан) --><div id=\"activity-block\" class=\"bg-white rounded-lg shadow p-4 mb-2\"><div class=\"flex items-center justify-between mb-3\"><!-- Левая часть: Управление активностью и пагинация --><div class=\"flex items-center gap-6\"><h2 class=\"text-lg font-semibold text-gray-900\">Управление активность</h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -72,7 +75,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Правая часть: Добавить статус --><div class=\"w-sm\"><h2 class=\"text-xl font-semibold text-gray-800\">Добавить статус</h2></div></div><div><div class=\"grid grid-cols-1 lg:grid-cols-4 gap-6\"><!-- Два календаря (занимают 3 колонки) --><div class=\"lg:col-span-3\"><div class=\"flex flex-col items-center justify-center h-full\"><!-- Добавлено justify-center и h-full --><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto\"><!-- Календари --><div class=\"flex items-center justify-center\"><!-- Добавлен контейнер с центрированием -->")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Правая часть: Добавить статус --><div class=\"w-sm\"><h2 class=\"text-lg font-semibold text-gray-900\">Добавить статус</h2></div></div><div><div class=\"grid grid-cols-1 lg:grid-cols-4 gap-6\"><!-- Два календаря (занимают 3 колонки) --><div class=\"lg:col-span-3\"><div class=\"flex flex-col items-center justify-center h-full\"><!-- Добавлено justify-center и h-full --><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto\"><!-- Календари --><div class=\"flex items-center justify-center\"><!-- Добавлен контейнер с центрированием -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -104,7 +107,33 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div></div></div></div><div class=\"my-2 p-2 \"><h3 class=\"text-lg font-semibold text-gray-900\">Последние добавленные события</h3></div><div class=\"flex flex-col  mt-2\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, item := range props.LastAddStatus {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"mb-2\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = widgets.StatusEventWidget(widgets.StatusEventProps{
+					ID:           int(item.ID),
+					Status:       item.StatusType.Name,
+					Date:         item.StartDate,
+					Description:  item.Comment,
+					UserName:     item.Employee.LastName + " " + item.Employee.FirstName,
+					OneTimeEvent: item.OneTimeEvent,
+					DateAdd:      item.UpdatedAt,
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -147,7 +176,7 @@ func ActivityPageScript() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<script>\n        function toggleActivity() {\n            const block = document.getElementById('activity-block');\n            const icon = document.getElementById('toggle-icon');\n\n            block.classList.toggle('hidden');\n            icon.classList.toggle('rotate-0');\n            icon.classList.toggle('rotate-180');\n        }\n    </script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n        function toggleActivity() {\n            const block = document.getElementById('activity-block');\n            const icon = document.getElementById('toggle-icon');\n\n            block.classList.toggle('hidden');\n            icon.classList.toggle('rotate-0');\n            icon.classList.toggle('rotate-180');\n        }\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
