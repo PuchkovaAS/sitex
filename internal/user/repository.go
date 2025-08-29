@@ -170,19 +170,28 @@ func (repo *UserRepository) DeleteStatus(statusID int, email string) error {
 	return nil
 }
 
-func (repo *UserRepository) GetLastAddStatus(email string, count int) ([]StatusPeriod, error) {
+func (repo *UserRepository) GetLastAddStatus(email string, limit ...int) ([]StatusPeriod, error) {
 	var history []StatusPeriod
 
-	err := repo.DataBase.DB.
+	// Получаем текущий год
+	currentYear := time.Now().Year()
+	startOfYear := time.Date(currentYear, 1, 1, 0, 0, 0, 0, time.UTC)
+	endOfYear := time.Date(currentYear, 12, 31, 23, 59, 59, 0, time.UTC)
+
+	query := repo.DataBase.DB.
 		Preload("Employee").
-		Preload("StatusType"). // Загружаем связанный StatusType
+		Preload("StatusType").
 		Joins("INNER JOIN employees ON status_periods.employee_id = employees.id").
 		Where("employees.email = ?", email).
-		Order("updated_at DESC").
-		Limit(count).
-		Find(&history).
-		Error
+		Where("status_periods.start_date BETWEEN ? AND ?", startOfYear, endOfYear).
+		Order("status_periods.updated_at DESC")
 
+	// Если передан лимит, добавляем его
+	if len(limit) > 0 && limit[0] > 0 {
+		query = query.Limit(limit[0])
+	}
+
+	err := query.Find(&history).Error
 	return history, err
 }
 

@@ -52,6 +52,7 @@ func (h *PagesHandler) setupPrivateRoutes() {
 	private := h.router.Group("/", middleware.AuthMiddleware(h.store))
 
 	private.Get("/", h.home)
+	private.Get("/history_status", h.historyStatus)
 	private.Get("/api/logout", h.apiLogout)
 }
 
@@ -60,10 +61,7 @@ func (h *PagesHandler) login(c *fiber.Ctx) error {
 	return templeadapter.Render(c, component, http.StatusOK)
 }
 
-func (h *PagesHandler) home(c *fiber.Ctx) error {
-	month := c.QueryInt("month", int(time.Now().Month()))
-	email := c.Locals("email").(string)
-
+func (h *PagesHandler) UpdateUserInfo(email string, c *fiber.Ctx) {
 	today := time.Now().Truncate(24 * time.Hour)
 	status, err := h.repository.GetCurrentStatus(email, today)
 
@@ -73,11 +71,39 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		c.Locals("user_status", status)
 	}
 	userInfo, _ := h.repository.GetUserInfo(email)
-
 	c.Locals("user_info", userInfo)
+}
 
+func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	lastAddStatus, err := h.repository.GetLastAddStatus(email)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+	component := views.HistoryStatusPage(views.HistoryStatusProps{
+		LastAddStatus: lastAddStatus,
+	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) home(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	month := c.QueryInt("month", int(time.Now().Month()))
 	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, email, 2)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
 	lastAddStatus, err := h.repository.GetLastAddStatus(email, 6)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
 	component := views.ActivityPage(views.ActivityPageProps{
 		StatusCount:   statusCount,
 		MonthHistory:  monthHistory,
