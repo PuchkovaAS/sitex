@@ -53,6 +53,7 @@ func (h *PagesHandler) setupPrivateRoutes() {
 
 	private.Get("/", h.home)
 	private.Get("/history_status", h.historyStatus)
+	private.Get("/year_statistics", h.yearStatistic)
 	private.Get("/api/logout", h.apiLogout)
 }
 
@@ -72,6 +73,22 @@ func (h *PagesHandler) UpdateUserInfo(email string, c *fiber.Ctx) {
 	}
 	userInfo, _ := h.repository.GetUserInfo(email)
 	c.Locals("user_info", userInfo)
+}
+
+func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	yearHistory, statusCount, err := h.userService.GetYearHistory(email)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+	component := views.YearStatisticPage(views.YearStatisticProps{
+		StatusCount: statusCount,
+		YearHistory: yearHistory,
+	})
+	return templeadapter.Render(c, component, http.StatusOK)
 }
 
 func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {

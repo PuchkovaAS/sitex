@@ -21,32 +21,37 @@ func NewUserRepository(database *database.Db) *UserRepository {
 }
 
 func (repo *UserRepository) AddStatus(status statusAddInfo) error {
-	// 1. Находим сотрудника
+	// 1. Находим сотрудника, для которого добавляется статус
 	var employee Employee
 	if err := repo.DataBase.DB.Where("email = ?", status.Email).First(&employee).Error; err != nil {
 		return fmt.Errorf("сотрудник не найден: %w", err)
 	}
 
-	// 2. Находим ID статуса по КОДУ (а не по названию)
+	// 2. Находим сотрудника, который добавляет запись
+	var whoAdded Employee
+	if err := repo.DataBase.DB.Where("email = ?", status.WhoAddEmail).First(&whoAdded).Error; err != nil {
+		return fmt.Errorf("сотрудник, добавляющий запись, не найден: %w", err)
+	}
+
+	// 3. Находим ID статуса по КОДУ
 	var statusType StatusType
 	result := repo.DataBase.DB.Where("code = ?", status.Status).First(&statusType)
 	if result.Error != nil {
 		return fmt.Errorf("статус с кодом '%s' не найден: %w", status.Status, result.Error)
 	}
 
-	// 3. Парсим дату
+	// 4. Парсим дату
 	startDate, err := time.Parse("2006-01-02", status.Date)
 	if err != nil {
 		return fmt.Errorf("неверный формат даты: %w", err)
 	}
 
-	// 4. Проверяем, есть ли уже запись на эту дату
+	// 5. Проверяем, есть ли уже запись на эту дату
 	var existingRecord StatusPeriod
 	result = repo.DataBase.DB.
 		Where("employee_id = ? AND start_date = ?", employee.ID, startDate.Format("2006-01-02")).
 		First(&existingRecord)
 
-	// Правильная обработка ошибок
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			// Записи нет - СОЗДАЕМ новую
@@ -56,10 +61,10 @@ func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 				StartDate:    startDate,
 				OneTimeEvent: status.OneTimeEvent,
 				Comment:      status.Description,
+				WhoAddedID:   whoAdded.ID, // Добавляем информацию о том, кто создал запись
 			}
 			return repo.DataBase.DB.Create(&newStatus).Error
 		}
-		// Другая ошибка базы данных
 		return fmt.Errorf("ошибка при поиске существующей записи: %w", result.Error)
 	}
 
@@ -71,6 +76,7 @@ func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 			"status_id":      statusType.ID,
 			"one_time_event": status.OneTimeEvent,
 			"comment":        status.Description,
+			"who_added_id":   whoAdded.ID, // Обновляем информацию о том, кто изменил запись
 			"updated_at":     time.Now(),
 		}).Error
 }
@@ -180,6 +186,7 @@ func (repo *UserRepository) GetLastAddStatus(email string, limit ...int) ([]Stat
 
 	query := repo.DataBase.DB.
 		Preload("Employee").
+		Preload("WhoAdded").
 		Preload("StatusType").
 		Joins("INNER JOIN employees ON status_periods.employee_id = employees.id").
 		Where("employees.email = ?", email).

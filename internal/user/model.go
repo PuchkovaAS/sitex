@@ -14,7 +14,8 @@ type statusAddForm struct {
 }
 
 type statusAddInfo struct {
-	Email        string `gorm:"column:email"`
+	WhoAddEmail  string `gorm:"column:who_add_email"` // Email того, кто добавляет запись
+	Email        string `gorm:"column:email"`         // Email сотрудника, для которого добавляется статус
 	Status       string `gorm:"column:status"`
 	Date         string `gorm:"column:date"`
 	Description  string `gorm:"column:description"`
@@ -48,6 +49,8 @@ type StatusPeriod struct {
 	StartDate    time.Time `gorm:"not null"`
 	Comment      string
 	Employee     Employee   `gorm:"foreignKey:EmployeeID"`
+	WhoAddedID   uint       `gorm:"not null"`              // ID сотрудника, который добавил запись
+	WhoAdded     Employee   `gorm:"foreignKey:WhoAddedID"` // Ссылка на сотрудника
 	StatusType   StatusType `gorm:"foreignKey:StatusID"`
 	OneTimeEvent bool       `gorm:"not null;default:false"`
 }

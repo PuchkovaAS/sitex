@@ -1,0 +1,40 @@
+package views
+
+import (
+	"sitex/internal/user"
+	"sitex/views/layout"
+	"sitex/views/widgets"
+)
+
+type YearStatisticProps struct {
+	StatusCount map[string]int
+	YearHistory []user.MonthHistory
+}
+
+templ YearStatisticPage(props YearStatisticProps) {
+	@layout.Layout(layout.LayoutProps{
+		Title:           "Статистика за год",
+		MetaDescription: "Страница статистики за год",
+		IsAuthenticated: true,
+	}) {
+		<div class="space-y-6">
+			@widgets.TimeStatistics("", props.StatusCount)
+			<!-- Блок активности пользователя -->
+			<div id="activity-block" class="bg-white rounded-lg shadow p-6">
+				<h2 class="text-xl font-semibold text-gray-900 mb-6">Календарь на год</h2>
+				<!-- Сетка по 3 месяца в строке -->
+				<div class="grid grid-cols-3 gap-6">
+					for _, month := range props.YearHistory {
+						<div class="flex items-center justify-center">
+							@widgets.Calendar(widgets.CalendarProps{
+								MonthName:     month.Name,
+								FirstDay:      month.WeekdayFirstMonth,
+								HistoryStatus: month.HistoryStatus,
+							})
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	}
+}

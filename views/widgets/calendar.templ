@@ -1,7 +1,9 @@
 package widgets
 
-import "sitex/internal/user"
-import "sitex/views/view_utils"
+import (
+	"sitex/internal/user"
+	"sitex/views/view_utils"
+)
 
 type CalendarProps struct {
 	MonthName     string
@@ -36,10 +38,15 @@ weekdays = []string{"Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"}
 	statusClass := viewutils.GetStatusClass(day.Status)
 				}}
 				<div
-					class={ "h-7 rounded text-xs flex items-center justify-center " + statusClass + " cursor-help" }
+					class={ "h-7 rounded text-xs flex items-center justify-center relative cursor-help " + statusClass, }
 					title={ day.Status + ":  " + day.Comment }
 				>
-					{ day.Date }
+					<!-- Число дня -->
+					<span>{ day.Date }</span>
+					<!-- Точечка для добавленных статусов -->
+					if day.IsAddStatus {
+						<div class="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+					}
 				</div>
 			}
 		</div>

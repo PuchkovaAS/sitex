@@ -49,6 +49,7 @@ type DayStatus struct {
 	Status       string
 	Comment      string
 	OneTimeEvent bool
+	IsAddStatus  bool
 }
 
 type CalcDaysDeps struct {
@@ -70,6 +71,7 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 			Status:       status.StatusName,
 			Comment:      status.Comment,
 			OneTimeEvent: status.OneTimeEvent,
+			IsAddStatus:  true,
 		}
 	}
 
@@ -104,6 +106,8 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 
 		key := currentDate.Format("2006-01-02")
 
+		isAddStatus := false
+
 		// Если день есть в мапе - берем его статус
 		if status, ok := statusMap[key]; ok {
 			result = append(result, status)
@@ -127,9 +131,10 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 			}
 
 			result = append(result, DayStatus{
-				Date:    currentDate.Day(),
-				Status:  statusName,
-				Comment: statusComment,
+				Date:        currentDate.Day(),
+				Status:      statusName,
+				Comment:     statusComment,
+				IsAddStatus: isAddStatus,
 			})
 		}
 
@@ -170,6 +175,43 @@ func (service *UserService) GetDateRange(now time.Time) (time.Time, time.Time) {
 	lastDay := time.Date(now.Year(), now.Month()+1, 0, 23, 59, 59, 999999999, now.Location())
 
 	return firstDay, lastDay
+}
+
+func (service *UserService) GetYearHistory(
+	email string,
+) ([]MonthHistory, map[string]int, error) {
+	var resultHistory []MonthHistory
+	statusCount := make(map[string]int)
+
+	// Получаем текущий год
+	currentYear := time.Now().Year()
+
+	for month := 1; month <= 12; month++ {
+		startOfMonth := time.Date(currentYear, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+
+		timeStart, timeEnd := service.GetDateRange(startOfMonth)
+
+		daysStatus, monthStatusCount, err := service.GetDaysStatus(email, timeStart, timeEnd)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		// Накопление статистики за год (суммируем значения)
+		for status, count := range monthStatusCount {
+			statusCount[status] += count
+		}
+
+		// Получаем русское название месяца
+		monthName := getRussianMonthName(startOfMonth.Month())
+
+		resultHistory = append(resultHistory, MonthHistory{
+			Name:              monthName,
+			Number:            int(startOfMonth.Month()),
+			WeekdayFirstMonth: int(startOfMonth.Weekday()) - 1,
+			HistoryStatus:     daysStatus,
+		})
+	}
+	return resultHistory, statusCount, nil
 }
 
 func (service *UserService) GetMonthHistory(

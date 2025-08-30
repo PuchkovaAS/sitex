@@ -85,6 +85,7 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 		Date:         form.Date,
 		Description:  form.Description,
 		OneTimeEvent: form.OneTimeEvent,
+		WhoAddEmail:  email,
 	})
 	if err != nil {
 		return templeadapter.Render(c,

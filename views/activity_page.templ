@@ -1,114 +1,124 @@
 package views
 
 import (
-"sitex/internal/user"
-"sitex/views/components"
-"sitex/views/layout"
-"sitex/views/view_utils"
-"sitex/views/widgets"
+	"sitex/internal/user"
+	"sitex/views/components"
+	"sitex/views/layout"
+	"sitex/views/view_utils"
+	"sitex/views/widgets"
 )
 
 type ActivityPageProps struct {
-StatusCount map[string]int
-MonthHistory []user.MonthHistory
-CurrentMonth int
-LastAddStatus []user.StatusPeriod
+	StatusCount   map[string]int
+	MonthHistory  []user.MonthHistory
+	CurrentMonth  int
+	LastAddStatus []user.StatusPeriod
 }
 
 templ ActivityPage(props ActivityPageProps) {
-@layout.Layout(layout.LayoutProps{
-Title: "Активность",
-MetaDescription: "Страница активности",
-IsAuthenticated: true,
-}) {
-<div class="space-y-1">
-    @widgets.TimeStatistics(viewutils.GetMonthName(props.CurrentMonth), props.StatusCount)
-    <!-- Кнопка раскрытия -->
-    <div class="flex justify-center">
-        <button id="toggle-activity" class="p-1 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
-            onclick="toggleActivity()">
-            <svg id="toggle-icon" class="w-3 h-3 text-gray-500 transform rotate-180 transition-transform" fill="none"
-                stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-        </button>
-    </div>
-    <!-- Блок активности пользователя (изначально показан) -->
-    <div id="activity-block" class="bg-white rounded-lg shadow p-4 mb-2">
-        <div class="flex items-center justify-between mb-3">
-            <!-- Левая часть: Управление активностью и пагинация -->
-            <div class="flex items-center gap-6">
-                <h2 class="text-lg font-semibold text-gray-900">
-                    Управление активность
-                </h2>
-                @components.Pagination(components.PaginationProps{
-                CurrentMonth: props.CurrentMonth,
-                NextDisable: props.CurrentMonth >= 12,
-                PrevDisable: props.CurrentMonth <= 1}) </div>
-                    <!-- Правая часть: Добавить статус -->
-                    <div class="w-sm">
-                        <h2 class="text-lg font-semibold text-gray-900">Добавить статус</h2>
-                    </div>
-            </div>
-            <div>
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    <!-- Два календаря (занимают 3 колонки) -->
-                    <div class="lg:col-span-3">
-                        <div class="flex flex-col items-center justify-center h-full">
-                            <!-- Добавлено justify-center и h-full -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto">
-                                <!-- Календари -->
-                                <div class="flex items-center justify-center">
-                                    <!-- Добавлен контейнер с центрированием -->
-                                    @widgets.Calendar(widgets.CalendarProps{
-                                    MonthName: props.MonthHistory[0].Name,
-                                    FirstDay: props.MonthHistory[0].WeekdayFirstMonth,
-                                    HistoryStatus: props.MonthHistory[0].HistoryStatus,
-                                    })
-                                </div>
-                                <div class="flex items-center justify-center">
-                                    <!-- Добавлен контейнер с центрированием -->
-                                    @widgets.Calendar(widgets.CalendarProps{
-                                    MonthName: props.MonthHistory[1].Name,
-                                    FirstDay: props.MonthHistory[1].WeekdayFirstMonth,
-                                    HistoryStatus: props.MonthHistory[1].HistoryStatus,
-                                    })
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Форма добавления статуса -->
-                    <div>
-                        @widgets.AddStatus()
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="my-2 p-2 ">
-        <h3 class="text-lg font-semibold text-gray-900">Последние добавленные события</h3>
-    </div>
-    <div class="flex flex-col  mt-2">
-        for _, item := range props.LastAddStatus {
-        <div class="mb-2">
-            @widgets.StatusEventWidget(widgets.StatusEventProps{
-            ID: int(item.ID),
-            Status: item.StatusType.Name,
-            Date: item.StartDate,
-            Description: item.Comment,
-            UserName: item.Employee.LastName + " " + item.Employee.FirstName,
-            OneTimeEvent: item.OneTimeEvent,
-            DateAdd: item.UpdatedAt,
-            })
-        </div>
-        }
-    </div>
-    @ActivityPageScript()
-    }
-    }
+	@layout.Layout(layout.LayoutProps{
+		Title:           "Активность",
+		MetaDescription: "Страница активности",
+		IsAuthenticated: true,
+	}) {
+		<div class="space-y-1">
+			@widgets.TimeStatistics(viewutils.GetMonthName(props.CurrentMonth), props.StatusCount)
+			<!-- Кнопка раскрытия -->
+			<div class="flex justify-center">
+				<button
+					id="toggle-activity"
+					class="p-1 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+					onclick="toggleActivity()"
+				>
+					<svg
+						id="toggle-icon"
+						class="w-3 h-3 text-gray-500 transform rotate-180 transition-transform"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+					</svg>
+				</button>
+			</div>
+			<!-- Блок активности пользователя (изначально показан) -->
+			<div id="activity-block" class="bg-white rounded-lg shadow p-4 mb-2">
+				<div class="flex items-center justify-between mb-3">
+					<!-- Левая часть: Управление активностью и пагинация -->
+					<div class="flex items-center gap-6">
+						<h2 class="text-lg font-semibold text-gray-900">
+							Управление активность
+						</h2>
+						@components.Pagination(components.PaginationProps{
+							CurrentMonth: props.CurrentMonth,
+							NextDisable:  props.CurrentMonth >= 12,
+							PrevDisable:  props.CurrentMonth <= 1})
+					</div>
+					<!-- Правая часть: Добавить статус -->
+					<div class="w-sm">
+						<h2 class="text-lg font-semibold text-gray-900">Добавить статус</h2>
+					</div>
+				</div>
+				<div>
+					<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+						<!-- Два календаря (занимают 3 колонки) -->
+						<div class="lg:col-span-3">
+							<div class="flex flex-col items-center justify-center h-full">
+								<!-- Добавлено justify-center и h-full -->
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto">
+									<!-- Календари -->
+									<div class="flex items-center justify-center">
+										<!-- Добавлен контейнер с центрированием -->
+										@widgets.Calendar(widgets.CalendarProps{
+											MonthName:     props.MonthHistory[0].Name,
+											FirstDay:      props.MonthHistory[0].WeekdayFirstMonth,
+											HistoryStatus: props.MonthHistory[0].HistoryStatus,
+										})
+									</div>
+									<div class="flex items-center justify-center">
+										<!-- Добавлен контейнер с центрированием -->
+										@widgets.Calendar(widgets.CalendarProps{
+											MonthName:     props.MonthHistory[1].Name,
+											FirstDay:      props.MonthHistory[1].WeekdayFirstMonth,
+											HistoryStatus: props.MonthHistory[1].HistoryStatus,
+										})
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- Форма добавления статуса -->
+						<div>
+							@widgets.AddStatus()
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="my-2 p-2 ">
+			<h3 class="text-lg font-semibold text-gray-900">Последние добавленные события</h3>
+		</div>
+		<div class="flex flex-col  mt-2">
+			for _, item := range props.LastAddStatus {
+				<div class="mb-2">
+					@widgets.StatusEventWidget(widgets.StatusEventProps{
+						ID:           int(item.ID),
+						Status:       item.StatusType.Name,
+						Date:         item.StartDate,
+						Description:  item.Comment,
+						UserName:     item.Employee.LastName + " " + item.Employee.FirstName,
+						OneTimeEvent: item.OneTimeEvent,
+						DateAdd:      item.UpdatedAt,
+						WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
+					})
+				</div>
+			}
+		</div>
+		@ActivityPageScript()
+	}
+}
 
-    templ ActivityPageScript() {
-    <script>
+templ ActivityPageScript() {
+	<script>
         function toggleActivity() {
             const block = document.getElementById('activity-block');
             const icon = document.getElementById('toggle-icon');
@@ -118,4 +128,4 @@ IsAuthenticated: true,
             icon.classList.toggle('rotate-180');
         }
     </script>
-    }
+}

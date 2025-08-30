@@ -14,6 +14,7 @@ type StatusEventProps struct {
 	Description  string
 	UserName     string
 	OneTimeEvent bool
+	WhoAddEvent  string
 }
 
 templ StatusEventWidget(props StatusEventProps) {
@@ -32,7 +33,7 @@ if props.Description != "" {
 		id={ "status-event-" + fmt.Sprintf("%d", props.ID) }
 		class="bg-white rounded-lg shadow-sm border border-gray-100 p-3"
 	>
-		<div class="flex items-center justify-between gap-6">
+		<div class="flex items-center justify-between gap-4">
 			<!-- Даты -->
 			<div class="flex flex-col text-center bg-gray-50 rounded-lg p-2 min-w-[100px]">
 				<div class="text-sm font-medium text-gray-700">{ props.Date.Format("02.01.2006") }</div>
@@ -47,9 +48,12 @@ if props.Description != "" {
 					}
 				</div>
 			</div>
-			<!-- Пользователь -->
+			<!-- Информация о пользователях -->
 			<div class="flex-1 min-w-0">
+				<!-- Сотрудник -->
 				<p class="text-sm text-gray-700 font-medium truncate">{ props.UserName }</p>
+				<!-- Кто добавил -->
+				<p class="text-xs text-gray-500 truncate">добавил(а): { props.WhoAddEvent }</p>
 			</div>
 			<!-- Описание -->
 			if props.Description != "" {
