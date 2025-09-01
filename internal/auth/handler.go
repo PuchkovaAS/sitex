@@ -1,1 +1,164 @@
 package auth
+
+import (
+	"fmt"
+	"net/http"
+	"sitex/internal/user"
+	"sitex/pkg/middleware"
+	"sitex/pkg/validator"
+	"sitex/views/components"
+	"strings"
+
+	"github.com/a-h/templ"
+	"github.com/gobuffalo/validate"
+	"github.com/gobuffalo/validate/validators"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/rs/zerolog"
+
+	templeadapter "sitex/pkg/temple_adapter"
+)
+
+type AuthHandlerDeps struct {
+	CustomLogger *zerolog.Logger
+	Store        *session.Store
+	Repository   *user.UserRepository
+}
+
+type AuthHandler struct {
+	router       fiber.Router
+	customLogger *zerolog.Logger
+	store        *session.Store
+	repository   *user.UserRepository
+}
+
+func NewHandler(router fiber.Router, deps AuthHandlerDeps) {
+	h := &AuthHandler{
+		router:       router,
+		customLogger: deps.CustomLogger,
+		store:        deps.Store,
+		repository:   deps.Repository,
+	}
+
+	h.setupPublicRoutes()
+	h.setupPrivateRoutes()
+}
+
+func (h *AuthHandler) setupPublicRoutes() {
+	public := h.router.Group("/api")
+	public.Post("/login", h.apiLogin)
+}
+
+func (h *AuthHandler) setupPrivateRoutes() {
+	private := h.router.Group("/api", middleware.AuthMiddleware(h.store))
+
+	private.Get("/logout", h.apiLogout)
+	private.Put("/profile_update", h.apiUpdateUser)
+}
+
+func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
+	form := userUpdateForm{}
+
+	// Парсим форму
+	if err := c.BodyParser(&form); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Неверный формат данных",
+		})
+	}
+
+	// Конвертируем строки в boolean
+	isActive := form.IsActive == "true"
+	isAdmin := form.IsAdmin == "true"
+
+	// Валидация
+	error := validate.Validate(
+		&validators.StringIsPresent{
+			Name:    "Имя",
+			Field:   form.FirstName,
+			Message: "Имя не задано",
+		},
+		&validators.StringIsPresent{
+			Name:    "Фамилия",
+			Field:   form.LastName,
+			Message: "Фамилия не задана",
+		},
+		&validators.StringIsPresent{
+			Name:    "Должность",
+			Field:   form.Position,
+			Message: "Должность не задана",
+		},
+		&validators.StringIsPresent{
+			Name:    "Отдел",
+			Field:   form.Department,
+			Message: "Отдел не задан",
+		},
+	)
+	var component templ.Component
+	if len(error.Errors) > 0 {
+		component = components.Notification(
+			validator.FormatErrors(error),
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusBadRequest)
+	}
+
+	if err := h.repository.UpdateUserProfile(form.Email, user.UserUpdateData{
+		FirstName:  strings.TrimSpace(form.FirstName),
+		LastName:   strings.TrimSpace(form.LastName),
+		Position:   strings.TrimSpace(form.Position),
+		Department: strings.TrimSpace(form.Department),
+		IsActive:   isActive,
+		IsAdmin:    isAdmin,
+	}); err != nil {
+		component = components.Notification(
+			err.Error(),
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusBadRequest)
+	} else {
+		component = components.Notification(
+			"Регистрация прошла успешно"+":  "+form.Email,
+			components.NotificationSuccess,
+		)
+	}
+	redirectURL := fmt.Sprintf("/profile?email=%s", form.Email)
+	c.Response().Header.Add("Hx-Redirect", redirectURL)
+	return c.Redirect(redirectURL, http.StatusOK)
+}
+
+func (h *AuthHandler) apiLogout(c *fiber.Ctx) error {
+	sess, err := h.store.Get(c)
+	if err != nil {
+		panic(err)
+	}
+	sess.Delete("email")
+	if err := sess.Save(); err != nil {
+		panic(err)
+	}
+	return c.Redirect("/login", http.StatusFound)
+}
+
+func (h *AuthHandler) apiLogin(c *fiber.Ctx) error {
+	form := LoginForm{
+		Email:    c.FormValue("email"),
+		Password: c.FormValue("password"),
+	}
+	if form.Email == "a@a.ru" && form.Password == "1" {
+		sess, err := h.store.Get(c)
+		if err != nil {
+			panic(err)
+		}
+		sess.Set("email", form.Email)
+		if err := sess.Save(); err != nil {
+			panic(err)
+		}
+		c.Response().Header.Add("Hx-Redirect", "/")
+		return c.Redirect("/", http.StatusOK)
+	}
+
+	component := components.Notification(
+		"Пароль или логин неверен",
+		components.NotificationFail,
+	)
+	return templeadapter.Render(c, component, http.StatusBadRequest)
+}

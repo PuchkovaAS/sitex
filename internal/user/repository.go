@@ -20,6 +20,14 @@ func NewUserRepository(database *database.Db) *UserRepository {
 	}
 }
 
+func (repo *UserRepository) GetEmployeeInfo(email string) (Employee, error) {
+	var employee Employee
+	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
+		return Employee{}, fmt.Errorf("сотрудник не найден: %w", err)
+	}
+	return employee, nil
+}
+
 func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 	// 1. Находим сотрудника, для которого добавляется статус
 	var employee Employee
@@ -97,7 +105,6 @@ func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
 	return dt.UserInfo{
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
-		Role:      user.Role,
 		Position:  user.Position,
 	}, nil
 }
@@ -220,4 +227,27 @@ func (repo *UserRepository) GetStatusHistory(
 		Error
 
 	return history, err
+}
+
+type UserUpdateData struct {
+	FirstName  string
+	LastName   string
+	Position   string
+	Department string
+	IsActive   bool
+	IsAdmin    bool
+}
+
+func (repo *UserRepository) UpdateUserProfile(email string, data UserUpdateData) error {
+	return repo.DataBase.DB.Model(&Employee{}).
+		Where("email = ?", email).
+		Updates(map[string]any{
+			"first_name": data.FirstName,
+			"last_name":  data.LastName,
+			"position":   data.Position,
+			"department": data.Department,
+			"is_active":  data.IsActive,
+			"is_admin":   data.IsAdmin,
+			"updated_at": time.Now(),
+		}).Error
 }

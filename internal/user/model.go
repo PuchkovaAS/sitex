@@ -28,10 +28,10 @@ type Employee struct {
 	LastName      string `gorm:"not null"`
 	Email         string `gorm:"not null;uniqueIndex:idx_employees_email"`
 	PasswordHash  string `gorm:"not null"`
-	Role          string `gorm:"not null;default:employee"`
 	Position      string
 	Department    string
 	IsActive      bool           `gorm:"default:true;index:idx_employees_active"`
+	IsAdmin       bool           `gorm:"default:false;index:idx_employees_admin"`
 	StatusPeriods []StatusPeriod `gorm:"foreignKey:EmployeeID"`
 }
 

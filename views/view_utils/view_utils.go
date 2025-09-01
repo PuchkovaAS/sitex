@@ -98,3 +98,33 @@ func GetTextColorClass(status string) string {
 		return "text-gray-400"
 	}
 }
+
+func GetInitals(firstName, lastName string) string {
+	// Безопасное получение инициалов
+	initials := ""
+
+	// Получаем первую руну имени
+	if firstName != "" {
+		runes := []rune(firstName)
+		if len(runes) > 0 {
+			initials += string(runes[0])
+		}
+	}
+
+	// Получаем первую руну фамилии
+	if lastName != "" {
+		runes := []rune(lastName)
+		if len(runes) > 0 {
+			initials += string(runes[0])
+		}
+	}
+
+	// Если оба поля пустые
+	if initials == "" {
+		initials = "U" // User по умолчанию
+	}
+
+	initials = strings.ToUpper(initials)
+
+	return initials
+}

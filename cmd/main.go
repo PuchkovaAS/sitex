@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sitex/config"
+	"sitex/internal/auth"
 	"sitex/internal/pages"
 	"sitex/internal/user"
 	"sitex/pkg/database"
@@ -71,6 +72,12 @@ func main() {
 		Repository:   userRepository,
 		CustomLogger: customLogger,
 		UserService:  userService,
+	})
+
+	auth.NewHandler(app, auth.AuthHandlerDeps{
+		CustomLogger: customLogger,
+		Store:        store,
+		Repository:   userRepository,
 	})
 	user.NewHandler(app, user.UserHandlerDeps{
 		CustomLogger: customLogger,
