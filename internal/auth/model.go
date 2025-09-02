@@ -5,6 +5,12 @@ type LoginForm struct {
 	Password string
 }
 
+type changePasswordForm struct {
+	Email           string `form:"email"`
+	NewPassword     string `form:"new_password"`
+	ConfirmPassword string `form:"confirm_password"`
+}
+
 type userUpdateForm struct {
 	FirstName  string `form:"first_name"`
 	LastName   string `form:"last_name"`

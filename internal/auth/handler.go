@@ -23,6 +23,7 @@ type AuthHandlerDeps struct {
 	CustomLogger *zerolog.Logger
 	Store        *session.Store
 	Repository   *user.UserRepository
+	Service      *AuthService
 }
 
 type AuthHandler struct {
@@ -30,6 +31,7 @@ type AuthHandler struct {
 	customLogger *zerolog.Logger
 	store        *session.Store
 	repository   *user.UserRepository
+	service      *AuthService
 }
 
 func NewHandler(router fiber.Router, deps AuthHandlerDeps) {
@@ -38,6 +40,7 @@ func NewHandler(router fiber.Router, deps AuthHandlerDeps) {
 		customLogger: deps.CustomLogger,
 		store:        deps.Store,
 		repository:   deps.Repository,
+		service:      deps.Service,
 	}
 
 	h.setupPublicRoutes()
@@ -54,6 +57,47 @@ func (h *AuthHandler) setupPrivateRoutes() {
 
 	private.Get("/logout", h.apiLogout)
 	private.Put("/profile_update", h.apiUpdateUser)
+	private.Post("/change_password", h.changePassword)
+}
+
+func (h *AuthHandler) changePassword(c *fiber.Ctx) error {
+	var req changePasswordForm
+	if err := c.BodyParser(&req); err != nil {
+		component := components.Notification(
+			"Неверный формат данных",
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusBadRequest)
+	}
+
+	// Валидация
+	if len(req.NewPassword) < 6 {
+		component := components.Notification(
+			"Пароль должен содержать минимум 6 символов",
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusOK)
+	}
+
+	if req.NewPassword != req.ConfirmPassword {
+		component := components.Notification(
+			"Пароли не совпадают",
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusOK)
+	}
+	err := h.service.ChangePassword(req)
+	if err != nil {
+		component := components.Notification(
+			"Возникла ошибка на сервере"+err.Error(),
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusOK)
+
+	}
+	redirectURL := fmt.Sprintf("/profile?email=%s", req.Email)
+	c.Response().Header.Add("Hx-Redirect", redirectURL)
+	return c.Redirect(redirectURL, http.StatusOK)
 }
 
 func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
@@ -61,9 +105,11 @@ func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 
 	// Парсим форму
 	if err := c.BodyParser(&form); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Неверный формат данных",
-		})
+		component := components.Notification(
+			err.Error(),
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusBadRequest)
 	}
 
 	// Конвертируем строки в boolean
@@ -115,11 +161,6 @@ func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 			components.NotificationFail,
 		)
 		return templeadapter.Render(c, component, http.StatusBadRequest)
-	} else {
-		component = components.Notification(
-			"Регистрация прошла успешно"+":  "+form.Email,
-			components.NotificationSuccess,
-		)
 	}
 	redirectURL := fmt.Sprintf("/profile?email=%s", form.Email)
 	c.Response().Header.Add("Hx-Redirect", redirectURL)
@@ -143,22 +184,46 @@ func (h *AuthHandler) apiLogin(c *fiber.Ctx) error {
 		Email:    c.FormValue("email"),
 		Password: c.FormValue("password"),
 	}
-	if form.Email == "a@a.ru" && form.Password == "1" {
-		sess, err := h.store.Get(c)
-		if err != nil {
-			panic(err)
-		}
-		sess.Set("email", form.Email)
-		if err := sess.Save(); err != nil {
-			panic(err)
-		}
-		c.Response().Header.Add("Hx-Redirect", "/")
-		return c.Redirect("/", http.StatusOK)
+
+	error := validate.Validate(
+		&validators.EmailIsPresent{
+			Name:    "Email",
+			Field:   form.Email,
+			Message: "Email не задан или не верный",
+		},
+		&validators.StringIsPresent{
+			Name:    "Password",
+			Field:   form.Password,
+			Message: "Пароль не задан",
+		},
+	)
+	var component templ.Component
+	if len(error.Errors) > 0 {
+		component = components.Notification(
+			validator.FormatErrors(error),
+			components.NotificationFail,
+		)
+		c.Set("Content-Type", "text/html")
+		return templeadapter.Render(c, component, http.StatusOK)
 	}
 
-	component := components.Notification(
-		"Пароль или логин неверен",
-		components.NotificationFail,
-	)
-	return templeadapter.Render(c, component, http.StatusBadRequest)
+	if err := h.service.Login(form); err != nil {
+
+		component = components.Notification(
+			"Пароль или логин неверен",
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusOK)
+	}
+
+	sess, err := h.store.Get(c)
+	if err != nil {
+		panic(err)
+	}
+	sess.Set("email", form.Email)
+	if err := sess.Save(); err != nil {
+		panic(err)
+	}
+	c.Response().Header.Add("Hx-Redirect", "/")
+	return c.Redirect("/", http.StatusOK)
 }

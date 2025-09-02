@@ -20,6 +20,33 @@ func NewUserRepository(database *database.Db) *UserRepository {
 	}
 }
 
+func (repo *UserRepository) ChangePassword(email string, password string) error {
+	var user Employee
+	result := repo.DataBase.DB.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("пользователь с email %s не найден", email)
+		}
+		return fmt.Errorf("ошибка базы данных: %w", result.Error)
+	}
+	if user.ID == 0 {
+		return fmt.Errorf("пользователь не найден")
+	}
+	// Обновление пароля
+	result = repo.DataBase.DB.Model(&user).
+		Update("password_hash", password)
+
+	if result.Error != nil {
+		return fmt.Errorf("ошибка при обновлении пароля: %w", result.Error)
+	}
+
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("пароль не был изменен")
+	}
+
+	return nil
+}
+
 func (repo *UserRepository) GetEmployeeInfo(email string) (Employee, error) {
 	var employee Employee
 	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
@@ -95,7 +122,7 @@ func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
 	// Получаем только нужные поля
 	err := repo.DataBase.DB.
 		Where("email = ?", email).
-		Select("first_name, last_name, role, position").
+		Select("first_name, last_name, role, position, is_admin").
 		First(&user).Error
 	if err != nil {
 		return dt.UserInfo{}, err
@@ -106,6 +133,7 @@ func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Position:  user.Position,
+		IsAdmin:   user.IsAdmin,
 	}, nil
 }
 

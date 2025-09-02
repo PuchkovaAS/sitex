@@ -54,14 +54,14 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			ctx = templ.InitializeContext(ctx)
 
 			initials := viewutils.GetInitals(props.Employee.FirstName, props.Employee.LastName)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full p-6\"><!-- Заголовок --><div class=\"mb-8\"><h1 class=\"text-lg font-semibold text-gray-900\">Редактирование профиля</h1><p class=\"text-gray-600 mt-2\">Изменение личных данных и информации</p></div><!-- Форма редактирования --><div id=\"update-result\"></div><form hx-put=\"/api/profile_update\" hx-swap=\"outerHTML\" class=\"bg-white rounded-lg shadow-sm border border-gray-200 p-6\" hx-ext=\"response-targets\" hx-trigger=\"submit\" hx-target=\"#update-result\" hx-target-error=\"#login-result\" data-400=\"#update-result\" hx-swap=\"innerHTML\" hx-indicator=\".update-form__loader\"><!-- Скрытое поле с ID --><input type=\"hidden\" name=\"id\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full p-6\"><!-- Заголовок --><div class=\"mb-8\"><h1 class=\"text-lg font-semibold text-gray-900\">Редактирование профиля</h1><p class=\"text-gray-600 mt-2\">Изменение личных данных и информации</p></div><!-- Форма редактирования --><div id=\"update-result\"></div><form hx-put=\"/api/profile_update\" hx-swap=\"outerHTML\" class=\"bg-white rounded-lg shadow-sm border border-gray-200 p-6\" hx-ext=\"response-targets\" hx-trigger=\"submit\" hx-target-error=\"#update-result\" data-400=\"#update-result\" hx-swap=\"innerHTML\"><!-- Скрытое поле с ID --><input type=\"hidden\" name=\"id\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", props.Employee.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 44, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 42, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -74,7 +74,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(initials)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 50, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 48, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -87,7 +87,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.FirstName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 59, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 57, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -100,7 +100,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.LastName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 70, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 68, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -113,7 +113,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.Email)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 80, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 78, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -126,7 +126,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.Email)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 84, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 82, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -139,7 +139,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.Position)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 96, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 94, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -152,7 +152,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.Department)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 107, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 105, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -185,7 +185,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var11 templ.SafeURL
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/profile?email=%s", props.Employee.Email))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 158, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 156, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {

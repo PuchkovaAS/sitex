@@ -34,11 +34,9 @@ initials := viewutils.GetInitals(props.Employee.FirstName, props.Employee.LastNa
 				class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
 				hx-ext="response-targets"
 				hx-trigger="submit"
-				hx-target="#update-result"
-				hx-target-error="#login-result"
+				hx-target-error="#update-result"
 				data-400="#update-result"
 				hx-swap="innerHTML"
-				hx-indicator=".update-form__loader"
 			>
 				<!-- Скрытое поле с ID -->
 				<input type="hidden" name="id" value={ fmt.Sprintf("%d", props.Employee.ID) }/>

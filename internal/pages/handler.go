@@ -2,6 +2,7 @@ package pages
 
 import (
 	"net/http"
+	"sitex/internal/dt"
 	"sitex/internal/user"
 	"sitex/pkg/middleware"
 	"sitex/views"
@@ -53,6 +54,7 @@ func (h *PagesHandler) setupPrivateRoutes() {
 	private.Get("/year_statistics", h.yearStatistic)
 	private.Get("/profile", h.profile)
 	private.Get("/profile_update", h.updateUser)
+	private.Get("/change_password", h.changePassword)
 }
 
 func (h *PagesHandler) login(c *fiber.Ctx) error {
@@ -70,14 +72,35 @@ func (h *PagesHandler) UpdateUserInfo(email string, c *fiber.Ctx) {
 		c.Locals("user_status", status)
 	}
 	userInfo, _ := h.repository.GetUserInfo(email)
+
 	c.Locals("user_info", userInfo)
+}
+
+func (h *PagesHandler) getEmailForChangeUser(email string, c *fiber.Ctx) string {
+	userInfo := c.Locals("user_info").(dt.UserInfo)
+	var emailUser string
+	if userInfo.IsAdmin {
+		emailUser = c.Query("email", email)
+	} else {
+		emailUser = email
+	}
+	return emailUser
+}
+
+func (h *PagesHandler) changePassword(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	emailUser := h.getEmailForChangeUser(email, c)
+	component := views.ChangePasswordPage(emailUser)
+	return templeadapter.Render(c, component, http.StatusOK)
 }
 
 func (h *PagesHandler) updateUser(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
 
-	emailUser := c.Query("email", email)
+	emailUser := h.getEmailForChangeUser(email, c)
 	employee, err := h.repository.GetEmployeeInfo(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())

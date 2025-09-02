@@ -66,23 +66,27 @@ func main() {
 		WorkCalendar:   workCalendar,
 	})
 
+	authService := auth.NewAuthService(userRepository)
+
 	// Handler
-	pages.NewHandler(app, pages.PagesHandlerDeps{
-		Store:        store,
-		Repository:   userRepository,
-		CustomLogger: customLogger,
-		UserService:  userService,
-	})
 
 	auth.NewHandler(app, auth.AuthHandlerDeps{
 		CustomLogger: customLogger,
 		Store:        store,
 		Repository:   userRepository,
+		Service:      authService,
 	})
 	user.NewHandler(app, user.UserHandlerDeps{
 		CustomLogger: customLogger,
 		Store:        store,
 		Repository:   userRepository,
+	})
+
+	pages.NewHandler(app, pages.PagesHandlerDeps{
+		Store:        store,
+		Repository:   userRepository,
+		CustomLogger: customLogger,
+		UserService:  userService,
 	})
 
 	app.Listen(":3000")

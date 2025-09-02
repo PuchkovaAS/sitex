@@ -8,8 +8,7 @@ templ AddStatus() {
 		<!-- Форма -->
 		<div id="add_status-result"></div>
 		<form
-			hx-ext="response-targets, file-upload"
-			class="add_news-form"
+			hx-ext="response-targets"
 			hx-post="/api/user/add_status"
 			hx-trigger="submit"
 			hx-target="#add_status-result"
