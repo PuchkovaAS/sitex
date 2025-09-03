@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"sitex/internal/user"
@@ -45,6 +46,7 @@ func NewHandler(router fiber.Router, deps AuthHandlerDeps) {
 
 	h.setupPublicRoutes()
 	h.setupPrivateRoutes()
+	h.setupAdminRoutes()
 }
 
 func (h *AuthHandler) setupPublicRoutes() {
@@ -52,15 +54,33 @@ func (h *AuthHandler) setupPublicRoutes() {
 	public.Post("/login", h.apiLogin)
 }
 
+func (h *AuthHandler) setupAdminRoutes() {
+	admin := h.router.Group("/api", middleware.AuthMiddleware(h.store))
+	admin.Post("/create_user", h.apiCreateUser)
+}
+
 func (h *AuthHandler) setupPrivateRoutes() {
 	private := h.router.Group("/api", middleware.AuthMiddleware(h.store))
 
 	private.Get("/logout", h.apiLogout)
 	private.Put("/profile_update", h.apiUpdateUser)
-	private.Post("/change_password", h.changePassword)
+	private.Put("/change_password", h.apiChangePassword)
 }
 
-func (h *AuthHandler) changePassword(c *fiber.Ctx) error {
+func validationPassword(password, confirmPassword string) error {
+	// Валидация
+	if len(password) < 6 {
+		return errors.New(ErrPasswordIsLess)
+	}
+
+	if password != confirmPassword {
+		return errors.New(ErrPasswordNotEq)
+	}
+
+	return nil
+}
+
+func (h *AuthHandler) apiChangePassword(c *fiber.Ctx) error {
 	var req changePasswordForm
 	if err := c.BodyParser(&req); err != nil {
 		component := components.Notification(
@@ -70,23 +90,17 @@ func (h *AuthHandler) changePassword(c *fiber.Ctx) error {
 		return templeadapter.Render(c, component, http.StatusBadRequest)
 	}
 
-	// Валидация
-	if len(req.NewPassword) < 6 {
+	err := validationPassword(req.NewPassword, req.ConfirmPassword)
+	if err != nil {
+
 		component := components.Notification(
-			"Пароль должен содержать минимум 6 символов",
+			err.Error(),
 			components.NotificationFail,
 		)
 		return templeadapter.Render(c, component, http.StatusOK)
 	}
 
-	if req.NewPassword != req.ConfirmPassword {
-		component := components.Notification(
-			"Пароли не совпадают",
-			components.NotificationFail,
-		)
-		return templeadapter.Render(c, component, http.StatusOK)
-	}
-	err := h.service.ChangePassword(req)
+	err = h.service.ChangePassword(req)
 	if err != nil {
 		component := components.Notification(
 			"Возникла ошибка на сервере"+err.Error(),
@@ -100,6 +114,81 @@ func (h *AuthHandler) changePassword(c *fiber.Ctx) error {
 	return c.Redirect(redirectURL, http.StatusOK)
 }
 
+func (h *AuthHandler) apiCreateUser(c *fiber.Ctx) error {
+	form := userCreateForm{}
+
+	// Парсим форму
+	if err := c.BodyParser(&form); err != nil {
+		component := components.Notification(
+			err.Error(),
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusOK)
+	}
+
+	// Валидация
+	error := validate.Validate(
+		&validators.StringIsPresent{
+			Name:    "Имя",
+			Field:   form.FirstName,
+			Message: "Имя не задано",
+		},
+		&validators.StringIsPresent{
+			Name:    "Фамилия",
+			Field:   form.LastName,
+			Message: "Фамилия не задана",
+		},
+		&validators.StringIsPresent{
+			Name:    "Должность",
+			Field:   form.Position,
+			Message: "Должность не задана",
+		},
+		&validators.StringIsPresent{
+			Name:    "Отдел",
+			Field:   form.Department,
+			Message: "Отдел не задан",
+		},
+		&validators.EmailIsPresent{
+			Name:    "Email",
+			Field:   form.Email,
+			Message: "email не верный",
+		},
+	)
+
+	var component templ.Component
+	if len(error.Errors) > 0 {
+		component = components.Notification(
+			validator.FormatErrors(error),
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusOK)
+	}
+
+	err := validationPassword(form.Password, form.ConfirmPassword)
+	if err != nil {
+
+		component = components.Notification(
+			err.Error(),
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusOK)
+	}
+
+	err = h.service.Register(form)
+	if err != nil {
+		component := components.Notification(
+			"Возникла ошибка на сервере"+err.Error(),
+			components.NotificationFail,
+		)
+		return templeadapter.Render(c, component, http.StatusOK)
+
+	}
+
+	redirectURL := fmt.Sprintf("/profile?email=%s", form.Email)
+	c.Response().Header.Add("Hx-Redirect", redirectURL)
+	return c.Redirect(redirectURL, http.StatusOK)
+}
+
 func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 	form := userUpdateForm{}
 
@@ -109,7 +198,7 @@ func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 			err.Error(),
 			components.NotificationFail,
 		)
-		return templeadapter.Render(c, component, http.StatusBadRequest)
+		return templeadapter.Render(c, component, http.StatusOK)
 	}
 
 	// Конвертируем строки в boolean
@@ -145,7 +234,7 @@ func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 			validator.FormatErrors(error),
 			components.NotificationFail,
 		)
-		return templeadapter.Render(c, component, http.StatusBadRequest)
+		return templeadapter.Render(c, component, http.StatusOK)
 	}
 
 	if err := h.repository.UpdateUserProfile(form.Email, user.UserUpdateData{
@@ -160,7 +249,7 @@ func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 			err.Error(),
 			components.NotificationFail,
 		)
-		return templeadapter.Render(c, component, http.StatusBadRequest)
+		return templeadapter.Render(c, component, http.StatusOK)
 	}
 	redirectURL := fmt.Sprintf("/profile?email=%s", form.Email)
 	c.Response().Header.Add("Hx-Redirect", redirectURL)
@@ -173,6 +262,7 @@ func (h *AuthHandler) apiLogout(c *fiber.Ctx) error {
 		panic(err)
 	}
 	sess.Delete("email")
+	sess.Delete("isAdmin")
 	if err := sess.Save(); err != nil {
 		panic(err)
 	}
@@ -221,6 +311,9 @@ func (h *AuthHandler) apiLogin(c *fiber.Ctx) error {
 		panic(err)
 	}
 	sess.Set("email", form.Email)
+	userInfo, _ := h.repository.GetUserInfo(form.Email)
+
+	sess.Set("is_admin", userInfo.IsAdmin)
 	if err := sess.Save(); err != nil {
 		panic(err)
 	}

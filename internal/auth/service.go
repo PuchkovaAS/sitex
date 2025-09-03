@@ -55,29 +55,37 @@ func (service *AuthService) ChangePassword(
 	return nil
 }
 
-// func (service *AuthService) Register(
-// 	createUserForm userCreateForm,
-// ) error {
-// 	existedUser, _ := service.UserRepository.FindByEmail(createUserForm.Email)
-//
-// 	if existedUser != nil {
-// 		return errors.New(ErrUserExists)
-// 	}
-// 	hashedPassword, err := bcrypt.GenerateFromPassword(
-// 		[]byte(createUserForm.Password),
-// 		bcrypt.DefaultCost,
-// 	)
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	err = service.UserRepository.Create(
-// 		createUserForm.Email,
-// 		createUserForm.Name,
-// 		string(hashedPassword),
-// 	)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
+func (service *AuthService) Register(
+	form userCreateForm,
+) error {
+	existedUser := service.UserRepository.EmailExists(form.Email)
+	if existedUser {
+		return errors.New(ErrUserExists)
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(form.Password),
+		bcrypt.DefaultCost,
+	)
+	if err != nil {
+		return err
+	}
+
+	// Конвертируем строки в boolean
+	isActive := form.IsActive == "true"
+	isAdmin := form.IsAdmin == "true"
+
+	err = service.UserRepository.CreateUser(
+		form.FirstName,
+		form.LastName,
+		form.Email,
+		form.Department,
+		form.Position,
+		string(hashedPassword),
+		isAdmin,
+		isActive,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}

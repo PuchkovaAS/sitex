@@ -40,20 +40,20 @@ func ChangePasswordWidget(props ChangePasswordProps) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.Email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/change_password_widget.templ`, Line: 20, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/change_password_widget.templ`, Line: 23, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p></div><!-- Форма смены пароля --><div id=\"change_password-result\"></div><form hx-ext=\"response-targets\" hx-post=\"/api/change_password\" hx-trigger=\"submit\" hx-target=\"#change_password-result\" hx-target-400=\"#change_password-result\" hx-swap=\"innerHTML swap:0.5s\" hx-encoding=\"multipart/form-data\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"space-y-6\"><!-- Скрытое поле для email --><input type=\"hidden\" name=\"email\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p></div><!-- Форма смены пароля --><div id=\"change_password-result\"></div><form hx-ext=\"response-targets\" hx-put=\"/api/change_password\" hx-trigger=\"submit\" hx-target=\"#change_password-result\" hx-target-400=\"#change_password-result\" hx-swap=\"innerHTML swap:0.5s\" hx-encoding=\"multipart/form-data\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"space-y-6\"><!-- Скрытое поле для email --><input type=\"hidden\" name=\"email\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.Email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/change_password_widget.templ`, Line: 29, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/change_password_widget.templ`, Line: 39, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

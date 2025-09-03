@@ -44,20 +44,20 @@ func Layout(props LayoutProps) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout/layout.templ`, Line: 17, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout/layout.templ`, Line: 16, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/htmx-ext-response-targets@2.0.2\"></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap\" rel=\"stylesheet\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon/favicon-32x32.png\"><link rel=\"apple-touch-icon\" sizes=\"48x48\" href=\"/public/favicon/favicon-48x48.png\"><link rel=\"apple-touch-icon\" sizes=\"72x72\" href=\"/public/favicon//favicon-72x72.png\"><link rel=\"apple-touch-icon\" sizes=\"96x96\" href=\"/public/favicon//favicon-96x96.png\"><link rel=\"apple-touch-icon\" sizes=\"256x256\" href=\"/public/favicon//favicon-256x256.png\"><link rel=\"apple-touch-icon\" sizes=\"384x384\" href=\"/public/favicon//favicon-384x384.png\"><link rel=\"apple-touch-icon\" sizes=\"512x512\" href=\"/public/favicon//favicon-512x512.png\"><link rel=\"manifest\" href=\"/public/favicon/manifest.webmanifest\" crossorigin=\"anonymous\"><link href=\"./public/output.css\" rel=\"stylesheet\"><meta name=\"description\" content=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/htmx-ext-response-targets@2.0.2\"></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap\" rel=\"stylesheet\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon/favicon-32x32.png\"><link rel=\"apple-touch-icon\" sizes=\"48x48\" href=\"/public/favicon/favicon-48x48.png\"><link rel=\"apple-touch-icon\" sizes=\"72x72\" href=\"/public/favicon//favicon-72x72.png\"><link rel=\"apple-touch-icon\" sizes=\"96x96\" href=\"/public/favicon//favicon-96x96.png\"><link rel=\"apple-touch-icon\" sizes=\"256x256\" href=\"/public/favicon//favicon-256x256.png\"><link rel=\"apple-touch-icon\" sizes=\"384x384\" href=\"/public/favicon//favicon-384x384.png\"><link rel=\"apple-touch-icon\" sizes=\"512x512\" href=\"/public/favicon//favicon-512x512.png\"><link rel=\"manifest\" href=\"/public/favicon/manifest.webmanifest\" crossorigin=\"anonymous\"><link href=\"/public/output.css\" rel=\"stylesheet\"><meta name=\"description\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.MetaDescription)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout/layout.templ`, Line: 34, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout/layout.templ`, Line: 35, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -70,7 +70,7 @@ func Layout(props LayoutProps) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout/layout.templ`, Line: 35, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout/layout.templ`, Line: 36, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -83,7 +83,7 @@ func Layout(props LayoutProps) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.MetaDescription)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout/layout.templ`, Line: 36, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout/layout.templ`, Line: 37, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

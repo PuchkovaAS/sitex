@@ -226,12 +226,12 @@ func Sidebar() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var16 = []any{"flex items-center p-3 text-sm font-medium rounded-lg transition-colors",
-				viewutils.IsActive(currentPath, "/add_user")}
+				viewutils.IsActive(currentPath, "/create_user")}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<a href=\"/ad_user\" class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<a href=\"/create_user\" class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

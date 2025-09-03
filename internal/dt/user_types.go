@@ -5,4 +5,5 @@ type UserInfo struct {
 	LastName  string
 	Position  string
 	IsAdmin   bool
+	IsActive  bool
 }

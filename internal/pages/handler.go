@@ -40,10 +40,17 @@ func NewHandler(router fiber.Router, deps PagesHandlerDeps) {
 	}
 	h.setupPublicRoutes()
 	h.setupPrivateRoutes()
+	h.setupAdminRoutes()
 }
 
 func (h *PagesHandler) setupPublicRoutes() {
 	h.router.Get("/login", h.login)
+	h.router.Get("/errors/403", h.error403)
+}
+
+func (h *PagesHandler) setupAdminRoutes() {
+	admin := h.router.Group("/", middleware.IsAdminMiddleware(h.store))
+	admin.Get("/create_user", h.createUser)
 }
 
 func (h *PagesHandler) setupPrivateRoutes() {
@@ -55,6 +62,19 @@ func (h *PagesHandler) setupPrivateRoutes() {
 	private.Get("/profile", h.profile)
 	private.Get("/profile_update", h.updateUser)
 	private.Get("/change_password", h.changePassword)
+}
+
+func (h *PagesHandler) createUser(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	component := views.CreateUserPage()
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) error403(c *fiber.Ctx) error {
+	component := views.Errors403Page()
+	return templeadapter.Render(c, component, http.StatusForbidden)
 }
 
 func (h *PagesHandler) login(c *fiber.Ctx) error {

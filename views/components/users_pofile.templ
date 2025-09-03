@@ -1,47 +1,9 @@
 package components
 
-import (
-	"sitex/internal/dt"
-	"strings"
-)
-
 templ UserProfile() {
-	{{userInfo := ctx.Value("user_info").(dt.UserInfo)
-// Безопасное получение инициалов
-initials := ""
-
-// Получаем первую руну имени
-if userInfo.FirstName != "" {
-	runes := []rune(userInfo.FirstName)
-	if len(runes) > 0 {
-		initials += string(runes[0])
-	}
-}
-
-// Получаем первую руну фамилии
-if userInfo.LastName != "" {
-	runes := []rune(userInfo.LastName)
-	if len(runes) > 0 {
-		initials += string(runes[0])
-	}
-}
-
-// Если оба поля пустые
-if initials == "" {
-	initials = "U" // User по умолчанию
-}
-
-initials = strings.ToUpper(initials)
-	}}
 	<div class="p-4 border-t border-gray-200">
 		<div class="flex items-center mb-3">
-			<div
-				class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
-			>
-				<span class="text-white font-semibold text-sm">
-					{ initials }
-				</span>
-			</div>
+			@UserAvatar(15)
 			<div class="ml-3 flex flex-col items-start">
 				@UserInfo()
 			</div>

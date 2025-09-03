@@ -47,6 +47,33 @@ func (repo *UserRepository) ChangePassword(email string, password string) error 
 	return nil
 }
 
+func (repo *UserRepository) CreateUser(firstName, lastName, email, department, position, password string, isActive, isAdmin bool) error {
+	user := &Employee{
+		FirstName:    firstName,
+		LastName:     lastName,
+		Department:   department,
+		Position:     position,
+		IsAdmin:      isAdmin,
+		IsActive:     isActive,
+		PasswordHash: password,
+		Email:        email,
+	}
+	result := repo.DataBase.Create(user)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (repo *UserRepository) EmailExists(email string) bool {
+	var count int64
+	result := repo.DataBase.Model(&Employee{}).Where("email = ?", email).Count(&count)
+	if result.Error != nil {
+		return false
+	}
+	return count > 0
+}
+
 func (repo *UserRepository) GetEmployeeInfo(email string) (Employee, error) {
 	var employee Employee
 	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
@@ -122,7 +149,7 @@ func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
 	// Получаем только нужные поля
 	err := repo.DataBase.DB.
 		Where("email = ?", email).
-		Select("first_name, last_name, role, position, is_admin").
+		Select("first_name, last_name, role, position, is_admin, is_active").
 		First(&user).Error
 	if err != nil {
 		return dt.UserInfo{}, err
@@ -134,6 +161,7 @@ func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
 		LastName:  user.LastName,
 		Position:  user.Position,
 		IsAdmin:   user.IsAdmin,
+		IsActive:  user.IsActive,
 	}, nil
 }
 

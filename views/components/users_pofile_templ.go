@@ -8,11 +8,6 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"sitex/internal/dt"
-	"strings"
-)
-
 func UserProfile() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -34,46 +29,15 @@ func UserProfile() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		userInfo := ctx.Value("user_info").(dt.UserInfo)
-		// Безопасное получение инициалов
-		initials := ""
-
-		// Получаем первую руну имени
-		if userInfo.FirstName != "" {
-			runes := []rune(userInfo.FirstName)
-			if len(runes) > 0 {
-				initials += string(runes[0])
-			}
-		}
-
-		// Получаем первую руну фамилии
-		if userInfo.LastName != "" {
-			runes := []rune(userInfo.LastName)
-			if len(runes) > 0 {
-				initials += string(runes[0])
-			}
-		}
-
-		// Если оба поля пустые
-		if initials == "" {
-			initials = "U" // User по умолчанию
-		}
-
-		initials = strings.ToUpper(initials)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"p-4 border-t border-gray-200\"><div class=\"flex items-center mb-3\"><div class=\"w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center\"><span class=\"text-white font-semibold text-sm\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"p-4 border-t border-gray-200\"><div class=\"flex items-center mb-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(initials)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/users_pofile.templ`, Line: 42, Col: 15}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		templ_7745c5c3_Err = UserAvatar(15).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span></div><div class=\"ml-3 flex flex-col items-start\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"ml-3 flex flex-col items-start\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
