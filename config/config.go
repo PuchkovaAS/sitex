@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 	"sitex/pkg/calendar"
 	"time"
 
@@ -32,9 +33,15 @@ func Init() {
 }
 
 func InitCalendar(filename string) *calendar.HolidayCalendar {
-	calendar, err := calendar.LoadHolidays(filename)
+	basePath := viper.GetString("CALENDAR_PATH")
+	if basePath == "" {
+		basePath = "./calendar_data" // значение по умолчанию
+	}
+
+	filenamePath := filepath.Join(basePath, filename)
+	calendar, err := calendar.LoadHolidays(filenamePath)
 	if err != nil {
-		panic("Календарь на год не удалось загрузить")
+		panic(fmt.Sprintf("Календарь на год не удалось загрузить, %s", filename))
 	}
 	return calendar
 }

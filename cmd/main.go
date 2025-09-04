@@ -22,7 +22,7 @@ func main() {
 	config.Init()
 
 	workCalendar := config.InitCalendar(
-		fmt.Sprintf("./calendar_data/%d/calendar.json", time.Now().Year()),
+		fmt.Sprintf("%d/calendar.json", time.Now().Year()), // Убрал начальный слеш
 	)
 
 	logConfig := config.NewLogConfig()

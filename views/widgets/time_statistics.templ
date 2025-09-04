@@ -5,51 +5,49 @@ import "time"
 import "sitex/views/view_utils"
 
 templ TimeStatistics(monthName string, stats map[string]int) {
-	{{
+{{
 year := time.Now().Year()
 statuses := []string{
-	"Отпуск",
-	"Выходной",
-	"В офисе",
-	"Больничный",
-	"Отгул",
-	"Удаленная работа",
-	"Работа в выходной день",
-	"Командировка",
+"Отпуск",
+"Выходной",
+"В офисе",
+"Больничный",
+"Отгул",
+"Удаленная работа",
+"Работа в выходной день",
+"Командировка",
 }
-	}}
-	<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-		<!-- Заголовок -->
-		<div class="flex items-center justify-between mb-6">
-			<h2 class="text-lg font-semibold text-gray-900">
-				Статистика активности за <span class="text-blue-600">{ monthName } { year }</span>
-			</h2>
-		</div>
-		<div class="flex items-start space-x-8">
-			<!-- Блок с информацией пользователя -->
-			<div class="flex-shrink-0">
-				@components.UserInfo()
-			</div>
-			<!-- Статистика -->
-			<div class="grid grid-cols-8 gap-3 flex-1">
-				for _, status := range statuses {
-					@StatusCard(status, stats[status])
-				}
-			</div>
-		</div>
-	</div>
+}}
+<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+    <!-- Заголовок -->
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-semibold text-gray-900">
+            Статистика активности за <span class="text-blue-600">{ monthName } { year }</span>
+        </h2>
+    </div>
+    <div class="flex items-start space-x-8">
+        <!-- Блок с информацией пользователя -->
+        <div class="flex-shrink-0">
+            @components.UserInfo(true)
+        </div>
+        <!-- Статистика -->
+        <div class="grid grid-cols-8 gap-3 flex-1">
+            for _, status := range statuses {
+            @StatusCard(status, stats[status])
+            }
+        </div>
+    </div>
+</div>
 }
 
 templ StatusCard(status string, count int) {
-	{{
+{{
 statusClass := viewutils.GetStatusClass(status)
 displayName := viewutils.GetDisplayName(status)
-	}}
-	<div
-		class={ "flex flex-col items-center justify-center rounded-lg p-4 min-h-[90px] hover:shadow-md transition-shadow" ,
-    statusClass }
-	>
-		<span class={ "text-xl font-bold" , viewutils.GetTextColorClass(status) }>{ count }</span>
-		<span class={ "text-xs font-medium text-center mt-1" , viewutils.GetTextColorClass(status) }>{ displayName }</span>
-	</div>
+}}
+<div class={ "flex flex-col items-center justify-center rounded-lg p-4 min-h-[90px] hover:shadow-md transition-shadow" ,
+    statusClass }>
+    <span class={ "text-xl font-bold" , viewutils.GetTextColorClass(status) }>{ count }</span>
+    <span class={ "text-xs font-medium text-center mt-1" , viewutils.GetTextColorClass(status) }>{ displayName }</span>
+</div>
 }

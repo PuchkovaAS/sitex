@@ -33,7 +33,7 @@ func UserProfile() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = UserAvatar(15).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = UserAvatar().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -41,7 +41,7 @@ func UserProfile() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = UserInfo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = UserInfo(false).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

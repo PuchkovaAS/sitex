@@ -10,8 +10,9 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "sitex/internal/dt"
 import "sitex/views/view_utils"
+import "fmt"
 
-func UserInfo() templ.Component {
+func UserInfo(isMenuVisible bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -37,14 +38,15 @@ func UserInfo() templ.Component {
 
 		statusText := status.(string)
 		statusClass := viewutils.GetStatusClass(statusText)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"ml-3 flex flex-col items-start\"><!-- ФИО с короной админа --><div class=\"flex items-center gap-2 mb-1\"><p class=\"text-sm font-medium text-gray-900\">")
+		emailParam := "?email=a@a.ru"
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"ml-3 flex flex-col items-start relative group\"><!-- Основная информация (кликабельная область) --><a href=\"/profile{ emailParam }\" class=\"flex flex-col items-start hover:bg-gray-50 p-2 rounded-lg transition-colors\"><!-- ФИО с короной админа --><div class=\"flex items-center gap-2 mb-1\"><p class=\"text-sm font-medium text-gray-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.LastName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 17, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 24, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -57,7 +59,7 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.FirstName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 17, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 24, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -68,7 +70,7 @@ func UserInfo() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if userInfo.IsAdmin {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"relative group\"><svg class=\"w-4 h-4 text-yellow-500 cursor-help\" fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z\"></path></svg><!-- Подсказка --><div class=\"absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap\">Администратор<div class=\"absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800\"></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"relative\"><svg class=\"w-4 h-4 text-yellow-500\" fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z\"></path></svg></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -80,7 +82,7 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(userInfo.Position)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 40, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 38, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -115,13 +117,36 @@ func UserInfo() templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(statusText)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 44, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 42, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</span></a> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if isMenuVisible {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<!-- Выпадающее меню при наведении --> <div class=\"absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10\"><div class=\"py-1\"><a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 templ.SafeURL
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/year_statistics%s", emailParam))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_info.templ`, Line: 52, Col: 58}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900\">Годовая статистика</a> <a href=\"/history_status{ emailParam }\" class=\"block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900\">История статусов</a> <a href=\"/profile{ emailParam }\" class=\"block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900\">Профиль</a> <a href=\"/activity{ emailParam }\" class=\"block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900\">Активность</a></div></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -5,11 +5,42 @@ services:
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: my_pass
-            PGDATA: /var/lib/postgresql/data/pgdata # Стандартный путь в контейнере
+            PGDATA: /var/lib/postgresql/data/pgdata
         volumes:
-            - pgdata:/var/lib/postgresql/data # Используем именованный том
+            - pgdata:/var/lib/postgresql/data
         ports:
             - '5432:5432'
 
+    # app:
+    #     container_name: app_go
+    #     build: . # ← Используем сборку из текущей директории
+    #     volumes:
+    #         - ./calendar_data:/app/calendar_data # Монтируем локальную директорию
+    #     environment:
+    #         CALENDAR_PATH: /app/calendar_data
+    #         DB_HOST: postgres # ← Меняем localhost на postgres
+    #         DB_USER: postgres
+    #         DB_PASSWORD: my_pass
+    #         DB_NAME: sitex_db
+    #         DB_PORT: 5432
+    #         DB_SSLMODE: disable
+    #         LOG_LEVEL: 0
+    #         LOG_FORMAT: 'terminal'
+    #     ports:
+    #         - '3001:3000'
+    #     depends_on:
+    #         - postgres # ← Ждем запуска postgres
+    #
+    # # 👇 ДОБАВЬТЕ ЭТО ДЛЯ АДМИНИСТРИРОВАНИЯ БД
+    #
+    # # Или Adminer (более легковесный)
+    # adminer:
+    #     image: adminer
+    #     container_name: adminer
+    #     ports:
+    #         - '8080:8080'
+    #     depends_on:
+    #         - postgres
+    #
 volumes:
-    pgdata: # Декларация тома
+    pgdata:

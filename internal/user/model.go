@@ -6,6 +6,24 @@ import (
 	"gorm.io/gorm"
 )
 
+type Department struct {
+	Id   int
+	Name string
+}
+
+type ActivityInfo struct {
+	StatusCount  map[string]int
+	MonthHistory []MonthHistory
+	CurrentMonth int
+}
+
+type MonthHistory struct {
+	Name              string
+	Number            int
+	WeekdayFirstMonth int
+	HistoryStatus     []DayStatus
+}
+
 type statusAddForm struct {
 	Status       string
 	Date         string
@@ -53,11 +71,4 @@ type StatusPeriod struct {
 	WhoAdded     Employee   `gorm:"foreignKey:WhoAddedID"` // Ссылка на сотрудника
 	StatusType   StatusType `gorm:"foreignKey:StatusID"`
 	OneTimeEvent bool       `gorm:"not null;default:false"`
-}
-
-type MonthHistory struct {
-	Name              string
-	Number            int
-	WeekdayFirstMonth int
-	HistoryStatus     []DayStatus
 }

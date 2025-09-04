@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import "sitex/internal/dt"
 import "sitex/views/view_utils"
 
-func UserAvatar(size int) templ.Component {
+func UserAvatar() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -36,8 +36,7 @@ func UserAvatar(size int) templ.Component {
 		initials := viewutils.GetInitals(userInfo.FirstName, userInfo.LastName)
 		var templ_7745c5c3_Var2 = []any{"w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 relative",
 			templ.KV("bg-gradient-to-r from-blue-500 to-indigo-600", userInfo.IsActive), templ.KV("bg-gray-300",
-				!userInfo.IsActive),
-		}
+				!userInfo.IsActive)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -60,8 +59,7 @@ func UserAvatar(size int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 = []any{"text-white font-semibold", templ.KV("text-xs", len(initials) > 3),
-			templ.KV("text-sm", len(initials) <= 3),
-		}
+			templ.KV("text-sm", len(initials) <= 3)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -86,7 +84,7 @@ func UserAvatar(size int) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(initials)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_avatar.templ`, Line: 23, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/user_avatar.templ`, Line: 15, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {

@@ -51,6 +51,7 @@ func (h *PagesHandler) setupPublicRoutes() {
 func (h *PagesHandler) setupAdminRoutes() {
 	admin := h.router.Group("/", middleware.IsAdminMiddleware(h.store))
 	admin.Get("/create_user", h.createUser)
+	admin.Get("/users_activity", h.usersActivity)
 }
 
 func (h *PagesHandler) setupPrivateRoutes() {
@@ -197,6 +198,49 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		MonthHistory:  monthHistory,
 		CurrentMonth:  month,
 		LastAddStatus: lastAddStatus,
+	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	month := c.QueryInt("month", int(time.Now().Month()))
+	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, email, 2)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
+	component := views.MultiUserActivityPage(views.MultiUserActivityPageProps{
+		Department: []user.Department{
+			{
+				Id:   1,
+				Name: "Ywe",
+			},
+
+			{
+				Id:   2,
+				Name: "USDSD",
+			},
+		},
+		CurrentDepartment: "УКПП",
+		CurrentPage:       1,
+		TotalPages:        3,
+		TotalUsers:        5,
+		Users: []user.ActivityInfo{
+			{
+				StatusCount:  statusCount,
+				MonthHistory: monthHistory,
+				CurrentMonth: month,
+			},
+			{
+				StatusCount:  statusCount,
+				MonthHistory: monthHistory,
+				CurrentMonth: month,
+			},
+		},
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

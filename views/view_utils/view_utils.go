@@ -1,6 +1,12 @@
 package viewutils
 
-import "strings"
+import (
+	"fmt"
+	"net/url"
+	"strings"
+
+	"github.com/a-h/templ"
+)
 
 func GetMonthName(monthNum int) string {
 	months := []string{
@@ -127,4 +133,15 @@ func GetInitals(firstName, lastName string) string {
 	initials = strings.ToUpper(initials)
 
 	return initials
+}
+
+// Вспомогательные функции (должны быть реализованы в Go коде)
+func buildPageURL(page, deptID int, searchQuery string) string {
+	// Реализация построения URL с параметрами
+	return fmt.Sprintf("/activity?page=%d&department=%d&search=%s", page, deptID, url.QueryEscape(searchQuery))
+}
+
+func generatePaginationLinks() templ.Component {
+	// Реализация генерации ссылок пагинации
+	return templ.Raw("") // Заглушка
 }

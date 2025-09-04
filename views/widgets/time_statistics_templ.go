@@ -52,7 +52,7 @@ func TimeStatistics(monthName string, stats map[string]int) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(monthName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 25, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 25, Col: 98}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -65,7 +65,7 @@ func TimeStatistics(monthName string, stats map[string]int) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 25, Col: 99}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 25, Col: 107}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -75,7 +75,7 @@ func TimeStatistics(monthName string, stats map[string]int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.UserInfo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.UserInfo(true).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -169,7 +169,7 @@ func StatusCard(status string, count int) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(count)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 52, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 50, Col: 85}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -204,7 +204,7 @@ func StatusCard(status string, count int) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(displayName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 53, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 51, Col: 110}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {

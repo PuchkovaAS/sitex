@@ -59,7 +59,7 @@ func Sidebar() templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(weekdays[int(date.Weekday())])
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/sidebar.templ`, Line: 30, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/sidebar.templ`, Line: 30, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -72,7 +72,7 @@ func Sidebar() templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(date.Format("2.01.2006"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/sidebar.templ`, Line: 33, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/sidebar.templ`, Line: 33, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -180,12 +180,12 @@ func Sidebar() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var12 = []any{"flex items-center p-3 text-sm font-medium rounded-lg transition-colors",
-				viewutils.IsActivePrefix(currentPath, "/users")}
+				viewutils.IsActive(currentPath, "/users_activity")}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<a href=\"/users\" class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<a href=\"/users_activity\" class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -203,7 +203,7 @@ func Sidebar() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 = []any{"flex items-center p-3 text-sm font-medium rounded-lg transition-colors",
-				viewutils.IsActivePrefix(currentPath, "/users")}
+				viewutils.IsActive(currentPath, "/users")}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
