@@ -69,7 +69,11 @@ func (h *PagesHandler) createUser(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
 
-	component := views.CreateUserPage()
+	departments, _ := h.repository.GetAllDepartments()
+
+	component := views.CreateUserPage(views.CreateUserPageProps{
+		Departments: departments,
+	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
 
@@ -127,8 +131,10 @@ func (h *PagesHandler) updateUser(c *fiber.Ctx) error {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
 	}
+	departments, _ := h.repository.GetAllDepartments()
 	component := views.UpdateProfilePage(views.UpdateProfileProps{
-		Employee: employee,
+		Departments: departments,
+		Employee:    employee,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -213,19 +219,11 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 		return c.SendStatus(500)
 	}
 
-	component := views.MultiUserActivityPage(views.MultiUserActivityPageProps{
-		Department: []user.Department{
-			{
-				Id:   1,
-				Name: "Ywe",
-			},
+	departments, _ := h.repository.GetAllDepartments()
 
-			{
-				Id:   2,
-				Name: "USDSD",
-			},
-		},
-		CurrentDepartment: "УКПП",
+	component := views.MultiUserActivityPage(views.MultiUserActivityPageProps{
+		Department:        departments,
+		CurrentDepartment: "УКП",
 		CurrentPage:       1,
 		TotalPages:        3,
 		TotalUsers:        5,

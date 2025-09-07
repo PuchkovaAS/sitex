@@ -124,15 +124,15 @@ func ProfilePage(props ProfileProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.Department)
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.Department.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/profile_page.templ`, Line: 62, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/profile_page.templ`, Line: 62, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p></div><!-- Статус --><div class=\"bg-gray-50 rounded-lg p-4\"><div class=\"flex items-center mb-2\"><span class=\"text-sm font-medium text-gray-700\">Статус</span></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!-- Исправлено здесь --></p></div><!-- Статус --><div class=\"bg-gray-50 rounded-lg p-4\"><div class=\"flex items-center mb-2\"><span class=\"text-sm font-medium text-gray-700\">Статус</span></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

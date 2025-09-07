@@ -7,8 +7,9 @@ import (
 )
 
 type Department struct {
-	Id   int
-	Name string
+	gorm.Model
+	Name      string     `gorm:"not null;unique;index:idx_department_name"`
+	Employees []Employee `gorm:"foreignKey:DepartmentID"`
 }
 
 type ActivityInfo struct {
@@ -40,6 +41,7 @@ type statusAddInfo struct {
 	OneTimeEvent bool   `gorm:"column:one_time_event"`
 }
 
+// models/employee.go
 type Employee struct {
 	gorm.Model
 	FirstName     string `gorm:"not null"`
@@ -47,7 +49,8 @@ type Employee struct {
 	Email         string `gorm:"not null;uniqueIndex:idx_employees_email"`
 	PasswordHash  string `gorm:"not null"`
 	Position      string
-	Department    string
+	DepartmentID  uint           `gorm:"index"`
+	Department    Department     `gorm:"foreignKey:DepartmentID"` // Связь
 	IsActive      bool           `gorm:"default:true;index:idx_employees_active"`
 	IsAdmin       bool           `gorm:"default:false;index:idx_employees_admin"`
 	StatusPeriods []StatusPeriod `gorm:"foreignKey:EmployeeID"`

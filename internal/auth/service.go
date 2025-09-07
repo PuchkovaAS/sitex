@@ -74,7 +74,7 @@ func (service *AuthService) Register(
 	isActive := form.IsActive == "true"
 	isAdmin := form.IsAdmin == "true"
 
-	err = service.UserRepository.CreateUser(
+	err = service.UserRepository.CreateUserWithDepartment(
 		form.FirstName,
 		form.LastName,
 		form.Email,

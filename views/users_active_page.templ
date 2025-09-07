@@ -1,143 +1,133 @@
 package views
 
 import (
-	"fmt"
-	"sitex/internal/user"
-	"sitex/views/components"
-	"sitex/views/layout"
-	"sitex/views/view_utils"
-	"sitex/views/widgets"
+"fmt"
+"sitex/internal/user"
+"sitex/views/components"
+"sitex/views/layout"
+"sitex/views/view_utils"
+"sitex/views/widgets"
 )
 
 type MultiUserActivityPageProps struct {
-	Users             []user.ActivityInfo
-	Department        []user.Department
-	CurrentDepartment string
-	CurrentPage       int
-	TotalPages        int
-	TotalUsers        int
+Users []user.ActivityInfo
+Department []user.Department
+CurrentDepartment string
+CurrentPage int
+TotalPages int
+TotalUsers int
 }
 
 templ MultiUserActivityPage(props MultiUserActivityPageProps) {
-	@layout.Layout(layout.LayoutProps{
-		Title:           "Активность сотрудников",
-		MetaDescription: "Страница активности сотрудников",
-		IsAuthenticated: true,
-	}) {
-		<div class="space-y-4">
-			<!-- Фильтры и поиск -->
-			<div class="bg-white rounded-lg shadow p-4">
-				<div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-					<!-- Левая часть: отдел и месяц -->
-					<div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-						<!-- Выбор отдела -->
-						<div class="w-full md:w-auto">
-							<label for="department" class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-							<select
-								id="department"
-								name="department"
-								onchange="changeDepartment(this.value)"
-								class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-							>
-								<option value="0" selected={ props.CurrentDepartment == "0" }>Все отделы</option>
-								for _, department := range props.Department {
-									<option
-										value={ fmt.Sprintf("%d", department.Id) }
-										selected={ fmt.Sprintf("%d",
-                            department.Id)==props.CurrentDepartment }
-									>
-										{ fmt.Sprintf("%s", department.Name) }
-									</option>
-								}
-							</select>
-						</div>
-						<!-- Выбор месяца -->
-						@components.SelectMonth(components.SelcectMonthProps{CurrentMonth: 9})
-					</div>
-					<!-- Правая часть: поиск -->
-					<div class="w-full md:w-auto">
-						@components.FindUser()
-					</div>
-				</div>
-			</div>
-			<!-- Список пользователей -->
-			<div>
-				<div class="divide-y divide-gray-200">
-					for curInd, currentUser := range props.Users {
-						<!-- Тестовые пользователи -->
-						<div class="p-4">
-							<!-- Статистика пользователя -->
-							@widgets.TimeStatistics(viewutils.GetMonthName(currentUser.CurrentMonth), currentUser.StatusCount)
-							<!-- Кнопка раскрытия -->
-							<div class="flex justify-center mt-2">
-								<button class="p-1 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors">
-									<svg
-										id={ fmt.Sprintf("toggle-icon-user-%d", curInd) }
-										class="w-3 h-3 text-gray-500 transform rotate-0 transition-transform"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-									</svg>
-								</button>
-							</div>
-							<!-- Блок активности пользователя (изначально скрыт) -->
-							<div id={ fmt.Sprintf("user-%d", curInd) } class="hidden bg-white rounded-lg shadow p-4 mt-2">
-								<div class="flex items-center justify-between mb-3">
-									<!-- Левая часть: Управление активностью -->
-									<div class="flex items-center gap-6">
-										<h2 class="text-lg font-semibold text-gray-900">
-											Управление активностью
-										</h2>
-									</div>
-								</div>
-								<div>
-									<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-										<!-- Два календаря (занимают 3 колонки) -->
-										<div class="lg:col-span-3">
-											<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto">
-												<!-- Календари -->
-												if len(currentUser.MonthHistory) > 0 {
-													<div class="flex items-center justify-center">
-														@widgets.Calendar(widgets.CalendarProps{
-															MonthName:     currentUser.MonthHistory[0].Name,
-															FirstDay:      currentUser.MonthHistory[0].WeekdayFirstMonth,
-															HistoryStatus: currentUser.MonthHistory[0].HistoryStatus,
-														})
-													</div>
-												}
-												if len(currentUser.MonthHistory) > 1 {
-													<div class="flex items-center justify-center">
-														@widgets.Calendar(widgets.CalendarProps{
-															MonthName:     currentUser.MonthHistory[1].Name,
-															FirstDay:      currentUser.MonthHistory[1].WeekdayFirstMonth,
-															HistoryStatus: currentUser.MonthHistory[1].HistoryStatus,
-														})
-													</div>
-												}
-											</div>
-										</div>
-										<!-- Форма добавления статуса -->
-										<div>
-											@widgets.AddStatus()
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					}
-				</div>
-				<!-- Пагинация -->
-				@components.PaginationNum()
-			</div>
-		</div>
-	}
-	@MultiUserActivityPageScripts()
+@layout.Layout(layout.LayoutProps{
+Title: "Активность сотрудников",
+MetaDescription: "Страница активности сотрудников",
+IsAuthenticated: true,
+}) {
+<div class="space-y-4">
+    <!-- Фильтры и поиск -->
+    <div class="bg-white rounded-lg shadow p-4">
+        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <!-- Левая часть: отдел и месяц -->
+            <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                <!-- Выбор отдела -->
+                <div class="w-full md:w-auto">
+                    <label for="department" class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
+                    <select id="department" name="department" onchange="changeDepartment(this.value)"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="0" selected={ props.CurrentDepartment=="0" }>Все отделы</option>
+                        for _, department := range props.Department {
+                        <option value={ fmt.Sprintf("%d", department.ID) } selected={ fmt.Sprintf("%d",
+                            department.ID)==props.CurrentDepartment }>
+                            { fmt.Sprintf("%s", department.Name) }
+                        </option>
+                        }
+                    </select>
+                </div>
+                <!-- Выбор месяца -->
+                @components.SelectMonth(components.SelcectMonthProps{CurrentMonth: 9})
+            </div>
+            <!-- Правая часть: поиск -->
+            <div class="w-full md:w-auto">
+                @components.FindUser()
+            </div>
+        </div>
+    </div>
+    <!-- Список пользователей -->
+    <div>
+        <div class="divide-y divide-gray-200">
+            for curInd, currentUser := range props.Users {
+            <!-- Тестовые пользователи -->
+            <div class="p-4">
+                <!-- Статистика пользователя -->
+                @widgets.TimeStatistics(viewutils.GetMonthName(currentUser.CurrentMonth), currentUser.StatusCount)
+                <!-- Кнопка раскрытия -->
+                <div class="flex justify-center mt-2">
+                    <button class="p-1 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors">
+                        <svg id={ fmt.Sprintf("toggle-icon-user-%d", curInd) }
+                            class="w-3 h-3 text-gray-500 transform rotate-0 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <!-- Блок активности пользователя (изначально скрыт) -->
+                <div id={ fmt.Sprintf("user-%d", curInd) } class="hidden bg-white rounded-lg shadow p-4 mt-2">
+                    <div class="flex items-center justify-between mb-3">
+                        <!-- Левая часть: Управление активностью -->
+                        <div class="flex items-center gap-6">
+                            <h2 class="text-lg font-semibold text-gray-900">
+                                Управление активностью
+                            </h2>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                            <!-- Два календаря (занимают 3 колонки) -->
+                            <div class="lg:col-span-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto">
+                                    <!-- Календари -->
+                                    if len(currentUser.MonthHistory) > 0 {
+                                    <div class="flex items-center justify-center">
+                                        @widgets.Calendar(widgets.CalendarProps{
+                                        MonthName: currentUser.MonthHistory[0].Name,
+                                        FirstDay: currentUser.MonthHistory[0].WeekdayFirstMonth,
+                                        HistoryStatus: currentUser.MonthHistory[0].HistoryStatus,
+                                        })
+                                    </div>
+                                    }
+                                    if len(currentUser.MonthHistory) > 1 {
+                                    <div class="flex items-center justify-center">
+                                        @widgets.Calendar(widgets.CalendarProps{
+                                        MonthName: currentUser.MonthHistory[1].Name,
+                                        FirstDay: currentUser.MonthHistory[1].WeekdayFirstMonth,
+                                        HistoryStatus: currentUser.MonthHistory[1].HistoryStatus,
+                                        })
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                            <!-- Форма добавления статуса -->
+                            <div>
+                                @widgets.AddStatus()
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+        <!-- Пагинация -->
+        @components.PaginationNum()
+    </div>
+</div>
+}
+@MultiUserActivityPageScripts()
 }
 
 templ MultiUserActivityPageScripts() {
-	<script>
+<script>
     function toggleUserCalendar(userId) {
         const element = document.getElementById(userId);
         const icon = document.getElementById('toggle-icon-' + userId);

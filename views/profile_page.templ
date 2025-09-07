@@ -59,7 +59,7 @@ initials := viewutils.GetInitals(props.Employee.FirstName, props.Employee.LastNa
 							<span class="text-sm font-medium text-gray-700">Отдел</span>
 						</div>
 						<p class="text-gray-900 font-semibold text-lg">
-							{ props.Employee.Department }
+							{ props.Employee.Department.Name } <!-- Исправлено здесь -->
 						</p>
 					</div>
 					<!-- Статус -->

@@ -8,9 +8,17 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "sitex/views/layout"
+import (
+	"fmt"
+	"sitex/internal/user"
+	"sitex/views/layout"
+)
 
-func CreateUserPage() templ.Component {
+type CreateUserPageProps struct {
+	Departments []user.Department
+}
+
+func CreateUserPage(props CreateUserPageProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -43,7 +51,47 @@ func CreateUserPage() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full p-6\"><!-- Заголовок --><div class=\"mb-8\"><h1 class=\"text-lg font-semibold text-gray-900\">Создание пользователя</h1><p class=\"text-gray-600 mt-2\">Добавление нового пользователя в систему</p></div><!-- Форма создания --><div id=\"create-result\"></div><form hx-post=\"/api/create_user\" hx-swap=\"outerHTML\" class=\"bg-white rounded-lg shadow-sm border border-gray-200 p-6\" hx-ext=\"response-targets\" hx-trigger=\"submit\" hx-target-error=\"#create-result\" data-400=\"#create-result\" hx-swap=\"innerHTML\"><!-- Основная информация --><div class=\"flex items-center mb-8\"><div class=\"w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-bold\"><i class=\"fas fa-user-plus text-xl\"></i></div><div class=\"ml-6 flex-1\"><!-- Фамилия --><div class=\"mb-4\"><label class=\"block text-sm font-medium text-gray-700 mb-1\">Фамилия *</label> <input type=\"text\" name=\"last_name\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required placeholder=\"Введите фамилию\"></div><!-- Имя --><div class=\"mb-4\"><label class=\"block text-sm font-medium text-gray-700 mb-1\">Имя *</label> <input type=\"text\" name=\"first_name\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required placeholder=\"Введите имя\"></div><!-- Email --><div class=\"mb-4\"><label class=\"block text-sm font-medium text-gray-700 mb-1\">Email *</label> <input type=\"email\" name=\"email\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required placeholder=\"email@example.com\"></div></div></div><!-- Пароль --><div class=\"grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6\"><!-- Пароль --><div><label class=\"block text-sm font-medium text-gray-700 mb-2\">Пароль *</label> <input type=\"password\" name=\"password\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required minlength=\"6\" placeholder=\"Минимум 6 символов\"></div><!-- Подтверждение пароля --><div><label class=\"block text-sm font-medium text-gray-700 mb-2\">Подтверждение пароля *</label> <input type=\"password\" name=\"confirm_password\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required minlength=\"6\" placeholder=\"Повторите пароль\"></div></div><!-- Информационные карточки --><div class=\"grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6\"><!-- Должность --><div><label class=\"block text-sm font-medium text-gray-700 mb-2\">Должность</label> <input type=\"text\" name=\"position\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" placeholder=\"Введите должность\"></div><!-- Отдел --><div><label class=\"block text-sm font-medium text-gray-700 mb-2\">Отдел</label> <input type=\"text\" name=\"department\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" placeholder=\"Введите отдел\"></div><!-- Роль --><div class=\"flex items-center justify-between py-2\"><div><label class=\"text-sm font-medium text-gray-700\">Права администратора</label><p class=\"text-xs text-gray-500\">Предоставить полный доступ к системе</p></div><label class=\"relative inline-flex items-center cursor-pointer\"><input type=\"checkbox\" name=\"is_admin\" value=\"true\" class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600\"></div></label></div><!-- Статус аккаунта --><div class=\"flex items-center justify-between py-2\"><div><label class=\"text-sm font-medium text-gray-700\">Активен</label><p class=\"text-xs text-gray-500\">Активировать аккаунт сразу</p></div><label class=\"relative inline-flex items-center cursor-pointer\"><input type=\"checkbox\" name=\"is_active\" value=\"true\" checked class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600\"></div></label></div></div><!-- Валидация пароля --><div class=\"p-4 bg-blue-50 rounded-lg border border-blue-100 mb-6\"><p class=\"text-sm text-blue-800\"><strong class=\"block mb-1\">Требования к паролю:</strong> • Минимум 6 символов</p></div><!-- Кнопки действий --><div class=\"border-t border-gray-200 pt-6 flex space-x-4 justify-end\"><a href=\"/\" class=\"px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium\">Отмена</a> <button type=\"submit\" class=\"px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium\"><i class=\"fas fa-plus mr-2\"></i> Создать пользователя</button></div></form></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full p-6\"><!-- Заголовок --><div class=\"mb-8\"><h1 class=\"text-lg font-semibold text-gray-900\">Создание пользователя</h1><p class=\"text-gray-600 mt-2\">Добавление нового пользователя в систему</p></div><!-- Форма создания --><div id=\"create-result\"></div><form hx-post=\"/api/create_user\" hx-swap=\"outerHTML\" class=\"bg-white rounded-lg shadow-sm border border-gray-200 p-6\" hx-ext=\"response-targets\" hx-trigger=\"submit\" hx-target-error=\"#create-result\" data-400=\"#create-result\" hx-swap=\"innerHTML\"><!-- Основная информация --><div class=\"flex items-center mb-8\"><div class=\"w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-bold\"><i class=\"fas fa-user-plus text-xl\"></i></div><div class=\"ml-6 flex-1\"><!-- Фамилия --><div class=\"mb-4\"><label class=\"block text-sm font-medium text-gray-700 mb-1\">Фамилия *</label> <input type=\"text\" name=\"last_name\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required placeholder=\"Введите фамилию\"></div><!-- Имя --><div class=\"mb-4\"><label class=\"block text-sm font-medium text-gray-700 mb-1\">Имя *</label> <input type=\"text\" name=\"first_name\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required placeholder=\"Введите имя\"></div><!-- Email --><div class=\"mb-4\"><label class=\"block text-sm font-medium text-gray-700 mb-1\">Email *</label> <input type=\"email\" name=\"email\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required placeholder=\"email@example.com\"></div></div></div><!-- Пароль --><div class=\"grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6\"><!-- Пароль --><div><label class=\"block text-sm font-medium text-gray-700 mb-2\">Пароль *</label> <input type=\"password\" name=\"password\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required minlength=\"6\" placeholder=\"Минимум 6 символов\"></div><!-- Подтверждение пароля --><div><label class=\"block text-sm font-medium text-gray-700 mb-2\">Подтверждение пароля *</label> <input type=\"password\" name=\"confirm_password\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required minlength=\"6\" placeholder=\"Повторите пароль\"></div></div><!-- Информационные карточки --><div class=\"grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6\"><!-- Должность --><div><label class=\"block text-sm font-medium text-gray-700 mb-2\">Должность</label> <input type=\"text\" name=\"position\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" placeholder=\"Введите должность\"></div><!-- Отдел --><div><label class=\"block text-sm font-medium text-gray-700 mb-2\">Отдел *</label><div class=\"flex gap-2\"><select name=\"department_id\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required><option value=\"\">Выберите отдел</option> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, dept := range props.Departments {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<option value=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var3 string
+				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", dept.ID))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/create_user_page.templ`, Line: 130, Col: 51}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var4 string
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(dept.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/create_user_page.templ`, Line: 130, Col: 65}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</option>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</select> <button type=\"button\" onclick=\"toggleNewDepartment()\" class=\"px-3 py-2 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition-colors\"><i class=\"fas fa-plus\"></i></button></div><!-- Поле для нового отдела (скрыто по умолчанию) --><div id=\"new-department-field\" class=\"hidden mt-2\"><input type=\"text\" name=\"new_department\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" placeholder=\"Введите название нового отдела\"></div></div><!-- Роль --><div class=\"flex items-center justify-between py-2\"><div><label class=\"text-sm font-medium text-gray-700\">Права администратора</label><p class=\"text-xs text-gray-500\">Предоставить полный доступ к системе</p></div><label class=\"relative inline-flex items-center cursor-pointer\"><input type=\"checkbox\" name=\"is_admin\" value=\"true\" class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600\"></div></label></div><!-- Статус аккаунта --><div class=\"flex items-center justify-between py-2\"><div><label class=\"text-sm font-medium text-gray-700\">Активен</label><p class=\"text-xs text-gray-500\">Активировать аккаунт сразу</p></div><label class=\"relative inline-flex items-center cursor-pointer\"><input type=\"checkbox\" name=\"is_active\" value=\"true\" checked class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600\"></div></label></div></div><!-- Валидация пароля --><div class=\"p-4 bg-blue-50 rounded-lg border border-blue-100 mb-6\"><p class=\"text-sm text-blue-800\"><strong class=\"block mb-1\">Требования к паролю:</strong> • Минимум 6 символов</p></div><!-- Кнопки действий --><div class=\"border-t border-gray-200 pt-6 flex space-x-4 justify-end\"><a href=\"/\" class=\"px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium\">Отмена</a> <button type=\"submit\" class=\"px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium\"><i class=\"fas fa-plus mr-2\"></i> Создать пользователя</button></div></form></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = CreateUserPageScripts().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -54,6 +102,35 @@ func CreateUserPage() templ.Component {
 			MetaDescription: "Создание нового пользователя системы",
 			IsAuthenticated: true,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func CreateUserPageScripts() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<script>\n    function toggleNewDepartment() {\n        const newDeptField = document.getElementById('new-department-field');\n        const deptSelect = document.querySelector('select[name=\"department_id\"]');\n\n        if (newDeptField.classList.contains('hidden')) {\n            newDeptField.classList.remove('hidden');\n            deptSelect.disabled = true;\n            deptSelect.value = '';\n        } else {\n            newDeptField.classList.add('hidden');\n            deptSelect.disabled = false;\n            document.querySelector('input[name=\"new_department\"]').value = '';\n        }\n    }\n\n    // Валидация формы - либо выбран отдел, либо введен новый\n    document.addEventListener('DOMContentLoaded', function () {\n        const form = document.querySelector('form');\n        if (form) {\n            form.addEventListener('submit', function (e) {\n                const deptSelect = document.querySelector('select[name=\"department_id\"]');\n                const newDeptInput = document.querySelector('input[name=\"new_department\"]');\n\n                if (!deptSelect.disabled && !deptSelect.value) {\n                    e.preventDefault();\n                    alert('Пожалуйста, выберите отдел или добавьте новый');\n                    return false;\n                }\n\n                if (deptSelect.disabled && !newDeptInput.value.trim()) {\n                    e.preventDefault();\n                    alert('Пожалуйста, введите название нового отдела');\n                    return false;\n                }\n            });\n        }\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

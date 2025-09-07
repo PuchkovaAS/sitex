@@ -47,22 +47,51 @@ func (repo *UserRepository) ChangePassword(email string, password string) error 
 	return nil
 }
 
-func (repo *UserRepository) CreateUser(firstName, lastName, email, department, position, password string, isActive, isAdmin bool) error {
+func (repo *UserRepository) GetAllDepartments() ([]Department, error) {
+	var departments []Department
+	err := repo.DataBase.Find(&departments).Error
+	return departments, err
+}
+
+func (repo *UserRepository) FindOrCreateDepartment(departmentName string) (Department, error) {
+	// Найти или создать отдел
+	var department Department
+	result := repo.DataBase.Where("name = ?", departmentName).First(&department)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			// Создать новый отдел
+			department = Department{Name: departmentName}
+			if err := repo.DataBase.Create(&department).Error; err != nil {
+				return Department{}, err
+			}
+		} else {
+			return Department{}, result.Error
+		}
+	}
+
+	return department, nil
+}
+
+func (repo *UserRepository) CreateUserWithDepartment(
+	firstName, lastName, email, departmentName, position, password string,
+	isActive, isAdmin bool,
+) error {
 	user := &Employee{
 		FirstName:    firstName,
 		LastName:     lastName,
-		Department:   department,
 		Position:     position,
 		IsAdmin:      isAdmin,
 		IsActive:     isActive,
 		PasswordHash: password,
 		Email:        email,
 	}
-	result := repo.DataBase.Create(user)
-	if result.Error != nil {
-		return result.Error
+	department, err := repo.FindOrCreateDepartment(departmentName)
+	if err != nil {
+		return err
 	}
-	return nil
+
+	user.DepartmentID = department.ID
+	return repo.DataBase.Create(user).Error
 }
 
 func (repo *UserRepository) EmailExists(email string) bool {
@@ -76,7 +105,9 @@ func (repo *UserRepository) EmailExists(email string) bool {
 
 func (repo *UserRepository) GetEmployeeInfo(email string) (Employee, error) {
 	var employee Employee
-	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
+	if err := repo.DataBase.DB.
+		Preload("Department").
+		Where("email = ?", email).First(&employee).Error; err != nil {
 		return Employee{}, fmt.Errorf("сотрудник не найден: %w", err)
 	}
 	return employee, nil
@@ -295,15 +326,25 @@ type UserUpdateData struct {
 }
 
 func (repo *UserRepository) UpdateUserProfile(email string, data UserUpdateData) error {
-	return repo.DataBase.DB.Model(&Employee{}).
+	var departmentID uint
+
+	if data.Department != "" {
+		department, err := repo.FindOrCreateDepartment(data.Department)
+		if err != nil {
+			return err
+		}
+		departmentID = department.ID
+	}
+
+	return repo.DataBase.Model(&Employee{}).
 		Where("email = ?", email).
 		Updates(map[string]any{
-			"first_name": data.FirstName,
-			"last_name":  data.LastName,
-			"position":   data.Position,
-			"department": data.Department,
-			"is_active":  data.IsActive,
-			"is_admin":   data.IsAdmin,
-			"updated_at": time.Now(),
+			"first_name":    data.FirstName,
+			"last_name":     data.LastName,
+			"position":      data.Position,
+			"department_id": departmentID,
+			"is_active":     data.IsActive,
+			"is_admin":      data.IsAdmin,
+			"updated_at":    time.Now(),
 		}).Error
 }

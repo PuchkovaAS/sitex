@@ -16,7 +16,8 @@ import (
 )
 
 type UpdateProfileProps struct {
-	Employee user.Employee
+	Employee    user.Employee
+	Departments []user.Department
 }
 
 func UpdateProfilePage(props UpdateProfileProps) templ.Component {
@@ -61,7 +62,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", props.Employee.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 35, Col: 83}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 43, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -74,7 +75,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(initials)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 40, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 49, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -87,7 +88,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.LastName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 46, Col: 87}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 58, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -100,7 +101,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.FirstName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 53, Col: 89}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 69, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -113,7 +114,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.Email)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 60, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 79, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -126,7 +127,7 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.Email)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 62, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 83, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -139,59 +140,86 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.Position)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 71, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 95, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" placeholder=\"Введите должность\"></div><!-- Отдел --><div><label class=\"block text-sm font-medium text-gray-700 mb-2\">Отдел</label> <input type=\"text\" name=\"department\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" placeholder=\"Введите должность\"></div><!-- Отдел --><div><label class=\"block text-sm font-medium text-gray-700 mb-2\">Отдел *</label><div class=\"flex gap-2\"><select name=\"department_id\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required><option value=\"\">Выберите отдел</option> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(props.Employee.Department)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 78, Col: 86}
+			for _, dept := range props.Departments {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<option value=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", dept.Name))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 111, Col: 53}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(dept.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 111, Col: 67}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</option>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" placeholder=\"Введите отдел\"></div><!-- Роль --><div class=\"flex items-center justify-between py-2\"><div><label class=\"text-sm font-medium text-gray-700\">Права администратора</label><p class=\"text-xs text-gray-500\">Предоставить полный доступ к системе</p></div><label class=\"relative inline-flex items-center cursor-pointer\"><input type=\"checkbox\" name=\"is_admin\" value=\"true\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</select> <button type=\"button\" onclick=\"toggleNewDepartment()\" class=\"px-3 py-2 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition-colors\"><i class=\"fas fa-plus\"></i></button></div><!-- Поле для нового отдела (скрыто по умолчанию) --><div id=\"new-department-field\" class=\"hidden mt-2\"><input type=\"text\" name=\"new_department\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" placeholder=\"Введите название нового отдела\"></div></div><!-- Роль --><div class=\"flex items-center justify-between py-2\"><div><label class=\"text-sm font-medium text-gray-700\">Права администратора</label><p class=\"text-xs text-gray-500\">Предоставить полный доступ к системе</p></div><label class=\"relative inline-flex items-center cursor-pointer\"><input type=\"checkbox\" name=\"is_admin\" value=\"true\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if props.Employee.IsAdmin {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " checked")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " checked")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600\"></div></label></div><!-- Статус аккаунта --><div class=\"flex items-center justify-between py-2\"><div><label class=\"text-sm font-medium text-gray-700\">Статус аккаунта</label><p class=\"text-xs text-gray-500\">Активировать или деактивировать аккаунт</p></div><label class=\"relative inline-flex items-center cursor-pointer\"><input type=\"checkbox\" name=\"is_active\" value=\"true\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600\"></div></label></div><!-- Статус аккаунта --><div class=\"flex items-center justify-between py-2\"><div><label class=\"text-sm font-medium text-gray-700\">Статус аккаунта</label><p class=\"text-xs text-gray-500\">Активировать или деактивировать аккаунт</p></div><label class=\"relative inline-flex items-center cursor-pointer\"><input type=\"checkbox\" name=\"is_active\" value=\"true\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if props.Employee.IsActive {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, " checked")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " checked")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600\"></div></label></div></div><!-- Кнопки действий --><div class=\"border-t border-gray-200 pt-6 flex space-x-4 justify-end\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, " class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600\"></div></label></div></div><!-- Кнопки действий --><div class=\"border-t border-gray-200 pt-6 flex space-x-4 justify-end\"><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var11 templ.SafeURL
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/profile?email=%s", props.Employee.Email))
+			var templ_7745c5c3_Var12 templ.SafeURL
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/profile?email=%s", props.Employee.Email))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 113, Col: 76}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 178, Col: 67}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" class=\"px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium\">Отмена</a> <button type=\"submit\" class=\"px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium\">Сохранить изменения</button></div></form></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" class=\"px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium\">Отмена</a> <button type=\"submit\" class=\"px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium\">Сохранить изменения</button></div></form></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = UpdateProfilePageScripts().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -202,6 +230,35 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 			MetaDescription: "Редактирование данных пользователя",
 			IsAuthenticated: true,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func UpdateProfilePageScripts() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<script>\n    function toggleNewDepartment() {\n        const newDeptField = document.getElementById('new-department-field');\n        const deptSelect = document.querySelector('select[name=\"department_id\"]');\n\n        if (newDeptField.classList.contains('hidden')) {\n            newDeptField.classList.remove('hidden');\n            deptSelect.disabled = true;\n            deptSelect.value = '';\n        } else {\n            newDeptField.classList.add('hidden');\n            deptSelect.disabled = false;\n            document.querySelector('input[name=\"new_department\"]').value = '';\n        }\n    }\n\n    // Валидация формы - либо выбран отдел, либо введен новый\n    document.addEventListener('DOMContentLoaded', function () {\n        const form = document.querySelector('form');\n        if (form) {\n            form.addEventListener('submit', function (e) {\n                const deptSelect = document.querySelector('select[name=\"department_id\"]');\n                const newDeptInput = document.querySelector('input[name=\"new_department\"]');\n\n                if (!deptSelect.disabled && !deptSelect.value) {\n                    e.preventDefault();\n                    alert('Пожалуйста, выберите отдел или добавьте новый');\n                    return false;\n                }\n\n                if (deptSelect.disabled && !newDeptInput.value.trim()) {\n                    e.preventDefault();\n                    alert('Пожалуйста, введите название нового отдела');\n                    return false;\n                }\n            });\n        }\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

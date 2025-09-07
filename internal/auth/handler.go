@@ -126,6 +126,13 @@ func (h *AuthHandler) apiCreateUser(c *fiber.Ctx) error {
 		return templeadapter.Render(c, component, http.StatusOK)
 	}
 
+	var departmentName string
+	if form.NewDepartment != "" {
+		departmentName = strings.TrimSpace(form.NewDepartment)
+	} else {
+		departmentName = form.Department
+	}
+
 	// Валидация
 	error := validate.Validate(
 		&validators.StringIsPresent{
@@ -145,7 +152,7 @@ func (h *AuthHandler) apiCreateUser(c *fiber.Ctx) error {
 		},
 		&validators.StringIsPresent{
 			Name:    "Отдел",
-			Field:   form.Department,
+			Field:   departmentName,
 			Message: "Отдел не задан",
 		},
 		&validators.EmailIsPresent{
@@ -201,6 +208,13 @@ func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 		return templeadapter.Render(c, component, http.StatusOK)
 	}
 
+	var departmentName string
+	if form.NewDepartment != "" {
+		departmentName = strings.TrimSpace(form.NewDepartment)
+	} else {
+		departmentName = form.Department
+	}
+
 	// Конвертируем строки в boolean
 	isActive := form.IsActive == "true"
 	isAdmin := form.IsAdmin == "true"
@@ -224,7 +238,7 @@ func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 		},
 		&validators.StringIsPresent{
 			Name:    "Отдел",
-			Field:   form.Department,
+			Field:   departmentName,
 			Message: "Отдел не задан",
 		},
 	)
@@ -241,7 +255,7 @@ func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 		FirstName:  strings.TrimSpace(form.FirstName),
 		LastName:   strings.TrimSpace(form.LastName),
 		Position:   strings.TrimSpace(form.Position),
-		Department: strings.TrimSpace(form.Department),
+		Department: departmentName,
 		IsActive:   isActive,
 		IsAdmin:    isAdmin,
 	}); err != nil {
