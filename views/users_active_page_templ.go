@@ -20,7 +20,7 @@ import (
 type MultiUserActivityPageProps struct {
 	Users             []user.ActivityInfo
 	Department        []user.Department
-	CurrentDepartment string
+	CurrentDepartment int
 	CurrentPage       int
 	TotalPages        int
 	TotalUsers        int
@@ -64,9 +64,9 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.CurrentDepartment == "0")
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.CurrentDepartment == -1)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 38, Col: 81}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 42, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -84,7 +84,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", department.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 40, Col: 72}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 45, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -95,10 +95,9 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d",
-					department.ID) == props.CurrentDepartment)
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(department.ID == uint(props.CurrentDepartment))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 41, Col: 67}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 46, Col: 67}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -111,7 +110,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", department.Name))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 42, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 48, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -142,7 +141,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for curInd, currentUser := range props.Users {
+			for _, currentUser := range props.Users {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<!-- Тестовые пользователи --> <div class=\"p-4\"><!-- Статистика пользователя -->")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -151,38 +150,12 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<!-- Кнопка раскрытия --><div class=\"flex justify-center mt-2\"><button class=\"p-1 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors\"><svg id=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("toggle-icon-user-%d", curInd))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 67, Col: 76}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"w-3 h-3 text-gray-500 transform rotate-0 transition-transform\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 9l-7 7-7-7\"></path></svg></button></div><!-- Блок активности пользователя (изначально скрыт) --><div id=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("user-%d", curInd))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 76, Col: 56}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"hidden bg-white rounded-lg shadow p-4 mt-2\"><div class=\"flex items-center justify-between mb-3\"><!-- Левая часть: Управление активностью --><div class=\"flex items-center gap-6\"><h2 class=\"text-lg font-semibold text-gray-900\">Управление активностью</h2></div></div><div><div class=\"grid grid-cols-1 lg:grid-cols-4 gap-6\"><!-- Два календаря (занимают 3 колонки) --><div class=\"lg:col-span-3\"><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto\"><!-- Календари -->")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<!-- Блок активности пользователя (изначально скрыт) --><div class=\"bg-white rounded-lg shadow p-4 mt-2\"><div class=\"flex items-center justify-between mb-3\"><!-- Левая часть: Управление активностью --><div class=\"flex items-center gap-6\"><h2 class=\"text-lg font-semibold text-gray-900\">Активность пользователя</h2></div></div><div><div class=\"px-8\"><!-- Календари --><div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  w-full\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if len(currentUser.MonthHistory) > 0 {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex items-center justify-center\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"flex justify-center w-full\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -194,13 +167,13 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
 				if len(currentUser.MonthHistory) > 1 {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"flex items-center justify-center\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex justify-center w-full\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -212,25 +185,35 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				if len(currentUser.MonthHistory) > 2 {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"flex justify-center w-full\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = widgets.Calendar(widgets.CalendarProps{
+						MonthName:     currentUser.MonthHistory[2].Name,
+						FirstDay:      currentUser.MonthHistory[2].WeekdayFirstMonth,
+						HistoryStatus: currentUser.MonthHistory[2].HistoryStatus,
+					}).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div><!-- Форма добавления статуса --><div>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = widgets.AddStatus().Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></div></div></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div><!-- Пагинация -->")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div><!-- Пагинация -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -238,7 +221,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -276,12 +259,12 @@ func MultiUserActivityPageScripts() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<script>\n    function toggleUserCalendar(userId) {\n        const element = document.getElementById(userId);\n        const icon = document.getElementById('toggle-icon-' + userId);\n\n        if (element.classList.contains('hidden')) {\n            element.classList.remove('hidden');\n            icon.classList.remove('rotate-0');\n            icon.classList.add('rotate-180');\n        } else {\n            element.classList.add('hidden');\n            icon.classList.remove('rotate-180');\n            icon.classList.add('rotate-0');\n        }\n    }\n\n    function changeDepartment(deptId) {\n        const searchInput = document.getElementById('search');\n        const searchQuery = searchInput ? searchInput.value : '';\n        const url = new URL(window.location.href);\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n        if (searchQuery) {\n            url.searchParams.set('search', searchQuery);\n        }\n        window.location.href = url.toString();\n    }\n\n    function performSearch() {\n        const searchInput = document.getElementById('search');\n        const deptSelect = document.getElementById('department');\n\n        if (!searchInput || !deptSelect) return;\n\n        const searchQuery = searchInput.value;\n        const deptId = deptSelect.value;\n        const url = new URL(window.location.href);\n        url.searchParams.set('search', searchQuery);\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n        window.location.href = url.toString();\n    }\n\n    // Обработка нажатия Enter в поле поиска\n    document.addEventListener('DOMContentLoaded', function () {\n        const searchInput = document.getElementById('search');\n        if (searchInput) {\n            searchInput.addEventListener('keypress', function (e) {\n                if (e.key === 'Enter') {\n                    performSearch();\n                }\n            });\n        }\n    });\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<script>\n    function changeDepartment(deptId) {\n        const searchInput = document.getElementById('search');\n        const searchQuery = searchInput ? searchInput.value : '';\n        const url = new URL(window.location.href);\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n        if (searchQuery) {\n            url.searchParams.set('search', searchQuery);\n        }\n        window.location.href = url.toString();\n    }\n\n    function performSearch() {\n        const searchInput = document.getElementById('search');\n        const deptSelect = document.getElementById('department');\n\n        if (!searchInput || !deptSelect) return;\n\n        const searchQuery = searchInput.value;\n        const deptId = deptSelect.value;\n        const url = new URL(window.location.href);\n        url.searchParams.set('search', searchQuery);\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n        window.location.href = url.toString();\n    }\n\n    // Обработка нажатия Enter в поле поиска\n    document.addEventListener('DOMContentLoaded', function () {\n        const searchInput = document.getElementById('search');\n        if (searchInput) {\n            searchInput.addEventListener('keypress', function (e) {\n                if (e.key === 'Enter') {\n                    performSearch();\n                }\n            });\n        }\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

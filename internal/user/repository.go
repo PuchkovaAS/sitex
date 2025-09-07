@@ -348,3 +348,11 @@ func (repo *UserRepository) UpdateUserProfile(email string, data UserUpdateData)
 			"updated_at":    time.Now(),
 		}).Error
 }
+
+func (repo *UserRepository) GetCountUsersByDepartment(departmentId int) (int64, error) {
+	var count int64
+	err := repo.DataBase.Model(&Employee{}).
+		Where("department_id = ?", departmentId).
+		Count(&count).Error
+	return count, err
+}

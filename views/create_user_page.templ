@@ -26,10 +26,11 @@ templ CreateUserPage(props CreateUserPageProps) {
 			<div id="create-result"></div>
 			<form
 				hx-post="/api/create_user"
-				hx-swap="outerHTML"
+				hx-swap="innerHTML"
 				class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
 				hx-ext="response-targets"
 				hx-trigger="submit"
+				hx-target="#create-result"
 				hx-target-error="#create-result"
 				data-400="#create-result"
 				hx-swap="innerHTML"
@@ -127,7 +128,7 @@ templ CreateUserPage(props CreateUserPageProps) {
 							>
 								<option value="">Выберите отдел</option>
 								for _, dept := range props.Departments {
-									<option value={ fmt.Sprintf("%d", dept.ID) }>{ dept.Name }</option>
+									<option value={ fmt.Sprintf("%s", dept.Name) }>{ dept.Name }</option>
 								}
 							</select>
 							<button

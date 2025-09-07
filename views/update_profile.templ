@@ -31,10 +31,11 @@ initials := viewutils.GetInitals(props.Employee.FirstName, props.Employee.LastNa
 			<div id="update-result"></div>
 			<form
 				hx-put="/api/profile_update"
-				hx-swap="outerHTML"
+				hx-swap="innerHTML"
 				class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
 				hx-ext="response-targets"
 				hx-trigger="submit"
+				hx-target="#update-result"
 				hx-target-error="#update-result"
 				data-400="#update-result"
 				hx-swap="innerHTML"

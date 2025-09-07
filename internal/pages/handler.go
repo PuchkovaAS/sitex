@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"math"
 	"net/http"
 	"sitex/internal/dt"
 	"sitex/internal/user"
@@ -115,8 +116,8 @@ func (h *PagesHandler) getEmailForChangeUser(email string, c *fiber.Ctx) string 
 func (h *PagesHandler) changePassword(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
-
 	emailUser := h.getEmailForChangeUser(email, c)
+
 	component := views.ChangePasswordPage(emailUser)
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -124,8 +125,8 @@ func (h *PagesHandler) changePassword(c *fiber.Ctx) error {
 func (h *PagesHandler) updateUser(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
-
 	emailUser := h.getEmailForChangeUser(email, c)
+
 	employee, err := h.repository.GetEmployeeInfo(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
@@ -142,7 +143,9 @@ func (h *PagesHandler) updateUser(c *fiber.Ctx) error {
 func (h *PagesHandler) profile(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
-	employee, err := h.repository.GetEmployeeInfo(email)
+	emailUser := h.getEmailForChangeUser(email, c)
+
+	employee, err := h.repository.GetEmployeeInfo(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
@@ -156,8 +159,9 @@ func (h *PagesHandler) profile(c *fiber.Ctx) error {
 func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
+	emailUser := h.getEmailForChangeUser(email, c)
 
-	yearHistory, statusCount, err := h.userService.GetYearHistory(email)
+	yearHistory, statusCount, err := h.userService.GetYearHistory(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
@@ -172,8 +176,9 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
+	emailUser := h.getEmailForChangeUser(email, c)
 
-	lastAddStatus, err := h.repository.GetLastAddStatus(email)
+	lastAddStatus, err := h.repository.GetLastAddStatus(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
@@ -187,14 +192,15 @@ func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
 func (h *PagesHandler) home(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
+	emailUser := h.getEmailForChangeUser(email, c)
 
 	month := c.QueryInt("month", int(time.Now().Month()))
-	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, email, 2)
+	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, emailUser, 2)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
 	}
-	lastAddStatus, err := h.repository.GetLastAddStatus(email, 6)
+	lastAddStatus, err := h.repository.GetLastAddStatus(emailUser, 6)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
@@ -213,7 +219,19 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 	h.UpdateUserInfo(email, c)
 
 	month := c.QueryInt("month", int(time.Now().Month()))
-	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, email, 2)
+	departmentID := c.QueryInt("department", -1)
+
+	PAGE_ITEMS := 4
+	page := c.QueryInt("page", 1)
+
+	TotalUsers, err := h.repository.GetCountUsersByDepartment(departmentID)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+	TotalPages := int(math.Ceil(float64(TotalUsers) / float64(PAGE_ITEMS)))
+
+	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, email, 3)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
@@ -223,10 +241,10 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 
 	component := views.MultiUserActivityPage(views.MultiUserActivityPageProps{
 		Department:        departments,
-		CurrentDepartment: "УКП",
-		CurrentPage:       1,
-		TotalPages:        3,
-		TotalUsers:        5,
+		CurrentDepartment: -1,
+		CurrentPage:       page,
+		TotalPages:        TotalPages,
+		TotalUsers:        int(TotalUsers),
 		Users: []user.ActivityInfo{
 			{
 				StatusCount:  statusCount,
