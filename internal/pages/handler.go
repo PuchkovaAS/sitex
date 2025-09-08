@@ -219,9 +219,9 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 	h.UpdateUserInfo(email, c)
 
 	month := c.QueryInt("month", int(time.Now().Month()))
-	departmentID := c.QueryInt("department", -1)
+	departmentID := c.QueryInt("department", 0)
 
-	PAGE_ITEMS := 4
+	PAGE_ITEMS := 3
 	page := c.QueryInt("page", 1)
 
 	TotalUsers, err := h.repository.GetCountUsersByDepartment(departmentID)
@@ -241,7 +241,7 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 
 	component := views.MultiUserActivityPage(views.MultiUserActivityPageProps{
 		Department:        departments,
-		CurrentDepartment: -1,
+		CurrentDepartment: departmentID,
 		CurrentPage:       page,
 		TotalPages:        TotalPages,
 		TotalUsers:        int(TotalUsers),
@@ -257,6 +257,9 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 				CurrentMonth: month,
 			},
 		},
+		CurrentMonth: month,
+		UsersOnPage:  PAGE_ITEMS,
+		QueryParams:  c.Queries(), // Передаем параметры запроса
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

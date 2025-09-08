@@ -69,6 +69,7 @@ func HistoryStatusPage(props HistoryStatusProps) templ.Component {
 					OneTimeEvent: item.OneTimeEvent,
 					DateAdd:      item.UpdatedAt,
 					WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
+					Email:        item.Employee.Email,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

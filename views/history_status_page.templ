@@ -31,6 +31,7 @@ templ HistoryStatusPage(props HistoryStatusProps) {
 						OneTimeEvent: item.OneTimeEvent,
 						DateAdd:      item.UpdatedAt,
 						WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
+						Email:        item.Employee.Email,
 					})
 				</div>
 			}

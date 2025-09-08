@@ -2,6 +2,7 @@ package widgets
 
 import (
 	"fmt"
+	"sitex/views/components"
 	"sitex/views/view_utils"
 	"time"
 )
@@ -13,6 +14,7 @@ type StatusEventProps struct {
 	DateAdd      time.Time
 	Description  string
 	UserName     string
+	Email        string
 	OneTimeEvent bool
 	WhoAddEvent  string
 }
@@ -27,6 +29,8 @@ confirmMessage := fmt.Sprintf("Удалить событие от %s? Стату
 if props.Description != "" {
 	confirmMessage += ". Описание: " + props.Description
 }
+
+emailParam := "?email=" + props.Email
 	}}
 	<div id="delete-result"></div>
 	<div
@@ -51,14 +55,22 @@ if props.Description != "" {
 			<!-- Информация о пользователях -->
 			<div class="flex-1 min-w-0">
 				<!-- Сотрудник -->
-				<p class="text-sm text-gray-700 font-medium truncate">{ props.UserName }</p>
+				<div class=" relative group">
+					<a
+						href={ fmt.Sprintf("/profile%s", emailParam) }
+						class="flex flex-col items-start hover:bg-gray-50 p-2 rounded-lg transition-colors"
+					>
+						<p class="text-sm text-gray-700 font-medium truncate">{ props.UserName }</p>
+					</a>
+					@components.UserLinks(emailParam)
+				</div>
 				<!-- Кто добавил -->
 				<p class="text-xs text-gray-500 truncate">добавил(а): { props.WhoAddEvent }</p>
 			</div>
 			<!-- Описание -->
 			if props.Description != "" {
 				<div class="flex-1 min-w-0">
-					<p class="text-xs text-gray-500 truncate">{ props.Description }</p>
+					<p class="text-xs text-gray-500 font-semibold truncate">{ props.Description }</p>
 				</div>
 			}
 			<!-- Кнопка удаления -->

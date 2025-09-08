@@ -24,6 +24,10 @@ type MultiUserActivityPageProps struct {
 	CurrentPage       int
 	TotalPages        int
 	TotalUsers        int
+	CurrentMonth      int
+	UsersOnPage       int
+
+	QueryParams map[string]string
 }
 
 func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
@@ -59,14 +63,14 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-4\"><!-- Фильтры и поиск --><div class=\"bg-white rounded-lg shadow p-4\"><div class=\"flex flex-col md:flex-row gap-4 items-center justify-between\"><!-- Левая часть: отдел и месяц --><div class=\"flex flex-col md:flex-row gap-4 w-full md:w-auto\"><!-- Выбор отдела --><div class=\"w-full md:w-auto\"><label for=\"department\" class=\"block text-sm font-medium text-gray-700 mb-1\">Отдел</label> <select id=\"department\" name=\"department\" onchange=\"changeDepartment(this.value)\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500\"><option value=\"0\" selected=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-3\"><!-- Фильтры и поиск --><div class=\"bg-white rounded-lg shadow p-4\"><div class=\"flex flex-col md:flex-row gap-4 items-center justify-between\"><!-- Левая часть: отдел и месяц --><div class=\"flex flex-col md:flex-row gap-4 w-full md:w-auto\"><!-- Выбор отдела --><div class=\"w-full md:w-auto\"><label for=\"department\" class=\"block text-sm font-medium text-gray-700 mb-1\">Отдел</label> <select id=\"department\" name=\"department\" onchange=\"changeDepartment(this.value)\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500\"><option value=\"0\" selected=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.CurrentDepartment == -1)
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.CurrentDepartment == 0)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 42, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 46, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -77,59 +81,79 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			for _, department := range props.Department {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<option value=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var4 string
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", department.ID))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 45, Col: 50}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" selected=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(department.ID == uint(props.CurrentDepartment))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 46, Col: 67}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", department.Name))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 48, Col: 46}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</option>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
+				if department.ID == uint(props.CurrentDepartment) {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<option value=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var4 string
+					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", department.ID))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 49, Col: 58}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" selected>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var5 string
+					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", department.Name))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 50, Col: 47}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</option>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				} else {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<option value=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var6 string
+					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", department.ID))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 53, Col: 58}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var7 string
+					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", department.Name))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 54, Col: 47}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</option>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</select></div><!-- Выбор месяца -->")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</select></div><!-- Выбор месяца -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectMonth(components.SelcectMonthProps{CurrentMonth: 9}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectMonth(components.SelcectMonthProps{CurrentMonth: props.CurrentMonth}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><!-- Правая часть: поиск --><div class=\"w-full md:w-auto\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><!-- Правая часть: поиск --><div class=\"w-full md:w-auto\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -137,12 +161,12 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div></div><!-- Список пользователей --><div><div class=\"divide-y divide-gray-200\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div></div><!-- Список пользователей --><div><div class=\"divide-y divide-gray-200\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, currentUser := range props.Users {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<!-- Тестовые пользователи --> <div class=\"p-4\"><!-- Статистика пользователя -->")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<!-- Тестовые пользователи --> <div class=\"p-4\"><!-- Статистика пользователя -->")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -150,12 +174,12 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<!-- Блок активности пользователя (изначально скрыт) --><div class=\"bg-white rounded-lg shadow p-4 mt-2\"><div class=\"flex items-center justify-between mb-3\"><!-- Левая часть: Управление активностью --><div class=\"flex items-center gap-6\"><h2 class=\"text-lg font-semibold text-gray-900\">Активность пользователя</h2></div></div><div><div class=\"px-8\"><!-- Календари --><div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  w-full\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<!-- Блок активности пользователя (изначально скрыт) --><div class=\"bg-white rounded-lg shadow p-4 mt-2\"><div class=\"flex items-center justify-between mb-3\"><!-- Левая часть: Управление активностью --><div class=\"flex items-center gap-6\"><h2 class=\"text-lg font-semibold text-gray-900\">Активность пользователя</h2></div></div><div><div class=\"px-8\"><!-- Календари --><div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  w-full\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if len(currentUser.MonthHistory) > 0 {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"flex justify-center w-full\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex justify-center w-full\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -167,13 +191,13 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
 				if len(currentUser.MonthHistory) > 1 {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex justify-center w-full\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"flex justify-center w-full\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -185,13 +209,13 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
 				if len(currentUser.MonthHistory) > 2 {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"flex justify-center w-full\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"flex justify-center w-full\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -203,25 +227,31 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div></div></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div></div></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div><!-- Пагинация -->")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div><!-- Пагинация -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.PaginationNum().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.PaginationNum(components.PaginationNumProps{
+				TotalPage:   props.TotalPages,
+				CurrentPage: props.CurrentPage,
+				TotalUsers:  props.TotalUsers,
+				UsersOnPage: props.UsersOnPage,
+				QueryParams: props.QueryParams,
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -259,12 +289,12 @@ func MultiUserActivityPageScripts() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<script>\n    function changeDepartment(deptId) {\n        const searchInput = document.getElementById('search');\n        const searchQuery = searchInput ? searchInput.value : '';\n        const url = new URL(window.location.href);\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n        if (searchQuery) {\n            url.searchParams.set('search', searchQuery);\n        }\n        window.location.href = url.toString();\n    }\n\n    function performSearch() {\n        const searchInput = document.getElementById('search');\n        const deptSelect = document.getElementById('department');\n\n        if (!searchInput || !deptSelect) return;\n\n        const searchQuery = searchInput.value;\n        const deptId = deptSelect.value;\n        const url = new URL(window.location.href);\n        url.searchParams.set('search', searchQuery);\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n        window.location.href = url.toString();\n    }\n\n    // Обработка нажатия Enter в поле поиска\n    document.addEventListener('DOMContentLoaded', function () {\n        const searchInput = document.getElementById('search');\n        if (searchInput) {\n            searchInput.addEventListener('keypress', function (e) {\n                if (e.key === 'Enter') {\n                    performSearch();\n                }\n            });\n        }\n    });\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<script>\n    function changeDepartment(deptId) {\n        const searchInput = document.getElementById('search');\n        const searchQuery = searchInput ? searchInput.value : '';\n        const url = new URL(window.location.href);\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n        if (searchQuery) {\n            url.searchParams.set('search', searchQuery);\n        }\n        window.location.href = url.toString();\n    }\n\n    function performSearch() {\n        const searchInput = document.getElementById('search');\n        const deptSelect = document.getElementById('department');\n\n        if (!searchInput || !deptSelect) return;\n\n        const searchQuery = searchInput.value;\n        const deptId = deptSelect.value;\n        const url = new URL(window.location.href);\n        url.searchParams.set('search', searchQuery);\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n        window.location.href = url.toString();\n    }\n\n    // Обработка нажатия Enter в поле поиска\n    document.addEventListener('DOMContentLoaded', function () {\n        const searchInput = document.getElementById('search');\n        if (searchInput) {\n            searchInput.addEventListener('keypress', function (e) {\n                if (e.key === 'Enter') {\n                    performSearch();\n                }\n            });\n        }\n    });\n\n    // Функция для формирования URL с текущими параметрами\n    function buildPageURL(page) {\n        const url = new URL(window.location.href);\n        url.searchParams.set('page', page.toString());\n        return url.toString();\n    }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

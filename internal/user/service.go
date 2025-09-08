@@ -222,6 +222,10 @@ func (service *UserService) GetMonthHistory(
 	var resultHistory []MonthHistory
 	statusCount := make(map[string]int)
 
+	if month < countMonth {
+		countMonth = month
+	}
+
 	currentTime := time.Date(time.Now().Year(), time.Month(month), 1, 0, 0, 0, 0, time.UTC)
 	for i := range countMonth {
 		// Вычисляем начало месяца (смещение на i месяцев назад)

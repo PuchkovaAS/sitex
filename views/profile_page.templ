@@ -3,6 +3,7 @@ package views
 import (
 	"fmt"
 	"sitex/internal/user"
+	"sitex/views/components"
 	"sitex/views/layout"
 	"sitex/views/view_utils"
 )
@@ -19,6 +20,7 @@ templ ProfilePage(props ProfileProps) {
 	}) {
 		{{
 initials := viewutils.GetInitals(props.Employee.FirstName, props.Employee.LastName)
+emailParam := "?email=" + props.Employee.Email
 		}}
 		<div class="w-full p-6">
 			<!-- Заголовок -->
@@ -35,11 +37,19 @@ initials := viewutils.GetInitals(props.Employee.FirstName, props.Employee.LastNa
 					>
 						{ initials }
 					</div>
-					<div class="ml-6">
-						<h2 class="text-lg font-semibold text-gray-900">
-							{ props.Employee.FirstName } { props.Employee.LastName }
-						</h2>
-						<p class="text-gray-500 text-lg">{ props.Employee.Email }</p>
+					<div class="ml-6 relative group">
+						<!-- ФИО с выпадающим меню при наведении -->
+						<a
+							href={ fmt.Sprintf("/profile%s", emailParam) }
+							class="flex flex-col items-start hover:bg-gray-50 p-2 rounded-lg transition-colors"
+						>
+							<h2 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+								{ props.Employee.LastName } { props.Employee.FirstName }
+							</h2>
+							<p class="text-gray-500 text-lg">{ props.Employee.Email }</p>
+						</a>
+						<!-- Выпадающее меню -->
+						@components.UserLinks(emailParam)
 					</div>
 				</div>
 				<!-- Информационные карточки -->
@@ -59,7 +69,7 @@ initials := viewutils.GetInitals(props.Employee.FirstName, props.Employee.LastNa
 							<span class="text-sm font-medium text-gray-700">Отдел</span>
 						</div>
 						<p class="text-gray-900 font-semibold text-lg">
-							{ props.Employee.Department.Name } <!-- Исправлено здесь -->
+							{ props.Employee.Department.Name }
 						</p>
 					</div>
 					<!-- Статус -->

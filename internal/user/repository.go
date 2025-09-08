@@ -351,8 +351,17 @@ func (repo *UserRepository) UpdateUserProfile(email string, data UserUpdateData)
 
 func (repo *UserRepository) GetCountUsersByDepartment(departmentId int) (int64, error) {
 	var count int64
-	err := repo.DataBase.Model(&Employee{}).
-		Where("department_id = ?", departmentId).
-		Count(&count).Error
+	var err error
+
+	if departmentId == 0 {
+		// Считаем всех пользователей
+		err = repo.DataBase.Model(&Employee{}).Count(&count).Error
+	} else {
+		// Считаем пользователей конкретного отдела
+		err = repo.DataBase.Model(&Employee{}).
+			Where("department_id = ?", departmentId).
+			Count(&count).Error
+	}
+
 	return count, err
 }
