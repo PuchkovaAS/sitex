@@ -4,7 +4,18 @@ import "sitex/views/components"
 import "time"
 import "sitex/views/view_utils"
 
-templ TimeStatistics(monthName string, stats map[string]int) {
+type TimeStatisticsProps struct {
+MonthName string
+Stats map[string]int
+Email string
+StatusText string
+FirstName string
+LastName string
+Position string
+IsAdmin bool
+}
+
+templ TimeStatistics(props TimeStatisticsProps) {
 {{
 year := time.Now().Year()
 statuses := []string{
@@ -22,18 +33,24 @@ statuses := []string{
     <!-- Заголовок -->
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-lg font-semibold text-gray-900">
-            Статистика активности за <span class="text-blue-600">{ monthName } { year }</span>
+            Статистика активности за <span class="text-blue-600">{ props.MonthName } { year }</span>
         </h2>
     </div>
     <div class="flex items-start space-x-8">
         <!-- Блок с информацией пользователя -->
         <div class="flex-shrink-0">
-            @components.UserInfo(true)
+            @components.EmployeeInfo(components.EmployeeInfoProps{
+            Email: props.Email,
+            StatusText: props.StatusText,
+            FirstName: props.FirstName,
+            LastName: props.LastName,
+            Position: props.Position,
+            IsAdmin: props.IsAdmin})
         </div>
         <!-- Статистика -->
         <div class="grid grid-cols-8 gap-3 flex-1">
             for _, status := range statuses {
-            @StatusCard(status, stats[status])
+            @StatusCard(status, props.Stats[status])
             }
         </div>
     </div>

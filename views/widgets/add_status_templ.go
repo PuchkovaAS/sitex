@@ -9,8 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import "time"
+import "fmt"
 
-func AddStatus() templ.Component {
+func AddStatus(email string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -31,20 +32,33 @@ func AddStatus() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg max-w-md mx-auto p-4 shadow-sm\"><!-- Заголовок --><!-- Форма --><div id=\"add_status-result\"></div><form hx-ext=\"response-targets\" hx-post=\"/api/user/add_status\" hx-trigger=\"submit\" hx-target=\"#add_status-result\" hx-swap=\"innerHTML swap:0.5s\" hx-encoding=\"multipart/form-data\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"space-y-3\"><!-- Выбор статуса --><div class=\"mb-2\"><label for=\"status\" class=\"block text-xs font-medium text-gray-700 mb-1\">Статус</label> <select id=\"status\" name=\"status\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors\"><option value=\"\">Выберите статус...</option> <option value=\"work_office\">В офисе</option> <option value=\"work_remote\">Удаленная работа</option> <option value=\"business_trip\">Командировка</option> <option value=\"vacation\">Отпуск</option> <option value=\"sick_leave\">Больничный</option> <option value=\"day_off\">Отгул</option> <option value=\"weekend_work\">Работа в выходной день</option></select></div><!-- Дата начала --><div class=\"mb-2\"><label for=\"date\" class=\"block text-xs font-medium text-gray-700 mb-1\">Дата начала</label> <input type=\"date\" id=\"date\" name=\"date\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg max-w-md mx-auto p-4 shadow-sm\"><!-- Заголовок --><!-- Форма --><div id=\"add_status-result\"></div><form hx-ext=\"response-targets\" hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("2006-01-02"))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("/api/user/add_status?email=" + fmt.Sprintf("%s", email))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_status.templ`, Line: 50, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_status.templ`, Line: 11, Col: 102}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors\"></div><!-- Чекбокс однократного события --><div class=\"mb-2 flex items-center\"><input type=\"checkbox\" id=\"onetimeevent\" name=\"onetimeevent\" value=\"true\" class=\"h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500\"> <label for=\"onetimeevent\" class=\"ml-2 block text-xs font-medium text-gray-700 px-2\">Однократное событие</label></div><!-- Описание --><div class=\"mb-2\"><label for=\"description\" class=\"block text-xs font-medium text-gray-700 mb-1\">Описание (необязательно)</label> <textarea id=\"description\" name=\"description\" rows=\"2\" placeholder=\"Например: Командировка в Москву...\" class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-y\"></textarea></div><!-- Кнопка отправки --><div class=\"pt-1\"><button type=\"submit\" class=\"w-full bg-blue-600 text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors\">Сохранить статус</button></div></form><!-- Контейнер для уведомлений --><div id=\"status-notification\" class=\"mt-3\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"submit\" hx-target=\"#add_status-result\" hx-swap=\"innerHTML swap:0.5s\" hx-encoding=\"multipart/form-data\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"space-y-3\"><!-- Выбор статуса --><div class=\"mb-2\"><label for=\"status\" class=\"block text-xs font-medium text-gray-700 mb-1\">Статус</label> <select id=\"status\" name=\"status\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors\"><option value=\"\">Выберите статус...</option> <option value=\"work_office\">В офисе</option> <option value=\"work_remote\">Удаленная работа</option> <option value=\"business_trip\">Командировка</option> <option value=\"vacation\">Отпуск</option> <option value=\"sick_leave\">Больничный</option> <option value=\"day_off\">Отгул</option> <option value=\"weekend_work\">Работа в выходной день</option></select></div><!-- Дата начала --><div class=\"mb-2\"><label for=\"date\" class=\"block text-xs font-medium text-gray-700 mb-1\">Дата начала</label> <input type=\"date\" id=\"date\" name=\"date\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("2006-01-02"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_status.templ`, Line: 37, Col: 92}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors\"></div><!-- Чекбокс однократного события --><div class=\"mb-2 flex items-center\"><input type=\"checkbox\" id=\"onetimeevent\" name=\"onetimeevent\" value=\"true\" class=\"h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500\"> <label for=\"onetimeevent\" class=\"ml-2 block text-xs font-medium text-gray-700 px-2\">Однократное событие</label></div><!-- Описание --><div class=\"mb-2\"><label for=\"description\" class=\"block text-xs font-medium text-gray-700 mb-1\">Описание (необязательно)</label> <textarea id=\"description\" name=\"description\" rows=\"2\" placeholder=\"Например: Командировка в Москву...\" class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-y\"></textarea></div><!-- Кнопка отправки --><div class=\"pt-1\"><button type=\"submit\" class=\"w-full bg-blue-600 text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors\">Сохранить статус</button></div></form><!-- Контейнер для уведомлений --><div id=\"status-notification\" class=\"mt-3\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -17,6 +17,12 @@ import (
 type YearStatisticProps struct {
 	StatusCount map[string]int
 	YearHistory []user.MonthHistory
+	Email       string
+	StatusText  string
+	FirstName   string
+	LastName    string
+	Position    string
+	IsAdmin     bool
 }
 
 func YearStatisticPage(props YearStatisticProps) templ.Component {
@@ -56,7 +62,18 @@ func YearStatisticPage(props YearStatisticProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = widgets.TimeStatistics("", props.StatusCount).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = widgets.TimeStatistics(
+				widgets.TimeStatisticsProps{
+					MonthName:  "",
+					Stats:      props.StatusCount,
+					Email:      props.Email,
+					StatusText: props.StatusText,
+					FirstName:  props.FirstName,
+					LastName:   props.LastName,
+					Position:   props.Position,
+					IsAdmin:    props.IsAdmin,
+				},
+			).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

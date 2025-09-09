@@ -365,3 +365,48 @@ func (repo *UserRepository) GetCountUsersByDepartment(departmentId int) (int64, 
 
 	return count, err
 }
+
+type SearchParam struct {
+	DepartmentID uint
+	SearchQuery  string
+	Offset       int
+	Limit        int
+}
+
+func (repo *UserRepository) GetUsersByParam(searchParam SearchParam) ([]Employee, int64, error) {
+	var employees []Employee
+	var totalCount int64
+
+	// Создаем базовый запрос
+	query := repo.DataBase.Model(&Employee{}).Preload("Department")
+
+	// Фильтр по departmentID (если не 0)
+	if searchParam.DepartmentID != 0 {
+		query = query.Where("department_id = ?", searchParam.DepartmentID)
+	}
+
+	// Поиск по ФИО (если SearchQuery не пустой)
+	if searchParam.SearchQuery != "" {
+		searchPattern := "%" + searchParam.SearchQuery + "%"
+		query = query.Where("first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ?",
+			searchPattern, searchPattern, searchPattern)
+	}
+
+	// Сортировка по алфавитному порядку (фамилия, имя)
+	query = query.Order("is_active DESC, last_name ASC, first_name ASC")
+
+	// Считаем общее количество записей (для пагинации)
+	if err := query.Count(&totalCount).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Применяем пагинацию
+	query = query.Offset(searchParam.Offset).Limit(searchParam.Limit)
+
+	// Выполняем запрос
+	if err := query.Find(&employees).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return employees, totalCount, nil
+}

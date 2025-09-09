@@ -156,6 +156,37 @@ func (h *PagesHandler) profile(c *fiber.Ctx) error {
 	return templeadapter.Render(c, component, http.StatusOK)
 }
 
+type EmployeeData struct {
+	Email      string
+	StatusText string
+	FirstName  string
+	LastName   string
+	Position   string
+	IsAdmin    bool
+}
+
+func (h *PagesHandler) getEmployeeData(employeerEmail string) (EmployeeData, error) {
+	today := time.Now().Truncate(24 * time.Hour)
+	status, err := h.repository.GetCurrentStatus(employeerEmail, today)
+	if err != nil {
+		return EmployeeData{}, err
+	}
+
+	employeerInfo, err := h.repository.GetUserInfo(employeerEmail)
+	if err != nil {
+		return EmployeeData{}, err
+	}
+
+	return EmployeeData{
+		Email:      employeerEmail,
+		StatusText: status,
+		FirstName:  employeerInfo.FirstName,
+		LastName:   employeerInfo.LastName,
+		Position:   employeerInfo.Position,
+		IsAdmin:    employeerInfo.IsAdmin,
+	}, nil
+}
+
 func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
@@ -166,9 +197,22 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
 	}
+
+	employeeData, err := h.getEmployeeData(emailUser)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
 	component := views.YearStatisticPage(views.YearStatisticProps{
 		StatusCount: statusCount,
 		YearHistory: yearHistory,
+		Email:       emailUser,
+		StatusText:  employeeData.StatusText,
+		FirstName:   employeeData.FirstName,
+		LastName:    employeeData.LastName,
+		Position:    employeeData.Position,
+		IsAdmin:     employeeData.IsAdmin,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -205,11 +249,24 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
 	}
+
+	employeeData, err := h.getEmployeeData(emailUser)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
 	component := views.ActivityPage(views.ActivityPageProps{
 		StatusCount:   statusCount,
 		MonthHistory:  monthHistory,
 		CurrentMonth:  month,
 		LastAddStatus: lastAddStatus,
+		Email:         emailUser,
+		StatusText:    employeeData.StatusText,
+		FirstName:     employeeData.FirstName,
+		LastName:      employeeData.LastName,
+		Position:      employeeData.Position,
+		IsAdmin:       employeeData.IsAdmin,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -220,24 +277,54 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 
 	month := c.QueryInt("month", int(time.Now().Month()))
 	departmentID := c.QueryInt("department", 0)
+	searchQuery := c.Query("search", "")
 
-	PAGE_ITEMS := 3
+	departments, err := h.repository.GetAllDepartments()
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
+	PAGE_ITEMS := 5
 	page := c.QueryInt("page", 1)
 
-	TotalUsers, err := h.repository.GetCountUsersByDepartment(departmentID)
+	employees, TotalUsers, err := h.repository.GetUsersByParam(
+		user.SearchParam{
+			DepartmentID: uint(departmentID),
+			SearchQuery:  searchQuery,
+			Offset:       (page - 1) * PAGE_ITEMS,
+			Limit:        PAGE_ITEMS,
+		},
+	)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
 	}
 	TotalPages := int(math.Ceil(float64(TotalUsers) / float64(PAGE_ITEMS)))
 
-	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, email, 3)
-	if err != nil {
-		h.customLogger.Error().Msg(err.Error())
-		return c.SendStatus(500)
-	}
+	var usersInfo []user.ActivityInfo
 
-	departments, _ := h.repository.GetAllDepartments()
+	today := time.Now().Truncate(24 * time.Hour)
+	for _, employee := range employees {
+
+		monthHistory, statusCount, err := h.userService.GetMonthHistory(month, employee.Email, 3)
+		if err != nil {
+			h.customLogger.Error().Msg(err.Error())
+			return c.SendStatus(500)
+		}
+
+		status, err := h.repository.GetCurrentStatus(employee.Email, today)
+
+		// Создаем и добавляем ActivityInfo в срез
+		usersInfo = append(usersInfo, user.ActivityInfo{
+			Employee:     employee,
+			StatusCount:  statusCount,
+			MonthHistory: monthHistory,
+			CurrentMonth: month,
+			StatusText:   status,
+		},
+		)
+	}
 
 	component := views.MultiUserActivityPage(views.MultiUserActivityPageProps{
 		Department:        departments,
@@ -245,21 +332,9 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 		CurrentPage:       page,
 		TotalPages:        TotalPages,
 		TotalUsers:        int(TotalUsers),
-		Users: []user.ActivityInfo{
-			{
-				StatusCount:  statusCount,
-				MonthHistory: monthHistory,
-				CurrentMonth: month,
-			},
-			{
-				StatusCount:  statusCount,
-				MonthHistory: monthHistory,
-				CurrentMonth: month,
-			},
-		},
-		CurrentMonth: month,
-		UsersOnPage:  PAGE_ITEMS,
-		QueryParams:  c.Queries(), // Передаем параметры запроса
+		Users:             usersInfo,
+		CurrentMonth:      month,
+		QueryParams:       c.Queries(), // Передаем параметры запроса
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

@@ -53,7 +53,8 @@ func (h *UserHandler) deleteStatus(c *fiber.Ctx) error {
 	}
 
 	// Проверяем, что пользователь удаляет только свой статус
-	email := c.Locals("email").(string)
+	emailAdmin := c.Locals("email").(string)
+	email := c.Query("email", emailAdmin)
 
 	err = h.repository.DeleteStatus(statusID, email)
 	if err != nil {
@@ -65,8 +66,9 @@ func (h *UserHandler) deleteStatus(c *fiber.Ctx) error {
 			fiber.StatusInternalServerError,
 		)
 	}
-	c.Response().Header.Add("Hx-Redirect", "/")
-	return c.Redirect("/", http.StatusOK)
+	redirectURL := fmt.Sprintf("/?email=%s", email)
+	c.Response().Header.Add("Hx-Redirect", redirectURL)
+	return c.Redirect(redirectURL, http.StatusOK)
 }
 
 func (h *UserHandler) addStatus(c *fiber.Ctx) error {
@@ -77,7 +79,8 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 		})
 	}
 
-	email := c.Locals("email").(string)
+	emailAdmin := c.Locals("email").(string)
+	email := c.Query("email", emailAdmin)
 
 	err := h.repository.AddStatus(statusAddInfo{
 		Email:        email,
@@ -85,7 +88,7 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 		Date:         form.Date,
 		Description:  form.Description,
 		OneTimeEvent: form.OneTimeEvent,
-		WhoAddEmail:  email,
+		WhoAddEmail:  emailAdmin,
 	})
 	if err != nil {
 		return templeadapter.Render(c,
@@ -104,7 +107,7 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 	}
 	month := date.Month()
 
-	redirectURL := fmt.Sprintf("/?month=%d", month)
+	redirectURL := fmt.Sprintf("/?email=%s&month=%d", email, month)
 	c.Response().Header.Add("Hx-Redirect", redirectURL)
 	return c.Redirect(redirectURL, http.StatusOK)
 }

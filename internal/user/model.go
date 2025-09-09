@@ -13,9 +13,11 @@ type Department struct {
 }
 
 type ActivityInfo struct {
+	Employee     Employee
 	StatusCount  map[string]int
 	MonthHistory []MonthHistory
 	CurrentMonth int
+	StatusText   string
 }
 
 type MonthHistory struct {
