@@ -51,9 +51,9 @@ func EmployeeInfo(props EmployeeInfoProps) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 templ.SafeURL
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/profile%s", emailParam))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/%s", emailParam))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/employeeInfo.templ`, Line: 24, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/employeeInfo.templ`, Line: 24, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {

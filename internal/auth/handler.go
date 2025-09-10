@@ -55,7 +55,7 @@ func (h *AuthHandler) setupPublicRoutes() {
 }
 
 func (h *AuthHandler) setupAdminRoutes() {
-	admin := h.router.Group("/api", middleware.AuthMiddleware(h.store))
+	admin := h.router.Group("/api", middleware.IsAdminMiddleware(h.store, h.repository))
 	admin.Post("/create_user", h.apiCreateUser)
 }
 
@@ -276,7 +276,6 @@ func (h *AuthHandler) apiLogout(c *fiber.Ctx) error {
 		panic(err)
 	}
 	sess.Delete("email")
-	sess.Delete("isAdmin")
 	if err := sess.Save(); err != nil {
 		panic(err)
 	}
@@ -325,9 +324,7 @@ func (h *AuthHandler) apiLogin(c *fiber.Ctx) error {
 		panic(err)
 	}
 	sess.Set("email", form.Email)
-	userInfo, _ := h.repository.GetUserInfo(form.Email)
 
-	sess.Set("is_admin", userInfo.IsAdmin)
 	if err := sess.Save(); err != nil {
 		panic(err)
 	}

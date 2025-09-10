@@ -28,6 +28,7 @@ type ActivityPageProps struct {
 	LastName   string
 	Position   string
 	IsAdmin    bool
+	IsActive   bool
 }
 
 func ActivityPage(props ActivityPageProps) templ.Component {
@@ -77,6 +78,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 					LastName:   props.LastName,
 					Position:   props.Position,
 					IsAdmin:    props.IsAdmin,
+					IsActive:   props.IsActive,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

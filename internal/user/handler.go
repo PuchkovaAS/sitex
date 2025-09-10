@@ -54,7 +54,19 @@ func (h *UserHandler) deleteStatus(c *fiber.Ctx) error {
 
 	// Проверяем, что пользователь удаляет только свой статус
 	emailAdmin := c.Locals("email").(string)
+	isAdmin := h.repository.IsAdmin(emailAdmin)
+
 	email := c.Query("email", emailAdmin)
+
+	if emailAdmin != email && !isAdmin {
+		return templeadapter.Render(c,
+			components.Notification(
+				"Ошибка при удаление статуса",
+				components.NotificationFail,
+			),
+			fiber.StatusInternalServerError,
+		)
+	}
 
 	err = h.repository.DeleteStatus(statusID, email)
 	if err != nil {
@@ -80,7 +92,19 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 	}
 
 	emailAdmin := c.Locals("email").(string)
+	isAdmin := h.repository.IsAdmin(emailAdmin)
+
 	email := c.Query("email", emailAdmin)
+
+	if emailAdmin != email && !isAdmin {
+		return templeadapter.Render(c,
+			components.Notification(
+				"Ошибка при добавление статуса",
+				components.NotificationFail,
+			),
+			fiber.StatusInternalServerError,
+		)
+	}
 
 	err := h.repository.AddStatus(statusAddInfo{
 		Email:        email,

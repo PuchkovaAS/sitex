@@ -23,6 +23,7 @@ type YearStatisticProps struct {
 	LastName    string
 	Position    string
 	IsAdmin     bool
+	IsActive    bool
 }
 
 func YearStatisticPage(props YearStatisticProps) templ.Component {
@@ -72,6 +73,7 @@ func YearStatisticPage(props YearStatisticProps) templ.Component {
 					LastName:   props.LastName,
 					Position:   props.Position,
 					IsAdmin:    props.IsAdmin,
+					IsActive:   props.IsActive,
 				},
 			).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

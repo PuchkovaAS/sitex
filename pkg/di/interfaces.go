@@ -7,4 +7,5 @@ type IUserRepository interface {
 	ChangePassword(email, password string) error
 	EmailExists(email string) bool
 	CreateUserWithDepartment(firstName, lastName, email, department, position, password string, isActive, isAdmin bool) error
+	IsAdmin(email string) bool
 }

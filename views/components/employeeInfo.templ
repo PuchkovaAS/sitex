@@ -21,7 +21,7 @@ emailParam := fmt.Sprintf("?email=%s", props.Email)
 }}
 <div class="ml-3 flex flex-col items-start relative group">
     <!-- Основная информация (кликабельная область) -->
-    <a href={ fmt.Sprintf("/profile%s", emailParam) }
+    <a href={ fmt.Sprintf("/%s", emailParam) }
         class="flex flex-col items-start hover:bg-gray-50 p-2 rounded-lg transition-colors">
         <!-- ФИО с короной админа -->
         <div class="flex items-center gap-2 mb-1">

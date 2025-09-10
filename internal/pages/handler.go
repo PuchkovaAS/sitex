@@ -50,9 +50,11 @@ func (h *PagesHandler) setupPublicRoutes() {
 }
 
 func (h *PagesHandler) setupAdminRoutes() {
-	admin := h.router.Group("/", middleware.IsAdminMiddleware(h.store))
+	admin := h.router.Group("/", middleware.IsAdminMiddleware(h.store, h.repository))
 	admin.Get("/create_user", h.createUser)
 	admin.Get("/users_activity", h.usersActivity)
+	admin.Get("/profile_update", h.updateUser)
+	admin.Get("/change_password", h.changePassword)
 }
 
 func (h *PagesHandler) setupPrivateRoutes() {
@@ -62,8 +64,6 @@ func (h *PagesHandler) setupPrivateRoutes() {
 	private.Get("/history_status", h.historyStatus)
 	private.Get("/year_statistics", h.yearStatistic)
 	private.Get("/profile", h.profile)
-	private.Get("/profile_update", h.updateUser)
-	private.Get("/change_password", h.changePassword)
 }
 
 func (h *PagesHandler) createUser(c *fiber.Ctx) error {
@@ -163,6 +163,7 @@ type EmployeeData struct {
 	LastName   string
 	Position   string
 	IsAdmin    bool
+	IsActive   bool
 }
 
 func (h *PagesHandler) getEmployeeData(employeerEmail string) (EmployeeData, error) {
@@ -184,6 +185,7 @@ func (h *PagesHandler) getEmployeeData(employeerEmail string) (EmployeeData, err
 		LastName:   employeerInfo.LastName,
 		Position:   employeerInfo.Position,
 		IsAdmin:    employeerInfo.IsAdmin,
+		IsActive:   employeerInfo.IsActive,
 	}, nil
 }
 
@@ -213,6 +215,7 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 		LastName:    employeeData.LastName,
 		Position:    employeeData.Position,
 		IsAdmin:     employeeData.IsAdmin,
+		IsActive:    employeeData.IsActive,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -267,6 +270,7 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		LastName:      employeeData.LastName,
 		Position:      employeeData.Position,
 		IsAdmin:       employeeData.IsAdmin,
+		IsActive:      employeeData.IsActive,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

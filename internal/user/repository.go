@@ -410,3 +410,26 @@ func (repo *UserRepository) GetUsersByParam(searchParam SearchParam) ([]Employee
 
 	return employees, totalCount, nil
 }
+
+func (repo *UserRepository) IsAdmin(email string) bool {
+	var user Employee
+
+	// Выполняем запрос к базе данных
+	result := repo.DataBase.Model(&Employee{}).
+		Select("is_admin").
+		Where("email = ?", email).
+		First(&user)
+
+	// Если произошла ошибка или пользователь не найден, возвращаем false
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			// Пользователь не найден
+			return false
+		}
+		// Другая ошибка базы данных
+		// Можно залогировать ошибку: log.Printf("Database error: %v", result.Error)
+		return false
+	}
+
+	return user.IsAdmin
+}

@@ -69,7 +69,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.CurrentDepartment == 0)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 41, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 45, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -88,7 +88,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", department.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 44, Col: 72}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 48, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
@@ -101,7 +101,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					var templ_7745c5c3_Var5 string
 					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", department.Name))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 45, Col: 64}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 49, Col: 47}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 					if templ_7745c5c3_Err != nil {
@@ -119,7 +119,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", department.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 48, Col: 72}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 52, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
@@ -132,7 +132,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", department.Name))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 49, Col: 64}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 53, Col: 47}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {
@@ -167,7 +167,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", props.TotalUsers))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 68, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 72, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -180,7 +180,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", props.CurrentPage))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 71, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 75, Col: 61}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -193,7 +193,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", props.TotalPages))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 71, Col: 116}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 75, Col: 106}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -217,6 +217,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					LastName:   currentUser.Employee.LastName,
 					Position:   currentUser.Employee.Position,
 					IsAdmin:    currentUser.Employee.IsAdmin,
+					IsActive:   currentUser.Employee.IsActive,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -228,7 +229,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(currentUser.Employee.LastName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 100, Col: 67}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 105, Col: 43}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -242,7 +243,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(
 					currentUser.Employee.FirstName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 101, Col: 66}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 106, Col: 66}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
