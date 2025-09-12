@@ -6,7 +6,7 @@ import (
 )
 
 // Функция для формирования URL с сохранением параметров
-func BuildPageURL(page int, queryParams map[string]string) string {
+func BuildPageURL(urlPath string, page int, queryParams map[string]string) string {
 	params := url.Values{}
 
 	// Копируем все существующие параметры
@@ -19,5 +19,5 @@ func BuildPageURL(page int, queryParams map[string]string) string {
 	// Добавляем новый номер страницы
 	params.Set("page", strconv.Itoa(page))
 
-	return "/users_activity?" + params.Encode()
+	return urlPath + params.Encode()
 }

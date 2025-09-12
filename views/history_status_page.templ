@@ -1,12 +1,18 @@
 package views
 
 import (
+	"fmt"
 	"sitex/internal/user"
+	"sitex/views/components"
 	"sitex/views/layout"
 	"sitex/views/widgets"
 )
 
 type HistoryStatusProps struct {
+	Email         string
+	TotalPage     int
+	CurrentPage   int
+	TotalItems    int
 	LastAddStatus []user.StatusPeriod
 }
 
@@ -17,7 +23,12 @@ templ HistoryStatusPage(props HistoryStatusProps) {
 		IsAuthenticated: true,
 	}) {
 		<div class="my-2 p-2 ">
-			<h3 class="text-lg font-semibold text-gray-900">Добавленные события за текущий год</h3>
+			<h3 class="text-lg font-semibold text-gray-900">Добавленные события за текущий год </h3>
+			@components.CounterItemsPage(components.CounterItemsProps{
+				CurrentPage: props.CurrentPage,
+				TotalItems:  props.TotalItems,
+				TotalPages:  props.TotalPage,
+			})
 		</div>
 		<div class="flex flex-col  mt-2">
 			for _, item := range props.LastAddStatus {
@@ -36,5 +47,10 @@ templ HistoryStatusPage(props HistoryStatusProps) {
 				</div>
 			}
 		</div>
+		@components.PaginationNum(components.PaginationNumProps{
+			UrlPath:     fmt.Sprintf("/history_status?email=%s&", props.Email),
+			TotalPage:   props.TotalPage,
+			CurrentPage: props.CurrentPage,
+		})
 	}
 }

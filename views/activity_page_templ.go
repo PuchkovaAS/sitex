@@ -27,6 +27,7 @@ type ActivityPageProps struct {
 	FirstName  string
 	LastName   string
 	Position   string
+	Department string
 	IsAdmin    bool
 	IsActive   bool
 }
@@ -79,6 +80,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 					Position:   props.Position,
 					IsAdmin:    props.IsAdmin,
 					IsActive:   props.IsActive,
+					Department: props.Department,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -151,6 +153,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 					OneTimeEvent: item.OneTimeEvent,
 					DateAdd:      item.UpdatedAt,
 					WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
+					Email:        item.Employee.Email,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

@@ -14,6 +14,7 @@ import (
 )
 
 type PaginationNumProps struct {
+	UrlPath     string
 	TotalPage   int
 	CurrentPage int
 	QueryParams map[string]string
@@ -50,9 +51,9 @@ func PaginationNum(props PaginationNumProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 templ.SafeURL
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(viewutils.BuildPageURL(props.CurrentPage-1, props.QueryParams))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(viewutils.BuildPageURL(props.UrlPath, props.CurrentPage-1, props.QueryParams))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/pagination_num.templ`, Line: 22, Col: 84}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/pagination_num.templ`, Line: 22, Col: 99}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -97,9 +98,9 @@ func PaginationNum(props PaginationNumProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var4 templ.SafeURL
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(viewutils.BuildPageURL(i+1, props.QueryParams))
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(viewutils.BuildPageURL(props.UrlPath, i+1, props.QueryParams))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/pagination_num.templ`, Line: 37, Col: 68}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/pagination_num.templ`, Line: 37, Col: 83}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -134,9 +135,9 @@ func PaginationNum(props PaginationNumProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 templ.SafeURL
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs(viewutils.BuildPageURL(props.CurrentPage+1, props.QueryParams))
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs(viewutils.BuildPageURL(props.UrlPath, props.CurrentPage+1, props.QueryParams))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/pagination_num.templ`, Line: 45, Col: 88}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/pagination_num.templ`, Line: 45, Col: 103}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {

@@ -109,7 +109,11 @@ initials := viewutils.GetInitals(props.Employee.FirstName, props.Employee.LastNa
 							>
 								<option value="">Выберите отдел</option>
 								for _, dept := range props.Departments {
-									<option value={ fmt.Sprintf("%s", dept.Name) }>{ dept.Name }</option>
+									if dept.Name == props.Employee.Department.Name {
+										<option value={ fmt.Sprintf("%s", dept.Name) } selected>{ dept.Name }</option>
+									} else {
+										<option value={ fmt.Sprintf("%s", dept.Name) }>{ dept.Name }</option>
+									}
 								}
 							</select>
 							<button

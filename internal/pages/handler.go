@@ -55,6 +55,7 @@ func (h *PagesHandler) setupAdminRoutes() {
 	admin.Get("/users_activity", h.usersActivity)
 	admin.Get("/profile_update", h.updateUser)
 	admin.Get("/change_password", h.changePassword)
+	admin.Get("/users_status_history", h.usersStatusHistory)
 }
 
 func (h *PagesHandler) setupPrivateRoutes() {
@@ -150,8 +151,11 @@ func (h *PagesHandler) profile(c *fiber.Ctx) error {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
 	}
+	isAdmin := h.repository.IsAdmin(email)
+
 	component := views.ProfilePage(views.ProfileProps{
 		Employee: employee,
+		IsAdmin:  isAdmin,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -162,6 +166,7 @@ type EmployeeData struct {
 	FirstName  string
 	LastName   string
 	Position   string
+	Department string
 	IsAdmin    bool
 	IsActive   bool
 }
@@ -186,6 +191,7 @@ func (h *PagesHandler) getEmployeeData(employeerEmail string) (EmployeeData, err
 		Position:   employeerInfo.Position,
 		IsAdmin:    employeerInfo.IsAdmin,
 		IsActive:   employeerInfo.IsActive,
+		Department: employeerInfo.Department,
 	}, nil
 }
 
@@ -216,22 +222,78 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 		Position:    employeeData.Position,
 		IsAdmin:     employeeData.IsAdmin,
 		IsActive:    employeeData.IsActive,
+		Department:  employeeData.Department,
+	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) usersStatusHistory(c *fiber.Ctx) error {
+	page := c.QueryInt("page", 1)
+	PAGE_ITEMS := 20
+	departmentID := c.QueryInt("department", 0)
+
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	searchQuery := c.Query("search", "")
+	departments, err := h.repository.GetAllDepartments()
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
+	lastAddStatus, TotalEvents, err := h.repository.GetLastAddEvents(user.SearchParam{
+		Email:        "",
+		DepartmentID: uint(departmentID),
+		SearchQuery:  searchQuery,
+		Offset:       page,
+		Limit:        PAGE_ITEMS,
+	})
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+	TotalPages := int(math.Ceil(float64(TotalEvents) / float64(PAGE_ITEMS)))
+
+	component := views.UsersHistoryStatusPage(views.UsersHistoryStatusProps{
+		TotalPage:     TotalPages,
+		CurrentPage:   page,
+		LastAddStatus: lastAddStatus,
+		Depatrments:   departments,
+		DepartmentId:  departmentID,
+		QueryParams:   c.Queries(),
+		TotalItems:    int(TotalEvents),
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
 
 func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
+	page := c.QueryInt("page", 1)
+	PAGE_ITEMS := 20
+
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
 	emailUser := h.getEmailForChangeUser(email, c)
 
-	lastAddStatus, err := h.repository.GetLastAddStatus(emailUser)
+	lastAddStatus, TotalEvents, err := h.repository.GetLastAddEvents(user.SearchParam{
+		Email:        emailUser,
+		DepartmentID: 0,
+		SearchQuery:  "",
+		Offset:       page,
+		Limit:        PAGE_ITEMS,
+	})
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
 	}
+	TotalPages := int(math.Ceil(float64(TotalEvents) / float64(PAGE_ITEMS)))
+
 	component := views.HistoryStatusPage(views.HistoryStatusProps{
+		TotalPage:     TotalPages,
+		CurrentPage:   page,
+		Email:         emailUser,
 		LastAddStatus: lastAddStatus,
+		TotalItems:    int(TotalEvents),
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -271,6 +333,7 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		Position:      employeeData.Position,
 		IsAdmin:       employeeData.IsAdmin,
 		IsActive:      employeeData.IsActive,
+		Department:    employeeData.Department,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

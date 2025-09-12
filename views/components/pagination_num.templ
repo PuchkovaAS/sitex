@@ -6,6 +6,7 @@ import (
 )
 
 type PaginationNumProps struct {
+UrlPath string
 TotalPage int
 CurrentPage int
 QueryParams map[string]string
@@ -14,12 +15,11 @@ QueryParams map[string]string
 templ PaginationNum(props PaginationNumProps) {
 <div class="p-4 border-t border-gray-200">
     <nav class="flex items-center justify-between">
-        <div class="text-sm text-gray-700">
-        </div>
+        <div class="text-sm text-gray-700"></div>
         <div class="flex space-x-2">
             <!-- Кнопка "Назад" -->
             if props.CurrentPage > 1 {
-            <a href={ viewutils.BuildPageURL(props.CurrentPage-1, props.QueryParams) }
+            <a href={ viewutils.BuildPageURL(props.UrlPath, props.CurrentPage-1, props.QueryParams) }
                 class="px-3 py-2 rounded-md border border-gray-300 text-sm font-medium bg-white text-gray-700 hover:bg-gray-50">
                 Назад
             </a>
@@ -34,7 +34,7 @@ templ PaginationNum(props PaginationNumProps) {
             if (i+1)==props.CurrentPage {
             <span class="px-3 py-2 bg-blue-600 text-white rounded-md">{ strconv.Itoa(i + 1) }</span>
             } else {
-            <a href={ viewutils.BuildPageURL(i+1, props.QueryParams) }
+            <a href={ viewutils.BuildPageURL(props.UrlPath, i+1, props.QueryParams) }
                 class="px-3 py-2 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-50">
                 { strconv.Itoa(i + 1) }
             </a>
@@ -42,9 +42,9 @@ templ PaginationNum(props PaginationNumProps) {
             }
             <!-- Кнопка "Вперед" -->
             if props.CurrentPage < props.TotalPage { 
-                <a href={ viewutils.BuildPageURL(props.CurrentPage+1, props.QueryParams) }
-                    class="px-3 py-2 rounded-md border border-gray-300 text-sm font-medium bg-white text-gray-700 hover:bg-gray-50">
-                    Вперед
+                <a href={ viewutils.BuildPageURL(props.UrlPath, props.CurrentPage+1, props.QueryParams) }
+                class="px-3 py-2 rounded-md border border-gray-300 text-sm font-medium bg-white text-gray-700 hover:bg-gray-50">
+                Вперед
                 </a>
                 } else {
                 <span

@@ -177,23 +177,31 @@ func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
 	var user Employee
 
-	// Получаем только нужные поля
+	// Получаем пользователя с предзагрузкой отдела
 	err := repo.DataBase.DB.
+		Preload("Department").
 		Where("email = ?", email).
-		Select("first_name, last_name, role, position, is_admin, is_active").
+		Select("first_name, last_name, email, position, is_admin, is_active, department_id").
 		First(&user).Error
 	if err != nil {
 		return dt.UserInfo{}, err
 	}
 
-	// Создаем структуру с нужными полями
-	return dt.UserInfo{
+	// Создаем UserInfo
+	userInfo := dt.UserInfo{
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Position:  user.Position,
 		IsAdmin:   user.IsAdmin,
 		IsActive:  user.IsActive,
-	}, nil
+	}
+
+	// Проверяем, загружен ли отдел (DepartmentID != 0 и Department.Name не пустое)
+	if user.DepartmentID != 0 && user.Department.Name != "" {
+		userInfo.Department = user.Department.Name
+	}
+
+	return userInfo, nil
 }
 
 func (repo *UserRepository) GetLastStatus(email string, date time.Time) (string, error) {
@@ -210,6 +218,8 @@ func (repo *UserRepository) GetLastStatus(email string, date time.Time) (string,
 		Joins("LEFT JOIN status_types ON status_types.id = status_periods.status_id").
 		Where("status_periods.employee_id = ?", employee.ID).
 		Where("status_periods.start_date <= ?", date).
+		Where("status_periods.deleted_at IS NULL"). // Исключаем удаленные статусы
+		Where("status_types.deleted_at IS NULL").   // Также исключаем удаленные статус-типы
 		Where("status_periods.one_time_event = ?", false).
 		Order("status_periods.start_date DESC").
 		Limit(1).
@@ -230,11 +240,14 @@ func (repo *UserRepository) GetCurrentStatus(email string, date time.Time) (stri
 	var statusName string
 
 	err := repo.DataBase.DB.
+		Unscoped(). // Отключаем soft delete по умолчанию
 		Table("status_periods").
 		Select("status_types.name").
 		Joins("LEFT JOIN status_types ON status_types.id = status_periods.status_id").
 		Where("status_periods.employee_id = ?", employee.ID).
 		Where("status_periods.start_date = ?", date).
+		Where("status_periods.deleted_at IS NULL"). // Явно исключаем удаленные
+		Where("status_types.deleted_at IS NULL").   // Явно исключаем удаленные
 		Order("status_periods.start_date DESC").
 		Limit(1).
 		Scan(&statusName).Error
@@ -266,9 +279,100 @@ func (repo *UserRepository) DeleteStatus(statusID int, email string) error {
 	if result.RowsAffected == 0 {
 		return fmt.Errorf("статус не найден или нет прав для удаления")
 	}
+	// Добавляем логирование SQL запроса
 
 	return nil
 }
+
+// Отдельная функция для подсчета общего количества статус-периодов
+func (repo *UserRepository) getStatusPeriodsCount(searchParams SearchParam, startOfYear, endOfYear time.Time) (int64, error) {
+	var totalCount int64
+
+	query := repo.DataBase.DB.
+		Model(&StatusPeriod{}).
+		Joins("INNER JOIN employees ON status_periods.employee_id = employees.id").
+		Where("status_periods.start_date BETWEEN ? AND ?", startOfYear, endOfYear).
+		Where("status_periods.deleted_at IS NULL").
+		Where("employees.deleted_at IS NULL")
+
+	// Применяем фильтры
+	if searchParams.Email != "" {
+		query = query.Where("employees.email = ?", searchParams.Email)
+	}
+	if searchParams.DepartmentID != 0 {
+		query = query.Where("employees.department_id = ?", searchParams.DepartmentID)
+	}
+	if searchParams.SearchQuery != "" {
+		searchPattern := "%" + searchParams.SearchQuery + "%"
+		query = query.Where("employees.first_name ILIKE ? OR employees.last_name ILIKE ?",
+			searchPattern, searchPattern)
+	}
+
+	err := query.Count(&totalCount).Error
+	return totalCount, err
+}
+
+func (repo *UserRepository) GetLastAddEvents(searchParams SearchParam) ([]StatusPeriod, int64, error) {
+	var history []StatusPeriod
+
+	currentYear := time.Now().Year()
+	startOfYear := time.Date(currentYear, 1, 1, 0, 0, 0, 0, time.UTC)
+	endOfYear := time.Date(currentYear, 12, 31, 23, 59, 59, 0, time.UTC)
+
+	// Получаем общее количество
+	totalCount, err := repo.getStatusPeriodsCount(searchParams, startOfYear, endOfYear)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Основной запрос с Preload
+	query := repo.DataBase.DB.
+		Preload("Employee", func(db *gorm.DB) *gorm.DB {
+			return db.Where("deleted_at IS NULL")
+		}).
+		Preload("WhoAdded", func(db *gorm.DB) *gorm.DB {
+			return db.Where("deleted_at IS NULL")
+		}).
+		Preload("StatusType", func(db *gorm.DB) *gorm.DB {
+			return db.Where("deleted_at IS NULL")
+		}).
+		Joins("INNER JOIN employees ON status_periods.employee_id = employees.id").
+		Where("status_periods.start_date BETWEEN ? AND ?", startOfYear, endOfYear).
+		Where("status_periods.deleted_at IS NULL").
+		Where("employees.deleted_at IS NULL")
+
+	// Применяем фильтры
+	if searchParams.Email != "" {
+		query = query.Where("employees.email = ?", searchParams.Email)
+	}
+	if searchParams.DepartmentID != 0 {
+		query = query.Where("employees.department_id = ?", searchParams.DepartmentID)
+	}
+	if searchParams.SearchQuery != "" {
+		searchPattern := "%" + searchParams.SearchQuery + "%"
+		query = query.Where("employees.first_name ILIKE ? OR employees.last_name ILIKE ?",
+			searchPattern, searchPattern)
+	}
+
+	// Сортировка и пагинация
+	query = query.Order("status_periods.updated_at DESC")
+	if searchParams.Limit > 0 {
+		query = query.Limit(searchParams.Limit)
+	}
+	if searchParams.Offset > 0 {
+		query = query.Offset(searchParams.Offset)
+	}
+
+	// Выполняем запрос
+	err = query.Find(&history).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return history, totalCount, nil
+}
+
+//
 
 func (repo *UserRepository) GetLastAddStatus(email string, limit ...int) ([]StatusPeriod, error) {
 	var history []StatusPeriod
@@ -367,6 +471,7 @@ func (repo *UserRepository) GetCountUsersByDepartment(departmentId int) (int64, 
 }
 
 type SearchParam struct {
+	Email        string
 	DepartmentID uint
 	SearchQuery  string
 	Offset       int

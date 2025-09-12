@@ -19,6 +19,7 @@ type ActivityPageProps struct {
 	FirstName  string
 	LastName   string
 	Position   string
+	Department string
 	IsAdmin    bool
 	IsActive   bool
 }
@@ -41,6 +42,7 @@ templ ActivityPage(props ActivityPageProps) {
 					Position:   props.Position,
 					IsAdmin:    props.IsAdmin,
 					IsActive:   props.IsActive,
+					Department: props.Department,
 				})
 			<!-- Кнопка раскрытия -->
 			<div class="flex justify-center">
@@ -127,6 +129,7 @@ templ ActivityPage(props ActivityPageProps) {
 						OneTimeEvent: item.OneTimeEvent,
 						DateAdd:      item.UpdatedAt,
 						WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
+						Email:        item.Employee.Email,
 					})
 				</div>
 			}

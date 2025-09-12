@@ -9,12 +9,18 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"fmt"
 	"sitex/internal/user"
+	"sitex/views/components"
 	"sitex/views/layout"
 	"sitex/views/widgets"
 )
 
 type HistoryStatusProps struct {
+	Email         string
+	TotalPage     int
+	CurrentPage   int
+	TotalItems    int
 	LastAddStatus []user.StatusPeriod
 }
 
@@ -51,12 +57,24 @@ func HistoryStatusPage(props HistoryStatusProps) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"my-2 p-2 \"><h3 class=\"text-lg font-semibold text-gray-900\">Добавленные события за текущий год</h3></div><div class=\"flex flex-col  mt-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"my-2 p-2 \"><h3 class=\"text-lg font-semibold text-gray-900\">Добавленные события за текущий год </h3>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.CounterItemsPage(components.CounterItemsProps{
+				CurrentPage: props.CurrentPage,
+				TotalItems:  props.TotalItems,
+				TotalPages:  props.TotalPage,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div class=\"flex flex-col  mt-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, item := range props.LastAddStatus {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"mb-2\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mb-2\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -74,12 +92,20 @@ func HistoryStatusPage(props HistoryStatusProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.PaginationNum(components.PaginationNumProps{
+				UrlPath:     fmt.Sprintf("/history_status?email=%s&", props.Email),
+				TotalPage:   props.TotalPage,
+				CurrentPage: props.CurrentPage,
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

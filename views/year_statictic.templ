@@ -14,6 +14,7 @@ type YearStatisticProps struct {
 	FirstName   string
 	LastName    string
 	Position    string
+	Department  string
 	IsAdmin     bool
 	IsActive    bool
 }
@@ -36,6 +37,7 @@ templ YearStatisticPage(props YearStatisticProps) {
 					Position:   props.Position,
 					IsAdmin:    props.IsAdmin,
 					IsActive:   props.IsActive,
+					Department: props.Department,
 				},
 			)
 			<!-- Блок активности пользователя -->
