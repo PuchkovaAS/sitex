@@ -68,7 +68,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.CurrentDepartment == 0)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 40, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 44, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -87,7 +87,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", department.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 43, Col: 72}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 47, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
@@ -100,7 +100,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					var templ_7745c5c3_Var5 string
 					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", department.Name))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 44, Col: 64}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 48, Col: 47}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 					if templ_7745c5c3_Err != nil {
@@ -118,7 +118,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", department.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 47, Col: 72}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 51, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
@@ -131,7 +131,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", department.Name))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 48, Col: 64}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 52, Col: 47}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {
@@ -202,7 +202,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(currentUser.Employee.LastName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 96, Col: 67}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 100, Col: 43}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -216,7 +216,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(
 					currentUser.Employee.FirstName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 97, Col: 66}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 101, Col: 66}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -341,7 +341,7 @@ func MultiUserActivityPageScripts() templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<script>\n    function changeDepartment(deptId) {\n        const searchInput = document.getElementById('search');\n        const searchQuery = searchInput ? searchInput.value : '';\n        const url = new URL(window.location.href);\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n        if (searchQuery) {\n            url.searchParams.set('search', searchQuery);\n        }\n        window.location.href = url.toString();\n    }\n\n    function performSearch() {\n        const searchInput = document.getElementById('search');\n        const deptSelect = document.getElementById('department');\n\n        if (!searchInput || !deptSelect) return;\n\n        const searchQuery = searchInput.value;\n        const deptId = deptSelect.value;\n        const url = new URL(window.location.href);\n        url.searchParams.set('search', searchQuery);\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n        window.location.href = url.toString();\n    }\n\n    // Обработка нажатия Enter в поле поиска\n    document.addEventListener('DOMContentLoaded', function () {\n        const searchInput = document.getElementById('search');\n        if (searchInput) {\n            searchInput.addEventListener('keypress', function (e) {\n                if (e.key === 'Enter') {\n                    performSearch();\n                }\n            });\n        }\n    });\n\n    // Функция для формирования URL с текущими параметрами\n    function buildPageURL(page) {\n        const url = new URL(window.location.href);\n        url.searchParams.set('page', page.toString());\n        return url.toString();\n    }\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<script>\n    function changeDepartment(deptId) {\n        const searchInput = document.getElementById('search');\n        const searchQuery = searchInput ? searchInput.value.trim() : '';\n        const url = new URL(window.location.href);\n\n        // Удаляем параметры поиска и пагинации\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n\n        // Добавляем search только если он не пустой\n        if (searchQuery) {\n            url.searchParams.set('search', searchQuery);\n        } else {\n            url.searchParams.delete('search'); // Удаляем пустой search\n        }\n\n        window.location.href = url.toString();\n    }\n\n    function performSearch() {\n        const searchInput = document.getElementById('search');\n        const deptSelect = document.getElementById('department');\n\n        if (!searchInput || !deptSelect) return;\n\n        const searchQuery = searchInput.value.trim();\n        const deptId = deptSelect.value;\n        const url = new URL(window.location.href);\n\n        // Устанавливаем параметры\n        url.searchParams.set('page', '1');\n        url.searchParams.set('department', deptId);\n\n        // Добавляем search только если не пустой\n        if (searchQuery) {\n            url.searchParams.set('search', searchQuery);\n        } else {\n            url.searchParams.delete('search'); // Удаляем пустой search\n        }\n\n        window.location.href = url.toString();\n    }\n\n    // Обработка нажатия Enter в поле поиска\n    document.addEventListener('DOMContentLoaded', function () {\n        const searchInput = document.getElementById('search');\n        if (searchInput) {\n            searchInput.addEventListener('keypress', function (e) {\n                if (e.key === 'Enter') {\n                    performSearch();\n                }\n            });\n        }\n    });\n\n    // Функция для формирования URL с текущими параметрами\n    function buildPageURL(page) {\n        const url = new URL(window.location.href);\n        url.searchParams.set('page', page.toString());\n\n        // Удаляем search если он пустой\n        const searchParam = url.searchParams.get('search');\n        if (!searchParam || searchParam.trim() === '') {\n            url.searchParams.delete('search');\n        }\n\n        return url.toString();\n    }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

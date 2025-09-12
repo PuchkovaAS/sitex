@@ -100,13 +100,20 @@ templ UsersHistoryStatusScript() {
 	<script>
     function changeDepartment(deptId) {
         const searchInput = document.getElementById('search');
-        const searchQuery = searchInput ? searchInput.value : '';
+        const searchQuery = searchInput ? searchInput.value.trim() : '';
         const url = new URL(window.location.href);
+
+        // Удаляем параметры поиска и пагинации
         url.searchParams.set('department', deptId);
         url.searchParams.set('page', '1');
+
+        // Добавляем search только если он не пустой
         if (searchQuery) {
             url.searchParams.set('search', searchQuery);
+        } else {
+            url.searchParams.delete('search'); // Удаляем пустой search
         }
+
         window.location.href = url.toString();
     }
 
@@ -116,12 +123,21 @@ templ UsersHistoryStatusScript() {
 
         if (!searchInput || !deptSelect) return;
 
-        const searchQuery = searchInput.value;
+        const searchQuery = searchInput.value.trim();
         const deptId = deptSelect.value;
         const url = new URL(window.location.href);
-        url.searchParams.set('search', searchQuery);
-        url.searchParams.set('department', deptId);
+
+        // Устанавливаем параметры
         url.searchParams.set('page', '1');
+        url.searchParams.set('department', deptId);
+
+        // Добавляем search только если не пустой
+        if (searchQuery) {
+            url.searchParams.set('search', searchQuery);
+        } else {
+            url.searchParams.delete('search'); // Удаляем пустой search
+        }
+
         window.location.href = url.toString();
     }
 
@@ -141,6 +157,13 @@ templ UsersHistoryStatusScript() {
     function buildPageURL(page) {
         const url = new URL(window.location.href);
         url.searchParams.set('page', page.toString());
+
+        // Удаляем search если он пустой
+        const searchParam = url.searchParams.get('search');
+        if (!searchParam || searchParam.trim() === '') {
+            url.searchParams.delete('search');
+        }
+
         return url.toString();
     }
 </script>
