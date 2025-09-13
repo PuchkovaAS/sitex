@@ -356,12 +356,8 @@ func (repo *UserRepository) GetLastAddEvents(searchParams SearchParam) ([]Status
 
 	// Сортировка и пагинация
 	query = query.Order("status_periods.updated_at DESC")
-	if searchParams.Limit > 0 {
-		query = query.Limit(searchParams.Limit)
-	}
-	if searchParams.Offset > 0 {
-		query = query.Offset(searchParams.Offset)
-	}
+
+	query = query.Offset(searchParams.Offset).Limit(searchParams.Limit)
 
 	// Выполняем запрос
 	err = query.Find(&history).Error

@@ -246,7 +246,7 @@ func (h *PagesHandler) usersStatusHistory(c *fiber.Ctx) error {
 		Email:        "",
 		DepartmentID: uint(departmentID),
 		SearchQuery:  searchQuery,
-		Offset:       page,
+		Offset:       (page - 1) * PAGE_ITEMS,
 		Limit:        PAGE_ITEMS,
 	})
 	if err != nil {
@@ -279,7 +279,7 @@ func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
 		Email:        emailUser,
 		DepartmentID: 0,
 		SearchQuery:  "",
-		Offset:       page,
+		Offset:       (page - 1) * PAGE_ITEMS,
 		Limit:        PAGE_ITEMS,
 	})
 	if err != nil {
