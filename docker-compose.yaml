@@ -19,7 +19,8 @@ services:
 
     app:
         container_name: app_go
-        build: .
+        image: puchkovaas/sitex-app:latest # ← теперь тянем с Docker Hub!
+        # build: .
         volumes:
             - ./calendar_data:/app/calendar_data
         environment:
