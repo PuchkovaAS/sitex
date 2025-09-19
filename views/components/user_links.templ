@@ -1,0 +1,30 @@
+package components
+
+import "fmt"
+
+templ UserLinks(emailParam string) {
+	<div
+		class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10"
+	>
+		<div class="py-1">
+			<a
+				href={ fmt.Sprintf("/profile%s", emailParam) }
+				class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+			>
+				Профиль
+			</a>
+			<a
+				href={ fmt.Sprintf("/year_statistics%s", emailParam) }
+				class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+			>
+				Статистика за год
+			</a>
+			<a
+				href={ fmt.Sprintf("/history_status%s", emailParam) }
+				class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+			>
+				История записей
+			</a>
+		</div>
+	</div>
+}

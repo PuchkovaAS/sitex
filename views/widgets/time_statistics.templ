@@ -1,0 +1,79 @@
+package widgets
+
+import "sitex/views/components"
+import "time"
+import "sitex/views/view_utils"
+
+type TimeStatisticsProps struct {
+	MonthName  string
+	Stats      map[string]int
+	Email      string
+	StatusText string
+	FirstName  string
+	LastName   string
+	Position   string
+	Department string
+	IsAdmin    bool
+	IsActive   bool
+}
+
+templ TimeStatistics(props TimeStatisticsProps) {
+	{{
+year := time.Now().Year()
+statuses := []string{
+	"Отпуск",
+	"Выходной",
+	"В офисе",
+	"Больничный",
+	"Отгул",
+	"Удаленная работа",
+	"Работа в выходной день",
+	"Командировка",
+}
+	}}
+	<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+		<!-- Заголовок -->
+		<div class="flex items-center justify-between mb-6">
+			<h2 class="text-lg font-semibold text-gray-900">
+				Статистика активности за <span class="text-blue-600">{ props.MonthName } { year }</span>
+			</h2>
+		</div>
+		<div class="flex items-center gap-6 bg-white ">
+			<!-- Аватар и основная информация в одной линии -->
+			<div class="flex items-center  flex-shrink-0">
+				@components.EmployeerAvatar(props.FirstName, props.LastName, props.IsActive)
+				@components.EmployeeInfo(components.EmployeeInfoProps{
+					Email:      props.Email,
+					StatusText: props.StatusText,
+					FirstName:  props.FirstName,
+					LastName:   props.LastName,
+					Position:   props.Position,
+					IsAdmin:    props.IsAdmin,
+					Department: props.Department,
+				})
+			</div>
+			<!-- Статистика -->
+			<div class="flex-1">
+				<div class="grid grid-cols-8 gap-4">
+					for _, status := range statuses {
+						@StatusCard(status, props.Stats[status])
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ StatusCard(status string, count int) {
+	{{
+statusClass := viewutils.GetStatusClass(status)
+displayName := viewutils.GetDisplayName(status)
+	}}
+	<div
+		class={ "flex flex-col items-center justify-center rounded-lg p-4 min-h-[90px] hover:shadow-md transition-shadow" ,
+    statusClass }
+	>
+		<span class={ "text-xl font-bold" , viewutils.GetTextColorClass(status) }>{ count }</span>
+		<span class={ "text-xs font-medium text-center mt-1" , viewutils.GetTextColorClass(status) }>{ displayName }</span>
+	</div>
+}

@@ -1,0 +1,38 @@
+package views
+
+import (
+	"sitex/views/components"
+	"sitex/views/layout"
+)
+
+templ Login() {
+	@layout.Layout(layout.LayoutProps{
+		Title:           "Вход на сайт",
+		MetaDescription: "Войти на сайт",
+		IsAuthenticated: false,
+	})
+	<div class="flex min-h-screen w-full items-center justify-center">
+		<div class="w-sm bg-white rounded-lg flex flex-col   items-center">
+			<div class="text-3xl  font-bold text-black mb-3 mt-9">Employee Tracker</div>
+			<div class="text-lg text-gray-500 mb-6">Sign in to your account</div>
+			<div id="login-result"></div>
+			<form
+				class="login-form w-auto px-4"
+				hx-ext="response-targets"
+				hx-post="/api/login"
+				hx-trigger="submit"
+				hx-target="#login-result"
+				hx-target-error="#login-result"
+				hx-swap="innerHTML"
+			>
+				<div class="w-full   flex flex-col gap-y-6 mb-9">
+					@components.Input(components.InputProps{Placeholder: "Email", Name: "email"})
+					@components.Input(components.InputProps{Placeholder: "Password", Name: "password", Type: "password"})
+					@components.SubmitButton() {
+						<div class="w-auto bg-blue-600 text-white rounded-lg py-3">Sign In</div>
+					}
+				</div>
+			</form>
+		</div>
+	</div>
+}

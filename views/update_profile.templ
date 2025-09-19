@@ -1,0 +1,241 @@
+package views
+
+import (
+	"fmt"
+	"sitex/internal/user"
+	"sitex/views/layout"
+	"sitex/views/view_utils"
+)
+
+type UpdateProfileProps struct {
+	Employee    user.Employee
+	Departments []user.Department
+}
+
+templ UpdateProfilePage(props UpdateProfileProps) {
+	@layout.Layout(layout.LayoutProps{
+		Title:           "Редактирование профиля",
+		MetaDescription: "Редактирование данных пользователя",
+		IsAuthenticated: true,
+	}) {
+		{{
+initials := viewutils.GetInitals(props.Employee.FirstName, props.Employee.LastName)
+		}}
+		<div class="w-full p-6">
+			<!-- Заголовок -->
+			<div class="mb-8">
+				<h1 class="text-lg font-semibold text-gray-900">Редактирование профиля</h1>
+				<p class="text-gray-600 mt-2">Изменение личных данных и информации</p>
+			</div>
+			<!-- Форма редактирования -->
+			<div id="update-result"></div>
+			<form
+				hx-put="/api/profile_update"
+				hx-swap="innerHTML"
+				class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+				hx-ext="response-targets"
+				hx-trigger="submit"
+				hx-target="#update-result"
+				hx-target-error="#update-result"
+				data-400="#update-result"
+				hx-swap="innerHTML"
+			>
+				<!-- Скрытое поле с ID -->
+				<input type="hidden" name="id" value={ fmt.Sprintf("%d", props.Employee.ID) }/>
+				<!-- Аватар и основная информация -->
+				<div class="flex items-center mb-8">
+					<div
+						class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-bold"
+					>
+						{ initials }
+					</div>
+					<div class="ml-6 flex-1">
+						<!-- Фамилия -->
+						<div class="mb-4">
+							<label class="block text-sm font-medium text-gray-700 mb-1">Фамилия</label>
+							<input
+								type="text"
+								name="last_name"
+								value={ props.Employee.LastName }
+								class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								required
+							/>
+						</div>
+						<!-- Имя -->
+						<div class="mb-4">
+							<label class="block text-sm font-medium text-gray-700 mb-1">Имя</label>
+							<input
+								type="text"
+								name="first_name"
+								value={ props.Employee.FirstName }
+								class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								required
+							/>
+						</div>
+						<!-- Email (только чтение) -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+							<input
+								type="email"
+								value={ props.Employee.Email }
+								class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+								disabled
+							/>
+							<input type="hidden" name="email" value={ props.Employee.Email }/>
+						</div>
+					</div>
+				</div>
+				<!-- Информационные карточки -->
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+					<!-- Должность -->
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Должность</label>
+						<input
+							type="text"
+							name="position"
+							value={ props.Employee.Position }
+							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+							placeholder="Введите должность"
+						/>
+					</div>
+					<!-- Отдел -->
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Отдел *</label>
+						<div class="flex gap-2">
+							<select
+								name="department_id"
+								class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								required
+							>
+								<option value="">Выберите отдел</option>
+								for _, dept := range props.Departments {
+									if dept.Name == props.Employee.Department.Name {
+										<option value={ fmt.Sprintf("%s", dept.Name) } selected>{ dept.Name }</option>
+									} else {
+										<option value={ fmt.Sprintf("%s", dept.Name) }>{ dept.Name }</option>
+									}
+								}
+							</select>
+							<button
+								type="button"
+								onclick="toggleNewDepartment()"
+								class="px-3 py-2 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition-colors"
+							>
+								<i class="fas fa-plus"></i>
+							</button>
+						</div>
+						<!-- Поле для нового отдела (скрыто по умолчанию) -->
+						<div id="new-department-field" class="hidden mt-2">
+							<input
+								type="text"
+								name="new_department"
+								class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								placeholder="Введите название нового отдела"
+							/>
+						</div>
+					</div>
+					<!-- Роль -->
+					<div class="flex items-center justify-between py-2">
+						<div>
+							<label class="text-sm font-medium text-gray-700">Права администратора</label>
+							<p class="text-xs text-gray-500">Предоставить полный доступ к системе</p>
+						</div>
+						<label class="relative inline-flex items-center cursor-pointer">
+							<input
+								type="checkbox"
+								name="is_admin"
+								value="true"
+								if props.Employee.IsAdmin {
+									checked
+								}
+								class="sr-only peer"
+							/>
+							<div
+								class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+							></div>
+						</label>
+					</div>
+					<!-- Статус аккаунта -->
+					<div class="flex items-center justify-between py-2">
+						<div>
+							<label class="text-sm font-medium text-gray-700">Статус аккаунта</label>
+							<p class="text-xs text-gray-500">Активировать или деактивировать аккаунт</p>
+						</div>
+						<label class="relative inline-flex items-center cursor-pointer">
+							<input
+								type="checkbox"
+								name="is_active"
+								value="true"
+								if props.Employee.IsActive {
+									checked
+								}
+								class="sr-only peer"
+							/>
+							<div
+								class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"
+							></div>
+						</label>
+					</div>
+				</div>
+				<!-- Кнопки действий -->
+				<div class="border-t border-gray-200 pt-6 flex space-x-4 justify-end">
+					<a
+						href={ fmt.Sprintf("/profile?email=%s", props.Employee.Email) }
+						class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+					>
+						Отмена
+					</a>
+					<button
+						type="submit"
+						class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+					>
+						Сохранить изменения
+					</button>
+				</div>
+			</form>
+		</div>
+		@UpdateProfilePageScripts()
+	}
+}
+
+templ UpdateProfilePageScripts() {
+	<script>
+    function toggleNewDepartment() {
+        const newDeptField = document.getElementById('new-department-field');
+        const deptSelect = document.querySelector('select[name="department_id"]');
+
+        if (newDeptField.classList.contains('hidden')) {
+            newDeptField.classList.remove('hidden');
+            deptSelect.disabled = true;
+            deptSelect.value = '';
+        } else {
+            newDeptField.classList.add('hidden');
+            deptSelect.disabled = false;
+            document.querySelector('input[name="new_department"]').value = '';
+        }
+    }
+
+    // Валидация формы - либо выбран отдел, либо введен новый
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                const deptSelect = document.querySelector('select[name="department_id"]');
+                const newDeptInput = document.querySelector('input[name="new_department"]');
+
+                if (!deptSelect.disabled && !deptSelect.value) {
+                    e.preventDefault();
+                    alert('Пожалуйста, выберите отдел или добавьте новый');
+                    return false;
+                }
+
+                if (deptSelect.disabled && !newDeptInput.value.trim()) {
+                    e.preventDefault();
+                    alert('Пожалуйста, введите название нового отдела');
+                    return false;
+                }
+            });
+        }
+    });
+</script>
+}

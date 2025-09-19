@@ -1,0 +1,56 @@
+package views
+
+import (
+	"fmt"
+	"sitex/internal/user"
+	"sitex/views/components"
+	"sitex/views/layout"
+	"sitex/views/widgets"
+)
+
+type HistoryStatusProps struct {
+	Email         string
+	TotalPage     int
+	CurrentPage   int
+	TotalItems    int
+	LastAddStatus []user.StatusPeriod
+}
+
+templ HistoryStatusPage(props HistoryStatusProps) {
+	@layout.Layout(layout.LayoutProps{
+		Title:           "История событий",
+		MetaDescription: "Страница добавления событий",
+		IsAuthenticated: true,
+	}) {
+		<div class="my-2 p-2 ">
+			<h3 class="text-lg font-semibold text-gray-900">Добавленные события за текущий год </h3>
+			@components.CounterItemsPage(components.CounterItemsProps{
+				CurrentPage: props.CurrentPage,
+				TotalItems:  props.TotalItems,
+				TotalPages:  props.TotalPage,
+			})
+		</div>
+		<div class="flex flex-col  mt-2">
+			for _, item := range props.LastAddStatus {
+				<div class="mb-2">
+					@widgets.StatusEventWidget(widgets.StatusEventProps{
+						ID:           int(item.ID),
+						Status:       item.StatusType.Name,
+						Date:         item.StartDate,
+						Description:  item.Comment,
+						UserName:     item.Employee.LastName + " " + item.Employee.FirstName,
+						OneTimeEvent: item.OneTimeEvent,
+						DateAdd:      item.UpdatedAt,
+						WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
+						Email:        item.Employee.Email,
+					})
+				</div>
+			}
+		</div>
+		@components.PaginationNum(components.PaginationNumProps{
+			UrlPath:     fmt.Sprintf("/history_status?email=%s&", props.Email),
+			TotalPage:   props.TotalPage,
+			CurrentPage: props.CurrentPage,
+		})
+	}
+}
