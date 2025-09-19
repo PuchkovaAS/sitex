@@ -9,6 +9,7 @@ import (
 	"sitex/pkg/database"
 	"sitex/pkg/logger"
 	"sitex/pkg/middleware"
+	"sitex/views"
 	"time"
 
 	"github.com/gofiber/contrib/fiberzerolog"
@@ -16,6 +17,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/storage/postgres/v3"
+
+	templeadapter "sitex/pkg/temple_adapter"
 )
 
 func main() {
@@ -89,5 +92,10 @@ func main() {
 		UserService:  userService,
 	})
 
+	// Обработчик 404 — должен быть ПОСЛЕ всех других маршрутов
+	app.Use(func(c *fiber.Ctx) error {
+		c.Status(fiber.StatusNotFound) // Устанавливаем статус 404
+		return templeadapter.Render(c, views.Errors404Page(), fiber.StatusOK)
+	})
 	app.Listen(":3000")
 }

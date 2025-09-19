@@ -10,7 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "sitex/views/layout"
 
-func Errors403Page() templ.Component {
+func Errors404Page() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -32,6 +32,43 @@ func Errors403Page() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = layout.Layout(layout.LayoutProps{
+			Title:           "Ошибка 404 - Страница не найдена",
+			MetaDescription: "Страница, которую вы ищете, не существует",
+			IsAuthenticated: false,
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"min-h-screen flex items-center justify-center bg-gray-100\"><div class=\"text-center\"><h1 class=\"text-4xl font-bold text-gray-900 mb-4\">404 - Страница не найдена</h1><p class=\"text-gray-600 mb-8\">Страница, которую вы ищете, не существует или была удалена</p><a href=\"/\" class=\"bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors\">На главную</a></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func Errors403Page() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = layout.Layout(layout.LayoutProps{
 			Title:           "Ошибка 403 - Доступ запрещен",
 			MetaDescription: "У вас недостаточно прав для просмотра этой страницы",
 			IsAuthenticated: false,
@@ -39,7 +76,7 @@ func Errors403Page() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"min-h-screen flex items-center justify-center bg-gray-100\"><div class=\"text-center\"><h1 class=\"text-4xl font-bold text-gray-900 mb-4\">403 - Доступ запрещен</h1><p class=\"text-gray-600 mb-8\">У вас недостаточно прав для просмотра этой страницы</p><a href=\"/\" class=\"bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors\">На главную</a></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"min-h-screen flex items-center justify-center bg-gray-100\"><div class=\"text-center\"><h1 class=\"text-4xl font-bold text-gray-900 mb-4\">403 - Доступ запрещен</h1><p class=\"text-gray-600 mb-8\">У вас недостаточно прав для просмотра этой страницы</p><a href=\"/\" class=\"bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors\">На главную</a></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
