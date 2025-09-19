@@ -17,26 +17,26 @@ services:
             timeout: 5s
             retries: 5
 
-    # app:
-    #     container_name: app_go
-    #     build: .
-    #     volumes:
-    #         - ./calendar_data:/app/calendar_data
-    #     environment:
-    #         CALENDAR_PATH: /app/calendar_data
-    #         DB_HOST: postgres
-    #         DB_USER: postgres
-    #         DB_PASSWORD: my_pass
-    #         DB_NAME: sitex_db
-    #         DB_PORT: 5432
-    #         DB_SSLMODE: disable
-    #         LOG_LEVEL: 0
-    #         LOG_FORMAT: 'terminal'
-    #     ports:
-    #         - '3001:3000'
-    #     depends_on:
-    #         postgres:
-    #             condition: service_healthy
+    app:
+        container_name: app_go
+        build: .
+        volumes:
+            - ./calendar_data:/app/calendar_data
+        environment:
+            CALENDAR_PATH: /app/calendar_data
+            DB_HOST: postgres
+            DB_USER: postgres
+            DB_PASSWORD: my_pass
+            DB_NAME: sitex_db
+            DB_PORT: 5432
+            DB_SSLMODE: disable
+            LOG_LEVEL: 0
+            LOG_FORMAT: 'terminal'
+        ports:
+            - '3001:3000'
+        depends_on:
+            postgres:
+                condition: service_healthy
 
     adminer:
         image: adminer

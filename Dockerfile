@@ -1,33 +1,47 @@
+# === Этап 1: Сборка приложения и генерация CSS ===
 FROM golang:1.24.5 AS builder
+
 WORKDIR /app
+
+# Устанавливаем Node.js + npm (нужно для Tailwind CLI)
+RUN apt-get update && apt-get install -y nodejs npm
+
+# Копируем зависимости Go
 COPY go.mod go.sum ./
 RUN go mod download
 
 # Устанавливаем templ
 RUN go install github.com/a-h/templ/cmd/templ@latest
 
-# Копируем все файлы
+# Копируем весь код
 COPY . .
 
-# Генерируем templ код
+# Генерируем Go-код из .templ файлов
 RUN templ generate
 
-# Скачиваем Tailwind CSS binary (без npm!)
-RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
-RUN chmod +x tailwindcss-linux-x64
-RUN ./tailwindcss-linux-x64 -i ./public/styles.css -o ./public/output.css
+# Устанавливаем Tailwind CSS CLI через npm
+RUN npm install -g @tailwindcss/cli
 
-# Собираем приложение
+# Генерируем CSS
+RUN tailwindcss -i ./public/styles.css -o ./public/output.css
+
+# Собираем бинарник Go
 RUN CGO_ENABLED=0 GOOS=linux go build -o ./main ./cmd/main.go
 
-# Финальный образ
+
+# === Этап 2: Финальный легковесный образ ===
 FROM alpine:latest
+
 WORKDIR /app
+
+# Копируем бинарник и статику
 COPY --from=builder /app/main .
 COPY --from=builder /app/public ./public
-# Создаем директорию и копируем calendar_data если она существует
+
+# Создаем директорию для календаря
 RUN mkdir -p calendar_data
 COPY --from=builder /app/calendar_data ./calendar_data
+
 EXPOSE 3000
 
 CMD ["./main"]
