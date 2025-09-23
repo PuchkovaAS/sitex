@@ -38,10 +38,11 @@ WORKDIR /app
 COPY --from=builder /app/main .
 COPY --from=builder /app/public ./public
 
-# Создаем директорию для календаря
-RUN mkdir -p calendar_data
-COPY --from=builder /app/calendar_data ./calendar_data
+# ❌ УБРАЛИ: не копируем calendar_data — оно будет примонтировано через volume
 
 EXPOSE 3000
+
+# Создаём пустую директорию в контейнере (на всякий случай, если volume не примонтируется)
+RUN mkdir -p /app/calendar_data
 
 CMD ["./main"]

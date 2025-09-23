@@ -1,2 +1,16 @@
+# .dockerignore
+
+# Игнорируем динамические данные
 calendar_data/*.json
 !calendar_data/structure/
+
+# Игнорируем логи, временные файлы, кэш
+*.log
+tmp/
+.cache/
+.env
+.git/
+.gitignore
+README.md
+Dockerfile
+docker-compose.yml
