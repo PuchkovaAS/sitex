@@ -12,11 +12,11 @@ help: ## Показать справку
 
 .PHONY: run
 run: ## Запустить приложение локально
-	go run main.go
+	go run cmd/main.go
 
 .PHONY: build
 build: ## Собрать бинарник
-	go build -o bin/$(BINARY_NAME) main.go
+	go build -o bin/$(BINARY_NAME) cmd/main.go
 
 .PHONY: docker-build
 docker-build: ## Собрать Docker-образ
