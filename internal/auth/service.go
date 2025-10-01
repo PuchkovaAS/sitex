@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"sitex/pkg/di"
 
 	"golang.org/x/crypto/bcrypt"
@@ -74,6 +75,8 @@ func (service *AuthService) Register(
 	isActive := form.IsActive == "true"
 	isAdmin := form.IsAdmin == "true"
 
+	fmt.Println(isAdmin)
+
 	err = service.UserRepository.CreateUserWithDepartment(
 		form.FirstName,
 		form.LastName,
@@ -81,8 +84,8 @@ func (service *AuthService) Register(
 		form.Department,
 		form.Position,
 		string(hashedPassword),
-		isAdmin,
 		isActive,
+		isAdmin,
 	)
 	if err != nil {
 		return err
