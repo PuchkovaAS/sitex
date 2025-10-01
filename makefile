@@ -26,6 +26,10 @@ docker-build: ## Собрать Docker-образ
 docker-run: docker-build ## Запустить в Docker
 	docker run --rm -p 3000:3000 --env-file .env $(IMAGE_NAME):latest
 
+.PHONY: docker-push
+docker-push: docker-build ## Отправить образ в Docker Hub
+	docker push $(IMAGE_NAME):latest
+
 .PHONY: lint
 lint: ## Проверить код линтером (требуется golangci-lint)
 	@if ! command -v golangci-lint &> /dev/null; then \
