@@ -1,7 +1,7 @@
 # Makefile для sitex (https://github.com/PuchkovaAS/sitex)
 
 BINARY_NAME = sitex
-IMAGE_NAME = puchkovaas/sitex
+IMAGE_NAME = puchkovaas/sitex-app
 
 .PHONY: help
 help: ## Показать справку
