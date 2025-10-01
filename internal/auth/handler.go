@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"sitex/internal/user"
-	"sitex/pkg/middleware"
 	"sitex/pkg/validator"
 	"sitex/views/components"
 	"strings"
@@ -35,7 +34,7 @@ type AuthHandler struct {
 	service      *AuthService
 }
 
-func NewHandler(router fiber.Router, deps AuthHandlerDeps) {
+func NewHandler(router fiber.Router, deps AuthHandlerDeps) *AuthHandler {
 	h := &AuthHandler{
 		router:       router,
 		customLogger: deps.CustomLogger,
@@ -43,28 +42,22 @@ func NewHandler(router fiber.Router, deps AuthHandlerDeps) {
 		repository:   deps.Repository,
 		service:      deps.Service,
 	}
-
-	h.setupPublicRoutes()
-	h.setupPrivateRoutes()
-	h.setupAdminRoutes()
+	return h
 }
 
-func (h *AuthHandler) setupPublicRoutes() {
-	public := h.router.Group("/api")
-	public.Post("/login", h.apiLogin)
+// SetupPublicRoutes регистрирует публичные API-эндпоинты (без middleware).
+func (h *AuthHandler) SetupPublicRoutes() {
+	h.router.Post("/login", h.apiLogin)
 }
 
-func (h *AuthHandler) setupAdminRoutes() {
-	admin := h.router.Group("/api", middleware.IsAdminMiddleware(h.store, h.repository))
-	admin.Post("/create_user", h.apiCreateUser)
+func (h *AuthHandler) SetupAdminRoutes(adminGroup fiber.Router) {
+	adminGroup.Post("/create_user", h.apiCreateUser)
+	adminGroup.Put("/profile_update", h.apiUpdateUser)
+	adminGroup.Put("/change_password", h.apiChangePassword)
 }
 
-func (h *AuthHandler) setupPrivateRoutes() {
-	private := h.router.Group("/api", middleware.AuthMiddleware(h.store))
-
-	private.Get("/logout", h.apiLogout)
-	private.Put("/profile_update", h.apiUpdateUser)
-	private.Put("/change_password", h.apiChangePassword)
+func (h *AuthHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
+	privetGroup.Get("/logout", h.apiLogout)
 }
 
 func validationPassword(password, confirmPassword string) error {

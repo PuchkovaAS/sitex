@@ -3,7 +3,6 @@ package user
 import (
 	"fmt"
 	"net/http"
-	"sitex/pkg/middleware"
 	"sitex/views/components"
 	"time"
 
@@ -27,7 +26,7 @@ type UserHandler struct {
 	repository   *UserRepository
 }
 
-func NewHandler(router fiber.Router, deps UserHandlerDeps) {
+func NewHandler(router fiber.Router, deps UserHandlerDeps) *UserHandler {
 	h := &UserHandler{
 		router:       router,
 		customLogger: deps.CustomLogger,
@@ -35,9 +34,12 @@ func NewHandler(router fiber.Router, deps UserHandlerDeps) {
 		repository:   deps.Repository,
 	}
 
-	authGroup := router.Group("/api", middleware.AuthMiddleware(h.store))
-	authGroup.Post("/user/add_status", h.addStatus)
-	authGroup.Delete("/user/delete_status/:id", h.deleteStatus)
+	return h
+}
+
+func (h *UserHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
+	privetGroup.Post("/user/add_status", h.addStatus)
+	privetGroup.Delete("/user/delete_status/:id", h.deleteStatus)
 }
 
 func (h *UserHandler) deleteStatus(c *fiber.Ctx) error {
@@ -64,7 +66,7 @@ func (h *UserHandler) deleteStatus(c *fiber.Ctx) error {
 				"Ошибка при удаление статуса",
 				components.NotificationFail,
 			),
-			fiber.StatusInternalServerError,
+			fiber.StatusOK,
 		)
 	}
 
@@ -75,7 +77,7 @@ func (h *UserHandler) deleteStatus(c *fiber.Ctx) error {
 				"Ошибка при удаление статуса",
 				components.NotificationFail,
 			),
-			fiber.StatusInternalServerError,
+			fiber.StatusOK,
 		)
 	}
 	redirectURL := fmt.Sprintf("/?email=%s", email)
@@ -102,7 +104,7 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 				"Ошибка при добавление статуса",
 				components.NotificationFail,
 			),
-			fiber.StatusInternalServerError,
+			fiber.StatusOK,
 		)
 	}
 
@@ -120,7 +122,7 @@ func (h *UserHandler) addStatus(c *fiber.Ctx) error {
 				err.Error(),
 				components.NotificationFail,
 			),
-			fiber.StatusInternalServerError,
+			fiber.StatusOK,
 		)
 	}
 

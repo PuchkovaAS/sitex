@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"sitex/internal/dt"
 	"sitex/internal/user"
-	"sitex/pkg/middleware"
 	"sitex/views"
 	"time"
 
@@ -31,7 +30,7 @@ type PagesHandler struct {
 	userService  *user.UserService
 }
 
-func NewHandler(router fiber.Router, deps PagesHandlerDeps) {
+func NewHandler(router fiber.Router, deps PagesHandlerDeps) *PagesHandler {
 	h := &PagesHandler{
 		router:       router,
 		store:        deps.Store,
@@ -39,32 +38,27 @@ func NewHandler(router fiber.Router, deps PagesHandlerDeps) {
 		customLogger: deps.CustomLogger,
 		userService:  deps.UserService,
 	}
-	h.setupPublicRoutes()
-	h.setupPrivateRoutes()
-	h.setupAdminRoutes()
+	return h
 }
 
-func (h *PagesHandler) setupPublicRoutes() {
+func (h *PagesHandler) SetupPublicRoutes() {
 	h.router.Get("/login", h.login)
 	h.router.Get("/errors/403", h.error403)
 }
 
-func (h *PagesHandler) setupAdminRoutes() {
-	admin := h.router.Group("/", middleware.IsAdminMiddleware(h.store, h.repository))
-	admin.Get("/create_user", h.createUser)
-	admin.Get("/users_activity", h.usersActivity)
-	admin.Get("/profile_update", h.updateUser)
-	admin.Get("/change_password", h.changePassword)
-	admin.Get("/users_status_history", h.usersStatusHistory)
+func (h *PagesHandler) SetupAdminRoutes(adminGroup fiber.Router) {
+	adminGroup.Get("/create_user", h.createUser)
+	adminGroup.Get("/users_activity", h.usersActivity)
+	adminGroup.Get("/profile_update", h.updateUser)
+	adminGroup.Get("/change_password", h.changePassword)
+	adminGroup.Get("/users_status_history", h.usersStatusHistory)
 }
 
-func (h *PagesHandler) setupPrivateRoutes() {
-	private := h.router.Group("/", middleware.AuthMiddleware(h.store))
-
-	private.Get("/", h.home)
-	private.Get("/history_status", h.historyStatus)
-	private.Get("/year_statistics", h.yearStatistic)
-	private.Get("/profile", h.profile)
+func (h *PagesHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
+	privetGroup.Get("/", h.home)
+	privetGroup.Get("/history_status", h.historyStatus)
+	privetGroup.Get("/year_statistics", h.yearStatistic)
+	privetGroup.Get("/profile", h.profile)
 }
 
 func (h *PagesHandler) createUser(c *fiber.Ctx) error {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sitex/config"
 	"sitex/internal/auth"
-	"sitex/internal/pages"
+	"sitex/internal/routers"
 	"sitex/internal/user"
 	"sitex/pkg/database"
 	"sitex/pkg/logger"
@@ -73,22 +73,11 @@ func main() {
 
 	// Handler
 
-	auth.NewHandler(app, auth.AuthHandlerDeps{
+	routers.NewHandler(app, routers.RouterHandlerDeps{
 		CustomLogger: customLogger,
 		Store:        store,
 		Repository:   userRepository,
-		Service:      authService,
-	})
-	user.NewHandler(app, user.UserHandlerDeps{
-		CustomLogger: customLogger,
-		Store:        store,
-		Repository:   userRepository,
-	})
-
-	pages.NewHandler(app, pages.PagesHandlerDeps{
-		Store:        store,
-		Repository:   userRepository,
-		CustomLogger: customLogger,
+		AuthService:  authService,
 		UserService:  userService,
 	})
 
