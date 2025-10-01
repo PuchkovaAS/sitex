@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"fmt"
 	"sitex/pkg/di"
 
 	"golang.org/x/crypto/bcrypt"
@@ -74,8 +73,6 @@ func (service *AuthService) Register(
 	// Конвертируем строки в boolean
 	isActive := form.IsActive == "true"
 	isAdmin := form.IsAdmin == "true"
-
-	fmt.Println(isAdmin)
 
 	err = service.UserRepository.CreateUserWithDepartment(
 		form.FirstName,
