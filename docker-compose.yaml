@@ -1,13 +1,12 @@
 services:
     postgres:
         container_name: sitex_bd
-        image: postgres:16.4
+        image: postgres:18
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: my_pass
-            PGDATA: /var/lib/postgresql/data/pgdata
         volumes:
-            - pgdata:/var/lib/postgresql/data
+            - pgdata:/var/lib/postgresql/data # ← стандартный путь
             - ./init:/docker-entrypoint-initdb.d/
         ports:
             - '5432:5432'
