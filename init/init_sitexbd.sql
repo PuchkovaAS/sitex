@@ -83,7 +83,8 @@ VALUES
     ('Больничный', 'sick_leave'),
     ('Выходной', 'weekend'),
     ('Отгул', 'day_off'),
-    ('Работа в выходной день', 'weekend_work')
+    ('Работа в выходной день', 'weekend_work'),
+    ('Отпуск за свой счёт', 'unpaid_vacation')
 ON CONFLICT (code) DO NOTHING;
 
 -- Отдел

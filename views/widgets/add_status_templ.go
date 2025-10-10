@@ -39,20 +39,20 @@ func AddStatus(email string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("/api/user/add_status?email=" + fmt.Sprintf("%s", email))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_status.templ`, Line: 11, Col: 102}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_status.templ`, Line: 13, Col: 69}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"submit\" hx-target=\"#add_status-result\" hx-swap=\"innerHTML swap:0.5s\" hx-encoding=\"multipart/form-data\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"space-y-3\"><!-- Выбор статуса --><div class=\"mb-2\"><label for=\"status\" class=\"block text-xs font-medium text-gray-700 mb-1\">Статус</label> <select id=\"status\" name=\"status\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors\"><option value=\"\">Выберите статус...</option> <option value=\"work_office\">В офисе</option> <option value=\"work_remote\">Удаленная работа</option> <option value=\"business_trip\">Командировка</option> <option value=\"vacation\">Отпуск</option> <option value=\"sick_leave\">Больничный</option> <option value=\"day_off\">Отгул</option> <option value=\"weekend_work\">Работа в выходной день</option></select></div><!-- Дата начала --><div class=\"mb-2\"><label for=\"date\" class=\"block text-xs font-medium text-gray-700 mb-1\">Дата начала</label> <input type=\"date\" id=\"date\" name=\"date\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"submit\" hx-target=\"#add_status-result\" hx-swap=\"innerHTML swap:0.5s\" hx-encoding=\"multipart/form-data\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"space-y-3\"><!-- Выбор статуса --><div class=\"mb-2\"><label for=\"status\" class=\"block text-xs font-medium text-gray-700 mb-1\">Статус</label> <select id=\"status\" name=\"status\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors\"><option value=\"\">Выберите статус...</option> <option value=\"work_office\">В офисе</option> <option value=\"work_remote\">Удаленная работа</option> <option value=\"business_trip\">Командировка</option> <option value=\"vacation\">Отпуск</option> <option value=\"unpaid_vacation\">Отпуск за свой счёт</option> <option value=\"sick_leave\">Больничный</option> <option value=\"day_off\">Отгул</option> <option value=\"weekend_work\">Работа в выходной день</option></select></div><!-- Дата начала --><div class=\"mb-2\"><label for=\"date\" class=\"block text-xs font-medium text-gray-700 mb-1\">Дата начала</label> <input type=\"date\" id=\"date\" name=\"date\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("2006-01-02"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_status.templ`, Line: 37, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_status.templ`, Line: 52, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
