@@ -93,7 +93,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Правая часть: Добавить статус --><div class=\"w-sm\"><h2 class=\"text-lg font-semibold text-gray-900\">Добавить статус</h2></div></div><div><div class=\"grid grid-cols-1 lg:grid-cols-4 gap-6\"><!-- Два календаря (занимают 3 колонки) --><div class=\"lg:col-span-3\"><div class=\"flex flex-col items-center justify-center h-full\"><!-- Добавлено justify-center и h-full --><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto\"><!-- Календари --><div class=\"flex items-center justify-center\"><!-- Добавлен контейнер с центрированием -->")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Правая часть: Добавить статус --><div class=\"w-sm\"><h2 class=\"text-lg font-semibold text-gray-900\">Добавить событие</h2></div></div><div><div class=\"grid grid-cols-1 lg:grid-cols-4 gap-6\"><!-- Два календаря (занимают 3 колонки) --><div class=\"lg:col-span-3\"><div class=\"flex flex-col items-center justify-center h-full\"><!-- Добавлено justify-center и h-full --><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto\"><!-- Календари --><div class=\"flex items-center justify-center\"><!-- Добавлен контейнер с центрированием -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -131,7 +131,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = widgets.AddStatus(props.Email).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = widgets.AddEventTabs(props.Email, props.IsAdmin).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

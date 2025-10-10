@@ -74,7 +74,7 @@ templ ActivityPage(props ActivityPageProps) {
 					</div>
 					<!-- Правая часть: Добавить статус -->
 					<div class="w-sm">
-						<h2 class="text-lg font-semibold text-gray-900">Добавить статус</h2>
+						<h2 class="text-lg font-semibold text-gray-900">Добавить событие</h2>
 					</div>
 				</div>
 				<div>
@@ -108,7 +108,7 @@ templ ActivityPage(props ActivityPageProps) {
 						</div>
 						<!-- Форма добавления статуса -->
 						<div>
-							@widgets.AddStatus(props.Email)
+							@widgets.AddEventTabs(props.Email, props.IsAdmin)
 						</div>
 					</div>
 				</div>

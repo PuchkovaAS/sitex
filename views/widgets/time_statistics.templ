@@ -46,9 +46,9 @@ statuses := []string{
 				Статистика активности за <span class="text-blue-600">{ props.MonthName } { year }</span>
 			</h2>
 		</div>
-		<div class="flex items-center gap-6 bg-white ">
-			<!-- Аватар и основная информация в одной линии -->
-			<div class="flex items-center  flex-shrink-0">
+		<div class="flex items-center gap-6 bg-white">
+			<!-- Аватар и основная информация -->
+			<div class="flex items-center flex-shrink-0">
 				@components.EmployeerAvatar(props.FirstName, props.LastName, props.IsActive)
 				@components.EmployeeInfo(components.EmployeeInfoProps{
 					Email:      props.Email,
@@ -60,7 +60,7 @@ statuses := []string{
 					Department: props.Department,
 				})
 			</div>
-			<!-- Статистика -->
+			<!-- Статистика по статусам -->
 			<div class="flex-1">
 				<div class="grid grid-cols-9 gap-4">
 					for _, status := range statuses {
@@ -69,6 +69,8 @@ statuses := []string{
 				</div>
 			</div>
 		</div>
+		<!-- 🔹 Блок учёта времени — гармонично внизу карточки -->
+		@TimeWatch()
 	</div>
 }
 
