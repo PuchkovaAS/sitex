@@ -135,35 +135,15 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></div></div><div class=\"my-2 p-2 \"><h3 class=\"text-lg font-semibold text-gray-900\">Последние добавленные события</h3></div><div class=\"flex flex-col  mt-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></div></div><div class=\"my-2 p-2 \"><h3 class=\"text-lg font-semibold text-gray-900\">Последние добавленные события</h3></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, item := range props.LastAddStatus {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"mb-2\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = widgets.StatusEventWidget(widgets.StatusEventProps{
-					ID:           int(item.ID),
-					Status:       item.StatusType.Name,
-					Date:         item.StartDate,
-					Description:  item.Comment,
-					UserName:     item.Employee.LastName + " " + item.Employee.FirstName,
-					OneTimeEvent: item.OneTimeEvent,
-					DateAdd:      item.UpdatedAt,
-					WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
-					Email:        item.Employee.Email,
-				}).Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
+			templ_7745c5c3_Err = widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus}, true).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -206,7 +186,7 @@ func ActivityPageScript() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<script>\n    function toggleActivity() {\n        const block = document.getElementById('activity-block');\n        const icon = document.getElementById('toggle-icon');\n\n        block.classList.toggle('hidden');\n        icon.classList.toggle('rotate-0');\n        icon.classList.toggle('rotate-180');\n    }\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n    function toggleActivity() {\n        const block = document.getElementById('activity-block');\n        const icon = document.getElementById('toggle-icon');\n\n        block.classList.toggle('hidden');\n        icon.classList.toggle('rotate-0');\n        icon.classList.toggle('rotate-180');\n    }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
