@@ -58,22 +58,47 @@ type Employee struct {
 	StatusPeriods []StatusPeriod `gorm:"foreignKey:EmployeeID"`
 }
 
+type TimeEvent struct {
+	gorm.Model
+	EmployeeID uint     `gorm:"not null"`
+	Employee   Employee `gorm:"foreignKey:EmployeeID"`
+	WhoAddedID uint     `gorm:"not null"`
+	WhoAdded   Employee `gorm:"foreignKey:WhoAddedID"`
+
+	EventTypeID uint          `gorm:"not null"`
+	EventType   TimeEventType `gorm:"foreignKey:EventTypeID"`
+
+	Date          time.Time `gorm:"not null;type:date"`
+	ScheduledTime string    `gorm:"not null;type:time"`
+	ActualTime    string    `gorm:"not null;type:time"`
+	Description   string    `gorm:"type:text"`
+	DifferenceMin int       `gorm:"not null"`
+}
+
+type TimeEventType struct {
+	gorm.Model
+	Code       string      `gorm:"not null;uniqueIndex"`
+	Name       string      `gorm:"not null"`
+	TimeEvents []TimeEvent `gorm:"foreignKey:EventTypeID"`
+}
+
 type StatusType struct {
 	gorm.Model
 	Name    string         `gorm:"not null"`
-	Code    string         `gorm:"not null"`
+	Code    string         `gorm:"not null;unique"` // ← верните unique
 	Periods []StatusPeriod `gorm:"foreignKey:StatusID"`
 }
 
 type StatusPeriod struct {
 	gorm.Model
 	EmployeeID   uint      `gorm:"not null"`
+	WhoAddedID   uint      `gorm:"not null"` // ID сотрудника, который добавил запись
 	StatusID     uint      `gorm:"not null"`
 	StartDate    time.Time `gorm:"not null"`
 	Comment      string
-	Employee     Employee   `gorm:"foreignKey:EmployeeID"`
-	WhoAddedID   uint       `gorm:"not null"`              // ID сотрудника, который добавил запись
-	WhoAdded     Employee   `gorm:"foreignKey:WhoAddedID"` // Ссылка на сотрудника
-	StatusType   StatusType `gorm:"foreignKey:StatusID"`
-	OneTimeEvent bool       `gorm:"not null;default:false"`
+	OneTimeEvent bool `gorm:"not null;default:false"`
+
+	Employee   Employee   `gorm:"foreignKey:EmployeeID;references:ID"`
+	WhoAdded   Employee   `gorm:"foreignKey:WhoAddedID;references:ID"`
+	StatusType StatusType `gorm:"foreignKey:StatusID;references:ID"`
 }

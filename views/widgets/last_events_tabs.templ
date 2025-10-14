@@ -7,7 +7,7 @@ type EventsProps struct {
 }
 
 templ LastEventsTabs(props EventsProps, isAdmin bool) {
-	<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 max-w-2xl mx-auto">
+	<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mx-auto">
 		<!-- Переключатели -->
 		<div class="flex space-x-2 mb-4 border-b border-gray-200">
 			<button
@@ -52,21 +52,19 @@ templ LastEventsTabs(props EventsProps, isAdmin bool) {
 		if isAdmin {
 			<div id="last-events-time" class="hidden">
 				<div class="flex flex-col mt-2">
-					for _, item := range props.LastAddStatus {
-						<div class="mb-2">
-							@StatusEventWidget(StatusEventProps{
-								ID:           int(item.ID),
-								Status:       item.StatusType.Name,
-								Date:         item.StartDate,
-								Description:  item.Comment,
-								UserName:     item.Employee.LastName + " " + item.Employee.FirstName,
-								OneTimeEvent: item.OneTimeEvent,
-								DateAdd:      item.UpdatedAt,
-								WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
-								Email:        item.Employee.Email,
-							})
-						</div>
-					}
+					<div class="mb-2">
+						@StatusEventWidget(StatusEventProps{
+							ID:           int(props.LastAddStatus[0].ID),
+							Status:       props.LastAddStatus[0].StatusType.Name,
+							Date:         props.LastAddStatus[0].StartDate,
+							Description:  props.LastAddStatus[0].Comment,
+							UserName:     props.LastAddStatus[0].Employee.LastName + " " + props.LastAddStatus[0].Employee.FirstName,
+							OneTimeEvent: props.LastAddStatus[0].OneTimeEvent,
+							DateAdd:      props.LastAddStatus[0].UpdatedAt,
+							WhoAddEvent:  props.LastAddStatus[0].WhoAdded.LastName + " " + props.LastAddStatus[0].WhoAdded.FirstName,
+							Email:        props.LastAddStatus[0].Employee.Email,
+						})
+					</div>
 				</div>
 			</div>
 		}

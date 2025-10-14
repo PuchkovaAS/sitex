@@ -71,6 +71,43 @@ CREATE INDEX IF NOT EXISTS idx_status_periods_employee_id ON status_periods(empl
 CREATE INDEX IF NOT EXISTS idx_status_periods_status_id ON status_periods(status_id);
 CREATE INDEX IF NOT EXISTS idx_status_periods_who_added_id ON status_periods(who_added_id);
 
+
+
+-- === Таблицы для учёта времени (опоздания, ранние уходы) ===
+
+CREATE TABLE IF NOT EXISTS time_event_types (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP WITH TIME ZONE,
+    code VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_time_event_types_deleted_at ON time_event_types (deleted_at);
+
+CREATE TABLE IF NOT EXISTS time_events (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP WITH TIME ZONE,
+    employee_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE RESTRICT,
+    who_added_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE RESTRICT,
+    event_type_id BIGINT NOT NULL REFERENCES time_event_types(id) ON DELETE RESTRICT,
+    date DATE NOT NULL,
+    scheduled_time TIME NOT NULL,
+    actual_time TIME NOT NULL,
+    description TEXT,
+    difference_min INTEGER NOT NULL
+);
+
+-- Индексы
+CREATE INDEX IF NOT EXISTS idx_time_events_employee_id ON time_events (employee_id);
+CREATE INDEX IF NOT EXISTS idx_time_events_who_added_id ON time_events (who_added_id);
+CREATE INDEX IF NOT EXISTS idx_time_events_event_type_id ON time_events (event_type_id);
+CREATE INDEX IF NOT EXISTS idx_time_events_date ON time_events (date);
+CREATE INDEX IF NOT EXISTS idx_time_events_deleted_at ON time_events (deleted_at);
+
 -- === Заполнение данными ===
 
 -- Статусы
@@ -85,6 +122,13 @@ VALUES
     ('Отгул', 'day_off'),
     ('Работа в выходной день', 'weekend_work'),
     ('Отпуск за свой счёт', 'unpaid_vacation')
+ON CONFLICT (code) DO NOTHING;
+
+-- Типы временных событий
+INSERT INTO time_event_types (code, name)
+VALUES
+    ('late', 'Опоздание'),
+    ('early_leave', 'Ранний уход')
 ON CONFLICT (code) DO NOTHING;
 
 -- Отдел
