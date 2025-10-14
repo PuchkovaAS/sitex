@@ -37,6 +37,11 @@ func NewHandler(router fiber.Router, deps UserHandlerDeps) *UserHandler {
 	return h
 }
 
+func (h *UserHandler) SetupAdminRoutes(privetGroup fiber.Router) {
+	privetGroup.Post("/user/add_time_event", h.addTimeEvent)
+	// privetGroup.Delete("/user/delete_time_event/:id", h.deleteTimeEvent)
+}
+
 func (h *UserHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
 	privetGroup.Post("/user/add_status", h.addStatus)
 	privetGroup.Delete("/user/delete_status/:id", h.deleteStatus)
@@ -83,6 +88,59 @@ func (h *UserHandler) deleteStatus(c *fiber.Ctx) error {
 	redirectURL := fmt.Sprintf("/?email=%s", email)
 	c.Response().Header.Add("Hx-Redirect", redirectURL)
 	return c.Redirect(redirectURL, http.StatusOK)
+}
+
+func (h *UserHandler) addTimeEvent(c *fiber.Ctx) error {
+	form := timeEventAddForm{
+		EventType:     c.FormValue("event_type"),
+		Date:          c.FormValue("date"),
+		ScheduledTime: c.FormValue("scheduled_time"),
+		ActualTime:    c.FormValue("actual_time"),
+		Description:   c.FormValue("description"),
+	}
+	if err := c.BodyParser(&form); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Неверный формат данных",
+		})
+	}
+
+	// Валидация
+	if form.EventType == "" || form.Date == "" || form.ScheduledTime == "" || form.ActualTime == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Все поля обязательны",
+		})
+	}
+
+	emailAdmin := c.Locals("email").(string)
+
+	email := c.Query("email", emailAdmin)
+
+	err := h.repository.AddTimeEvent(timeEventAddInfo{
+		WhoAddEmail:   emailAdmin,
+		Email:         email,
+		EventType:     form.EventType,
+		Date:          form.Date,
+		ScheduledTime: form.ScheduledTime,
+		ActualTime:    form.ActualTime,
+		Description:   form.Description,
+	})
+	if err != nil {
+		return templeadapter.Render(c,
+			components.Notification(
+				err.Error(),
+				components.NotificationFail,
+			),
+			fiber.StatusOK,
+		)
+	}
+
+	return templeadapter.Render(c,
+		components.Notification(
+			"Событие добавлено",
+			components.NotificationSuccess,
+		),
+		fiber.StatusOK,
+	)
 }
 
 func (h *UserHandler) addStatus(c *fiber.Ctx) error {

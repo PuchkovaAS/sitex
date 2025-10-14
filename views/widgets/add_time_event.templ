@@ -17,79 +17,66 @@ templ AddTimeEvent(email string) {
 			class="space-y-3"
 		>
 			<!-- Тип события -->
-			<div class="mb-2">
-				<label for="event_type" class="block text-xs font-medium text-gray-700 mb-1">
-					Тип события
-				</label>
+			<div class="mb-1">
+				<label for="event_type" class="block text-xs font-medium text-gray-700 mb-1">Тип события</label>
 				<select
 					id="event_type"
 					name="event_type"
 					required
-					class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+					class="w-full p-2 text-sm border border-gray-300 rounded-lg"
 				>
-					<option value="">Выберите тип...</option>
+					<option value="">Выберите...</option>
 					<option value="late">Опоздание</option>
 					<option value="early_leave">Ранний уход</option>
 				</select>
 			</div>
 			<!-- Дата -->
-			<div class="mb-2">
-				<label for="date" class="block text-xs font-medium text-gray-700 mb-1">
-					Дата
-				</label>
+			<div class="mb-1">
+				<label for="date" class="block text-xs font-medium text-gray-700 mb-1">Дата</label>
 				<input
 					type="date"
 					id="date"
 					name="date"
 					value={ time.Now().Format("2006-01-02") }
 					required
-					class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+					class="w-full p-2 text-sm border border-gray-300 rounded-lg"
 				/>
 			</div>
-			<!-- Время: плановое и фактическое (в одну строку) -->
-			<div class="mb-2">
-				<div class="flex gap-3">
-					<!-- Плановое время -->
-					<div class="flex-1">
-						<label for="scheduled_time" class="block text-xs font-medium text-gray-700 mb-1">
-							Плановое время
-						</label>
-						<input
-							type="time"
-							id="scheduled_time"
-							name="scheduled_time"
-							value="09:00"
-							required
-							class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-						/>
-					</div>
-					<!-- Фактическое время -->
-					<div class="flex-1">
-						<label for="actual_time" class="block text-xs font-medium text-gray-700 mb-1">
-							Фактическое время
-						</label>
-						<input
-							type="time"
-							id="actual_time"
-							name="actual_time"
-							value={ time.Now().Format("15:04") }
-							required
-							class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-						/>
-					</div>
-				</div>
+			<!-- Плановое время -->
+			<div class="mb-1">
+				<label for="scheduled_time" class="block text-xs font-medium text-gray-700 mb-1">Плановое время</label>
+				<input
+					type="time"
+					id="scheduled_time"
+					name="scheduled_time"
+					value="08:30"
+					required
+					class="w-full p-2 text-sm border border-gray-300 rounded-lg"
+				/>
 			</div>
-			<!-- Описание (опционально) -->
+			<!-- Фактическое время -->
+			<div class="mb-1">
+				<label for="actual_time" class="block text-xs font-medium text-gray-700 mb-1">Фактическое время</label>
+				<input
+					type="time"
+					id="actual_time"
+					name="actual_time"
+					value={ time.Now().Format("15:04") }
+					required
+					class="w-full p-2 text-sm border border-gray-300 rounded-lg"
+				/>
+			</div>
+			<!-- Описание -->
 			<div class="mb-2">
 				<label for="description" class="block text-xs font-medium text-gray-700 mb-1">
-					Комментарий (необязательно)
+					Описание (необязательно)
 				</label>
 				<textarea
 					id="description"
 					name="description"
-					rows="2"
-					placeholder="Например: Пробки на дороге..."
-					class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-y"
+					class="w-full p-2 text-sm border border-gray-300 rounded-lg"
+					placeholder="Например: Пробки на дорогах..."
+					rows="1"
 				></textarea>
 			</div>
 			<!-- Кнопка -->

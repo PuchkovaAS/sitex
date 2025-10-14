@@ -34,6 +34,24 @@ type statusAddForm struct {
 	OneTimeEvent bool
 }
 
+type timeEventAddForm struct {
+	EventType     string `json:"event_type"`     // "late" или "early_leave"
+	Date          string `json:"date"`           // "2025-10-14"
+	ScheduledTime string `json:"scheduled_time"` // "09:00"
+	ActualTime    string `json:"actual_time"`    // "09:23"
+	Description   string `json:"description"`    // опционально
+}
+
+type timeEventAddInfo struct {
+	WhoAddEmail   string `gorm:"column:who_add_email"` // Email того, кто добавляет запись
+	Email         string `gorm:"column:email"`         // Email сотрудника, для которого добавляется статус
+	EventType     string `json:"event_type"`           // "late" или "early_leave"
+	Date          string `json:"date"`                 // "2025-10-14"
+	ScheduledTime string `json:"scheduled_time"`       // "09:00"
+	ActualTime    string `json:"actual_time"`          // "09:23"
+	Description   string `json:"description"`          // опционально
+}
+
 type statusAddInfo struct {
 	WhoAddEmail  string `gorm:"column:who_add_email"` // Email того, кто добавляет запись
 	Email        string `gorm:"column:email"`         // Email сотрудника, для которого добавляется статус

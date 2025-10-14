@@ -9,10 +9,11 @@ import (
 )
 
 type ActivityPageProps struct {
-	StatusCount   map[string]int
-	MonthHistory  []user.MonthHistory
-	CurrentMonth  int
-	LastAddStatus []user.StatusPeriod
+	StatusCount    map[string]int
+	MonthHistory   []user.MonthHistory
+	CurrentMonth   int
+	LastAddStatus  []user.StatusPeriod
+	LastTimeEvents []user.TimeEvent
 
 	Email      string
 	StatusText string
@@ -117,7 +118,8 @@ templ ActivityPage(props ActivityPageProps) {
 		<div class="my-2 p-2 ">
 			<h3 class="text-lg font-semibold text-gray-900">Последние добавленные события</h3>
 		</div>
-		@widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus}, true)
+		@widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus, LastTimeEvents: props.LastTimeEvents},
+			true)
 		@ActivityPageScript()
 	}
 }

@@ -17,10 +17,11 @@ import (
 )
 
 type ActivityPageProps struct {
-	StatusCount   map[string]int
-	MonthHistory  []user.MonthHistory
-	CurrentMonth  int
-	LastAddStatus []user.StatusPeriod
+	StatusCount    map[string]int
+	MonthHistory   []user.MonthHistory
+	CurrentMonth   int
+	LastAddStatus  []user.StatusPeriod
+	LastTimeEvents []user.TimeEvent
 
 	Email      string
 	StatusText string
@@ -139,7 +140,8 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus}, true).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus, LastTimeEvents: props.LastTimeEvents},
+				true).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

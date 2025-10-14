@@ -309,6 +309,12 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		return c.SendStatus(500)
 	}
 
+	lastAddTimeEvent, err := h.repository.GetLastTimeEvents(emailUser, 6)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
 	employeeData, err := h.getEmployeeData(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
@@ -316,18 +322,19 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 	}
 
 	component := views.ActivityPage(views.ActivityPageProps{
-		StatusCount:   statusCount,
-		MonthHistory:  monthHistory,
-		CurrentMonth:  month,
-		LastAddStatus: lastAddStatus,
-		Email:         emailUser,
-		StatusText:    employeeData.StatusText,
-		FirstName:     employeeData.FirstName,
-		LastName:      employeeData.LastName,
-		Position:      employeeData.Position,
-		IsAdmin:       employeeData.IsAdmin,
-		IsActive:      employeeData.IsActive,
-		Department:    employeeData.Department,
+		StatusCount:    statusCount,
+		MonthHistory:   monthHistory,
+		CurrentMonth:   month,
+		LastAddStatus:  lastAddStatus,
+		LastTimeEvents: lastAddTimeEvent,
+		Email:          emailUser,
+		StatusText:     employeeData.StatusText,
+		FirstName:      employeeData.FirstName,
+		LastName:       employeeData.LastName,
+		Position:       employeeData.Position,
+		IsAdmin:        employeeData.IsAdmin,
+		IsActive:       employeeData.IsActive,
+		Department:     employeeData.Department,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

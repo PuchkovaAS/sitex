@@ -44,33 +44,33 @@ func AddTimeEvent(email string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"submit\" hx-target=\"#add_time_event-result\" hx-swap=\"innerHTML swap:0.5s\" hx-encoding=\"multipart/form-data\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"space-y-3\"><!-- Тип события --><div class=\"mb-2\"><label for=\"event_type\" class=\"block text-xs font-medium text-gray-700 mb-1\">Тип события</label> <select id=\"event_type\" name=\"event_type\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors\"><option value=\"\">Выберите тип...</option> <option value=\"late\">Опоздание</option> <option value=\"early_leave\">Ранний уход</option></select></div><!-- Дата --><div class=\"mb-2\"><label for=\"date\" class=\"block text-xs font-medium text-gray-700 mb-1\">Дата</label> <input type=\"date\" id=\"date\" name=\"date\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"submit\" hx-target=\"#add_time_event-result\" hx-swap=\"innerHTML swap:0.5s\" hx-encoding=\"multipart/form-data\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"space-y-3\"><!-- Тип события --><div class=\"mb-1\"><label for=\"event_type\" class=\"block text-xs font-medium text-gray-700 mb-1\">Тип события</label> <select id=\"event_type\" name=\"event_type\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg\"><option value=\"\">Выберите...</option> <option value=\"late\">Опоздание</option> <option value=\"early_leave\">Ранний уход</option></select></div><!-- Дата --><div class=\"mb-1\"><label for=\"date\" class=\"block text-xs font-medium text-gray-700 mb-1\">Дата</label> <input type=\"date\" id=\"date\" name=\"date\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("2006-01-02"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_time_event.templ`, Line: 44, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_time_event.templ`, Line: 40, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors\"></div><!-- Время: плановое и фактическое (в одну строку) --><div class=\"mb-2\"><div class=\"flex gap-3\"><!-- Плановое время --><div class=\"flex-1\"><label for=\"scheduled_time\" class=\"block text-xs font-medium text-gray-700 mb-1\">Плановое время</label> <input type=\"time\" id=\"scheduled_time\" name=\"scheduled_time\" value=\"09:00\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors\"></div><!-- Фактическое время --><div class=\"flex-1\"><label for=\"actual_time\" class=\"block text-xs font-medium text-gray-700 mb-1\">Фактическое время</label> <input type=\"time\" id=\"actual_time\" name=\"actual_time\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg\"></div><!-- Плановое время --><div class=\"mb-1\"><label for=\"scheduled_time\" class=\"block text-xs font-medium text-gray-700 mb-1\">Плановое время</label> <input type=\"time\" id=\"scheduled_time\" name=\"scheduled_time\" value=\"08:30\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg\"></div><!-- Фактическое время --><div class=\"mb-1\"><label for=\"actual_time\" class=\"block text-xs font-medium text-gray-700 mb-1\">Фактическое время</label> <input type=\"time\" id=\"actual_time\" name=\"actual_time\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("15:04"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_time_event.templ`, Line: 75, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/add_time_event.templ`, Line: 64, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors\"></div></div></div><!-- Описание (опционально) --><div class=\"mb-2\"><label for=\"description\" class=\"block text-xs font-medium text-gray-700 mb-1\">Комментарий (необязательно)</label> <textarea id=\"description\" name=\"description\" rows=\"2\" placeholder=\"Например: Пробки на дороге...\" class=\"w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-y\"></textarea></div><!-- Кнопка --><div class=\"pt-1\"><button type=\"submit\" class=\"w-full bg-blue-600 text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors\">Сохранить событие</button></div></form><!-- Контейнер для уведомлений --><div id=\"time_event-notification\" class=\"mt-3\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" required class=\"w-full p-2 text-sm border border-gray-300 rounded-lg\"></div><!-- Описание --><div class=\"mb-2\"><label for=\"description\" class=\"block text-xs font-medium text-gray-700 mb-1\">Описание (необязательно)</label> <textarea id=\"description\" name=\"description\" class=\"w-full p-2 text-sm border border-gray-300 rounded-lg\" placeholder=\"Например: Пробки на дорогах...\" rows=\"1\"></textarea></div><!-- Кнопка --><div class=\"pt-1\"><button type=\"submit\" class=\"w-full bg-blue-600 text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors\">Сохранить событие</button></div></form><!-- Контейнер для уведомлений --><div id=\"time_event-notification\" class=\"mt-3\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

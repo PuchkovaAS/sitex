@@ -52,6 +52,7 @@ func NewHandler(app *fiber.App, deps RouterHandlerDeps) {
 	// Админские API — IsAdminMiddleware
 	adminAPI := api.Group("", middleware.IsAdminMiddleware(deps.Store, deps.Repository))
 	authHandler.SetupAdminRoutes(adminAPI)
+	userHandler.SetupAdminRoutes(adminAPI)
 
 	pagesHandler := pages.NewHandler(app, pages.PagesHandlerDeps{
 		Store:        deps.Store,

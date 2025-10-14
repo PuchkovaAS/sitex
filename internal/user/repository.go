@@ -113,6 +113,72 @@ func (repo *UserRepository) GetEmployeeInfo(email string) (Employee, error) {
 	return employee, nil
 }
 
+func (repo *UserRepository) AddTimeEvent(event timeEventAddInfo) error {
+	// 1. Находим сотрудника, для которого добавляется событие
+	var employee Employee
+	if err := repo.DataBase.DB.Where("email = ?", event.Email).First(&employee).Error; err != nil {
+		return fmt.Errorf("сотрудник не найден: %w", err)
+	}
+
+	// 2. Находим сотрудника, который добавляет запись
+	var whoAdded Employee
+	if err := repo.DataBase.DB.Where("email = ?", event.WhoAddEmail).First(&whoAdded).Error; err != nil {
+		return fmt.Errorf("сотрудник, добавляющий запись, не найден: %w", err)
+	}
+
+	// 3. Находим тип события по коду
+	var eventType TimeEventType
+	if err := repo.DataBase.DB.Where("code = ?", event.EventType).First(&eventType).Error; err != nil {
+		return fmt.Errorf("тип события с кодом '%s' не найден: %w", event.EventType, err)
+	}
+
+	// 4. Парсим дату
+	eventDate, err := time.Parse("2006-01-02", event.Date)
+	if err != nil {
+		return fmt.Errorf("неверный формат даты: %w", err)
+	}
+
+	// 5. Парсим время
+	scheduled, err := time.Parse("15:04", event.ScheduledTime)
+	if err != nil {
+		return fmt.Errorf("неверный формат планового времени: %w", err)
+	}
+	actual, err := time.Parse("15:04", event.ActualTime)
+	if err != nil {
+		return fmt.Errorf("неверный формат фактического времени: %w", err)
+	}
+
+	// 6. Рассчитываем разницу в минутах
+	var diffMinutes int
+
+	switch eventType.Code {
+	case "late":
+		diffMinutes = int(actual.Sub(scheduled).Minutes())
+		if diffMinutes <= 0 {
+			return fmt.Errorf("для опоздания фактическое время должно быть позже планового")
+		}
+	case "early_leave":
+		diffMinutes = int(scheduled.Sub(actual).Minutes())
+		if diffMinutes <= 0 {
+			return fmt.Errorf("для раннего ухода фактическое время должно быть раньше планового")
+		}
+	}
+
+	// 7. Создаём новую запись (всегда создаём, не обновляем — события уникальны по дате+типу+сотруднику?)
+	newEvent := TimeEvent{
+		EmployeeID:    employee.ID,
+		WhoAddedID:    whoAdded.ID,
+		EventTypeID:   eventType.ID,
+		Date:          eventDate,
+		ScheduledTime: event.ScheduledTime, // сохраняем как строку "HH:MM"
+		ActualTime:    event.ActualTime,    // сохраняем как строку "HH:MM"
+		Description:   event.Description,
+		DifferenceMin: diffMinutes,
+	}
+
+	return repo.DataBase.DB.Create(&newEvent).Error
+}
+
 func (repo *UserRepository) AddStatus(status statusAddInfo) error {
 	// 1. Находим сотрудника, для которого добавляется статус
 	var employee Employee
@@ -394,6 +460,31 @@ func (repo *UserRepository) GetLastAddStatus(email string, limit ...int) ([]Stat
 
 	err := query.Find(&history).Error
 	return history, err
+}
+
+func (repo *UserRepository) GetLastTimeEvents(email string, limit ...int) ([]TimeEvent, error) {
+	var events []TimeEvent
+
+	// Текущий год
+	currentYear := time.Now().Year()
+	startOfYear := time.Date(currentYear, 1, 1, 0, 0, 0, 0, time.UTC)
+	endOfYear := time.Date(currentYear, 12, 31, 23, 59, 59, 0, time.UTC)
+
+	query := repo.DataBase.DB.
+		Preload("Employee").
+		Preload("WhoAdded").
+		Preload("EventType").
+		Joins("INNER JOIN employees ON time_events.employee_id = employees.id").
+		Where("employees.email = ?", email).
+		Where("time_events.date BETWEEN ? AND ?", startOfYear, endOfYear).
+		Order("time_events.updated_at DESC")
+
+	if len(limit) > 0 && limit[0] > 0 {
+		query = query.Limit(limit[0])
+	}
+
+	err := query.Find(&events).Error
+	return events, err
 }
 
 func (repo *UserRepository) GetStatusHistory(

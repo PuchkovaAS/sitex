@@ -145,13 +145,32 @@ func GetInitals(firstName, lastName string) string {
 	return initials
 }
 
-// Вспомогательные функции (должны быть реализованы в Go коде)
-func buildPageURL(page, deptID int, searchQuery string) string {
-	// Реализация построения URL с параметрами
-	return fmt.Sprintf("/activity?page=%d&department=%d&search=%s", page, deptID, url.QueryEscape(searchQuery))
+// // Вспомогательные функции (должны быть реализованы в Go коде)
+// func buildPageURL(page, deptID int, searchQuery string) string {
+// 	// Реализация построения URL с параметрами
+// 	return fmt.Sprintf("/activity?page=%d&department=%d&search=%s", page, deptID, url.QueryEscape(searchQuery))
+// }
+//
+// func generatePaginationLinks() templ.Component {
+// 	// Реализация генерации ссылок пагинации
+// 	return templ.Raw("") // Заглушка
+// }
+
+func GetTimeEventClass(eventType string) string {
+	switch eventType {
+	case "late":
+		return "text-orange-600 bg-orange-100 border border-orange-200"
+	case "early_leave":
+		return "text-rose-700 bg-rose-100 border border-rose-200"
+	default:
+		return "text-gray-400 bg-gray-100 border border-gray-200"
+	}
 }
 
-func generatePaginationLinks() templ.Component {
-	// Реализация генерации ссылок пагинации
-	return templ.Raw("") // Заглушка
+// FormatTimeWithoutSeconds обрезает секунды из строки времени "HH:MM:SS" → "HH:MM"
+func FormatTimeWithoutSeconds(timeStr string) string {
+	if len(timeStr) >= 5 {
+		return timeStr[:5] // берём первые 5 символов: "14:30"
+	}
+	return timeStr
 }

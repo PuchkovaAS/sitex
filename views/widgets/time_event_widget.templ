@@ -1,0 +1,110 @@
+package widgets
+
+import (
+	"fmt"
+	"sitex/views/components"
+
+	"sitex/views/view_utils"
+	"time"
+)
+
+type TimeEventProps struct {
+	ID            int
+	EventType     string // "late" или "early_leave"
+	EventTypeName string // "Опоздание" или "Ранний уход"
+	Date          time.Time
+	ScheduledTime string // "09:00"
+	ActualTime    string // "09:23"
+	DifferenceMin int    //
+	Description   string
+	UserName      string
+	Email         string
+	WhoAddEvent   string
+	DateAdd       time.Time
+}
+
+templ TimeEventWidget(props TimeEventProps) {
+	{{
+// Сообщение для подтверждения удаления
+confirmMessage := fmt.Sprintf("Удалить событие от %s? Тип: %s, План: %s, Факт: %s",
+	props.Date.Format("02.01.2006"),
+	props.EventTypeName,
+	props.ScheduledTime,
+	props.ActualTime,
+)
+if props.Description != "" {
+	confirmMessage += ". Описание: " + props.Description
+}
+
+emailParam := "?email=" + props.Email
+	}}
+	<div id="delete-result"></div>
+	<div
+		id={ "time-event-" + fmt.Sprintf("%d", props.ID) }
+		class="bg-white rounded-lg shadow-sm border border-gray-100 p-3"
+	>
+		<div class="flex items-center justify-between gap-4">
+			<!-- Дата и время -->
+			<div class="flex flex-col text-center bg-gray-50 rounded-lg p-2 min-w-[120px]">
+				<div class="text-sm font-medium text-gray-700">{ props.Date.Format("02.01.2006") }</div>
+				<div class="text-xs text-gray-500 mt-1">добавлено: { props.DateAdd.Format("02.01 15:04") }</div>
+			</div>
+			<div class="text-xs text-gray-600 mt-1">
+				<span class="block">План: { props.ScheduledTime }</span>
+				<span class="block">Факт: { props.ActualTime }</span>
+			</div>
+			<!-- Тип события с цветом -->
+			<div class="flex-shrink-0">
+				<div class={ "px-3 py-2 rounded-lg text-sm font-medium" , viewutils.GetTimeEventClass(props.EventType) }>
+					{ props.EventTypeName }
+					if props.DifferenceMin != 0 {
+						<span class="text-xs ml-1">
+							(
+							{ fmt.Sprintf("%d", props.DifferenceMin) } мин
+							)
+						</span>
+					}
+				</div>
+			</div>
+			<!-- Информация о пользователях -->
+			<div class="flex-1 min-w-0">
+				<div class="relative group">
+					<a
+						href={ fmt.Sprintf("/%s", emailParam) }
+						class="flex flex-col items-start hover:bg-gray-50 p-2 rounded-lg transition-colors"
+					>
+						<p class="text-sm text-gray-700 font-medium truncate">{ props.UserName }</p>
+					</a>
+					@components.UserLinks(emailParam)
+				</div>
+				<p class="text-xs text-gray-500 truncate">добавил(а): { props.WhoAddEvent }</p>
+			</div>
+			<!-- Описание -->
+			if props.Description != "" {
+				<div class="flex-1 min-w-0">
+					<p class="text-xs text-gray-500 font-semibold truncate">{ props.Description }</p>
+				</div>
+			}
+			<!-- Кнопка удаления -->
+			if props.ID != 0 {
+				<button
+					type="button"
+					class="flex-shrink-0 text-red-500 hover:text-red-700 transition-colors p-2 rounded-lg hover:bg-red-50"
+					hx-delete={ fmt.Sprintf("/api/user/delete_time_event/%d%s", props.ID, emailParam) }
+					hx-target="#delete-result"
+					hx-swap="outerHTML"
+					hx-confirm={ confirmMessage }
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+						></path>
+					</svg>
+				</button>
+			}
+		</div>
+	</div>
+}

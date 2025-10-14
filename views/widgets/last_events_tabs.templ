@@ -1,75 +1,76 @@
 package widgets
 
 import "sitex/internal/user"
+import "sitex/views/view_utils"
 
 type EventsProps struct {
-	LastAddStatus []user.StatusPeriod
+LastAddStatus []user.StatusPeriod
+LastTimeEvents []user.TimeEvent
 }
 
 templ LastEventsTabs(props EventsProps, isAdmin bool) {
-	<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mx-auto">
-		<!-- Переключатели -->
-		<div class="flex space-x-2 mb-4 border-b border-gray-200">
-			<button
-				type="button"
-				onclick="showLastEventsTab('status')"
-				id="last-tab-status"
-				class="pb-2 px-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap"
-			>
-				Последние статусы
-			</button>
-			if isAdmin {
-				<button
-					type="button"
-					onclick="showLastEventsTab('time')"
-					id="last-tab-time"
-					class="pb-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap transition-colors"
-				>
-					Последние временные события
-				</button>
-			}
-		</div>
-		<!-- Секции событий -->
-		<div id="last-events-status" class="block">
-			<div class="flex flex-col mt-2">
-				for _, item := range props.LastAddStatus {
-					<div class="mb-2">
-						@StatusEventWidget(StatusEventProps{
-							ID:           int(item.ID),
-							Status:       item.StatusType.Name,
-							Date:         item.StartDate,
-							Description:  item.Comment,
-							UserName:     item.Employee.LastName + " " + item.Employee.FirstName,
-							OneTimeEvent: item.OneTimeEvent,
-							DateAdd:      item.UpdatedAt,
-							WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
-							Email:        item.Employee.Email,
-						})
-					</div>
-				}
-			</div>
-		</div>
-		if isAdmin {
-			<div id="last-events-time" class="hidden">
-				<div class="flex flex-col mt-2">
-					<div class="mb-2">
-						@StatusEventWidget(StatusEventProps{
-							ID:           int(props.LastAddStatus[0].ID),
-							Status:       props.LastAddStatus[0].StatusType.Name,
-							Date:         props.LastAddStatus[0].StartDate,
-							Description:  props.LastAddStatus[0].Comment,
-							UserName:     props.LastAddStatus[0].Employee.LastName + " " + props.LastAddStatus[0].Employee.FirstName,
-							OneTimeEvent: props.LastAddStatus[0].OneTimeEvent,
-							DateAdd:      props.LastAddStatus[0].UpdatedAt,
-							WhoAddEvent:  props.LastAddStatus[0].WhoAdded.LastName + " " + props.LastAddStatus[0].WhoAdded.FirstName,
-							Email:        props.LastAddStatus[0].Employee.Email,
-						})
-					</div>
-				</div>
-			</div>
-		}
-	</div>
-	<script>
+<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mx-auto">
+    <!-- Переключатели -->
+    <div class="flex space-x-2 mb-4 border-b border-gray-200">
+        <button type="button" onclick="showLastEventsTab('status')" id="last-tab-status"
+            class="pb-2 px-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
+            Последние статусы
+        </button>
+        if isAdmin {
+        <button type="button" onclick="showLastEventsTab('time')" id="last-tab-time"
+            class="pb-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap transition-colors">
+            Последние временные события
+        </button>
+        }
+    </div>
+    <!-- Секции событий -->
+    <div id="last-events-status" class="block">
+        <div class="flex flex-col mt-2">
+            for _, item := range props.LastAddStatus {
+            <div class="mb-2">
+                @StatusEventWidget(StatusEventProps{
+                ID: int(item.ID),
+                Status: item.StatusType.Name,
+                Date: item.StartDate,
+                Description: item.Comment,
+                UserName: item.Employee.LastName + " " + item.Employee.FirstName,
+                OneTimeEvent: item.OneTimeEvent,
+                DateAdd: item.UpdatedAt,
+                WhoAddEvent: item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
+                Email: item.Employee.Email,
+                })
+            </div>
+            }
+        </div>
+    </div>
+    if isAdmin {
+    <div id="last-events-time" class="hidden">
+        <div class="flex flex-col mt-2">
+            <div class="mb-2">
+                for _, item := range props.LastTimeEvents {
+                <div class="mb-2">
+                    @TimeEventWidget(TimeEventProps{
+                    ID: int(item.ID),
+                    EventType: item.EventType.Code,
+                    EventTypeName: item.EventType.Name,
+                    Date: item.Date,
+                    ScheduledTime: viewutils.FormatTimeWithoutSeconds(item.ScheduledTime),
+                    ActualTime: viewutils.FormatTimeWithoutSeconds(item.ActualTime),
+                    DifferenceMin: item.DifferenceMin,
+                    Description: item.Description,
+                    UserName: item.Employee.LastName + " " + item.Employee.FirstName,
+                    Email: item.Employee.Email,
+                    WhoAddEvent: item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
+                    DateAdd: item.UpdatedAt,
+                    })
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</div>
+<script>
     function showLastEventsTab(tab) {
         const statusSection = document.getElementById('last-events-status');
         const timeSection = document.getElementById('last-events-time');
