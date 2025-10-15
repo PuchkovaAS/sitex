@@ -88,6 +88,11 @@ templ MultiUserActivityPage(props MultiUserActivityPageProps) {
 								IsAdmin:    currentUser.Employee.IsAdmin,
 								IsActive:   currentUser.Employee.IsActive,
 								Department: currentUser.Employee.Department.Name,
+							
+								LatelyMin:       currentUser.LatelyMin,
+								LatelyCount:     currentUser.LatelyCount,
+								EarlyLeaveMin:   currentUser.EarlyLeaveMin,
+								EarlyLeaveCount: currentUser.EarlyLeaveCount,
 							})
 							<!-- Блок активности пользователя (изначально скрыт) -->
 							<div class="bg-white rounded-lg shadow p-4 mt-2">

@@ -37,14 +37,57 @@ func NewHandler(router fiber.Router, deps UserHandlerDeps) *UserHandler {
 	return h
 }
 
-func (h *UserHandler) SetupAdminRoutes(privetGroup fiber.Router) {
-	privetGroup.Post("/user/add_time_event", h.addTimeEvent)
-	// privetGroup.Delete("/user/delete_time_event/:id", h.deleteTimeEvent)
+func (h *UserHandler) SetupAdminRoutes(adminGroup fiber.Router) {
+	adminGroup.Post("/user/add_time_event", h.addTimeEvent)
+	adminGroup.Delete("/user/delete_time_event/:id", h.deleteTimeEvent)
 }
 
 func (h *UserHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
 	privetGroup.Post("/user/add_status", h.addStatus)
 	privetGroup.Delete("/user/delete_status/:id", h.deleteStatus)
+}
+
+func (h *UserHandler) deleteTimeEvent(c *fiber.Ctx) error {
+	timeEventID, err := c.ParamsInt("id")
+	if err != nil {
+		return templeadapter.Render(c,
+			components.Notification(
+				"Неверный id статуса",
+				components.NotificationFail,
+			),
+			fiber.StatusOK,
+		)
+	}
+
+	// Проверяем, что пользователь удаляет только свой статус
+	emailAdmin := c.Locals("email").(string)
+	isAdmin := h.repository.IsAdmin(emailAdmin)
+
+	email := c.Query("email", emailAdmin)
+
+	if emailAdmin != email && !isAdmin {
+		return templeadapter.Render(c,
+			components.Notification(
+				"Ошибка при удаление статуса",
+				components.NotificationFail,
+			),
+			fiber.StatusOK,
+		)
+	}
+
+	err = h.repository.DeleteTimeEvent(timeEventID, email)
+	if err != nil {
+		return templeadapter.Render(c,
+			components.Notification(
+				"Ошибка при удаление статуса",
+				components.NotificationFail,
+			),
+			fiber.StatusOK,
+		)
+	}
+	redirectURL := fmt.Sprintf("/?email=%s", email)
+	c.Response().Header.Add("Hx-Redirect", redirectURL)
+	return c.Redirect(redirectURL, http.StatusOK)
 }
 
 func (h *UserHandler) deleteStatus(c *fiber.Ctx) error {
@@ -55,7 +98,7 @@ func (h *UserHandler) deleteStatus(c *fiber.Ctx) error {
 				"Неверный id статуса",
 				components.NotificationFail,
 			),
-			fiber.StatusInternalServerError,
+			fiber.StatusOK,
 		)
 	}
 
@@ -134,13 +177,16 @@ func (h *UserHandler) addTimeEvent(c *fiber.Ctx) error {
 		)
 	}
 
-	return templeadapter.Render(c,
-		components.Notification(
-			"Событие добавлено",
-			components.NotificationSuccess,
-		),
-		fiber.StatusOK,
-	)
+	// Парсим дату и получаем месяц
+	date, err := time.Parse("2006-01-02", form.Date)
+	if err != nil {
+		date = time.Now()
+	}
+	month := date.Month()
+
+	redirectURL := fmt.Sprintf("/?email=%s&month=%d", email, month)
+	c.Response().Header.Add("Hx-Redirect", redirectURL)
+	return c.Redirect(redirectURL, http.StatusOK)
 }
 
 func (h *UserHandler) addStatus(c *fiber.Ctx) error {

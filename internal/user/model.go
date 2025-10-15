@@ -18,6 +18,11 @@ type ActivityInfo struct {
 	MonthHistory []MonthHistory
 	CurrentMonth int
 	StatusText   string
+
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
 }
 
 type MonthHistory struct {

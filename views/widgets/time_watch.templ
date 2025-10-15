@@ -1,14 +1,21 @@
 package widgets
 
-templ TimeWatch() {
+type TimeWatchProps struct {
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
+}
+
+templ TimeWatch(props TimeWatchProps) {
 	<div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
 		<span class="flex items-center gap-1.5">
 			Опоздания:
-			<span class="font-medium text-orange-600">15 мин (2)</span>
+			<span class="font-medium text-orange-600">{ props.LatelyMin } мин ({ props.LatelyCount })</span>
 		</span>
 		<span class="flex items-center gap-1.5">
 			Ранние уходы:
-			<span class="font-medium text-rose-600">26 мин (3)</span>
+			<span class="font-medium text-rose-600">{ props.EarlyLeaveMin } мин ({ props.EarlyLeaveCount })</span>
 		</span>
 	</div>
 }

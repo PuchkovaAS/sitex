@@ -200,6 +200,12 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 		return c.SendStatus(500)
 	}
 
+	timeEventStat, err := h.repository.GetYearTimeEventStat(emailUser)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
 	employeeData, err := h.getEmployeeData(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
@@ -207,16 +213,20 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 	}
 
 	component := views.YearStatisticPage(views.YearStatisticProps{
-		StatusCount: statusCount,
-		YearHistory: yearHistory,
-		Email:       emailUser,
-		StatusText:  employeeData.StatusText,
-		FirstName:   employeeData.FirstName,
-		LastName:    employeeData.LastName,
-		Position:    employeeData.Position,
-		IsAdmin:     employeeData.IsAdmin,
-		IsActive:    employeeData.IsActive,
-		Department:  employeeData.Department,
+		StatusCount:     statusCount,
+		YearHistory:     yearHistory,
+		Email:           emailUser,
+		StatusText:      employeeData.StatusText,
+		FirstName:       employeeData.FirstName,
+		LastName:        employeeData.LastName,
+		Position:        employeeData.Position,
+		IsAdmin:         employeeData.IsAdmin,
+		IsActive:        employeeData.IsActive,
+		Department:      employeeData.Department,
+		LatelyMin:       timeEventStat.LatelyMin,
+		LatelyCount:     timeEventStat.LatelyCount,
+		EarlyLeaveMin:   timeEventStat.EarlyLeaveMin,
+		EarlyLeaveCount: timeEventStat.EarlyLeaveCount,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -321,20 +331,30 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		return c.SendStatus(500)
 	}
 
+	timeEventStat, err := h.repository.GetTimeEventStat(month, emailUser)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
 	component := views.ActivityPage(views.ActivityPageProps{
-		StatusCount:    statusCount,
-		MonthHistory:   monthHistory,
-		CurrentMonth:   month,
-		LastAddStatus:  lastAddStatus,
-		LastTimeEvents: lastAddTimeEvent,
-		Email:          emailUser,
-		StatusText:     employeeData.StatusText,
-		FirstName:      employeeData.FirstName,
-		LastName:       employeeData.LastName,
-		Position:       employeeData.Position,
-		IsAdmin:        employeeData.IsAdmin,
-		IsActive:       employeeData.IsActive,
-		Department:     employeeData.Department,
+		StatusCount:     statusCount,
+		MonthHistory:    monthHistory,
+		CurrentMonth:    month,
+		LastAddStatus:   lastAddStatus,
+		LastTimeEvents:  lastAddTimeEvent,
+		Email:           emailUser,
+		StatusText:      employeeData.StatusText,
+		FirstName:       employeeData.FirstName,
+		LastName:        employeeData.LastName,
+		Position:        employeeData.Position,
+		IsAdmin:         employeeData.IsAdmin,
+		IsActive:        employeeData.IsActive,
+		Department:      employeeData.Department,
+		LatelyMin:       timeEventStat.LatelyMin,
+		LatelyCount:     timeEventStat.LatelyCount,
+		EarlyLeaveMin:   timeEventStat.EarlyLeaveMin,
+		EarlyLeaveCount: timeEventStat.EarlyLeaveCount,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -381,15 +401,25 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 			return c.SendStatus(500)
 		}
 
+		timeEventStat, err := h.repository.GetTimeEventStat(month, employee.Email)
+		if err != nil {
+			h.customLogger.Error().Msg(err.Error())
+			return c.SendStatus(500)
+		}
+
 		status, err := h.repository.GetCurrentStatus(employee.Email, today)
 
 		// Создаем и добавляем ActivityInfo в срез
 		usersInfo = append(usersInfo, user.ActivityInfo{
-			Employee:     employee,
-			StatusCount:  statusCount,
-			MonthHistory: monthHistory,
-			CurrentMonth: month,
-			StatusText:   status,
+			Employee:        employee,
+			StatusCount:     statusCount,
+			MonthHistory:    monthHistory,
+			CurrentMonth:    month,
+			StatusText:      status,
+			LatelyMin:       timeEventStat.LatelyMin,
+			LatelyCount:     timeEventStat.LatelyCount,
+			EarlyLeaveMin:   timeEventStat.EarlyLeaveMin,
+			EarlyLeaveCount: timeEventStat.EarlyLeaveCount,
 		},
 		)
 	}

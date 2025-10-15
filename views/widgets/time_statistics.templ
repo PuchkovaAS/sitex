@@ -15,6 +15,11 @@ type TimeStatisticsProps struct {
 	Department string
 	IsAdmin    bool
 	IsActive   bool
+
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
 }
 
 templ TimeStatistics(props TimeStatisticsProps) {
@@ -70,7 +75,12 @@ statuses := []string{
 			</div>
 		</div>
 		<!-- 🔹 Блок учёта времени — гармонично внизу карточки -->
-		@TimeWatch()
+		@TimeWatch(TimeWatchProps{
+			LatelyMin:       props.LatelyMin,
+			LatelyCount:     props.LatelyCount,
+			EarlyLeaveMin:   props.EarlyLeaveMin,
+			EarlyLeaveCount: props.EarlyLeaveCount,
+		})
 	</div>
 }
 

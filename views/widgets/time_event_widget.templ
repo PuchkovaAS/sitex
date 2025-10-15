@@ -21,6 +21,8 @@ type TimeEventProps struct {
 	Email         string
 	WhoAddEvent   string
 	DateAdd       time.Time
+
+	IsAdmin bool
 }
 
 templ TimeEventWidget(props TimeEventProps) {
@@ -86,7 +88,7 @@ emailParam := "?email=" + props.Email
 				</div>
 			}
 			<!-- Кнопка удаления -->
-			if props.ID != 0 {
+			if props.ID != 0 && props.IsAdmin {
 				<button
 					type="button"
 					class="flex-shrink-0 text-red-500 hover:text-red-700 transition-colors p-2 rounded-lg hover:bg-red-50"

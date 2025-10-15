@@ -23,6 +23,11 @@ type ActivityPageProps struct {
 	LastAddStatus  []user.StatusPeriod
 	LastTimeEvents []user.TimeEvent
 
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
+
 	Email      string
 	StatusText string
 	FirstName  string
@@ -72,16 +77,20 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			}
 			templ_7745c5c3_Err = widgets.TimeStatistics(
 				widgets.TimeStatisticsProps{
-					MonthName:  viewutils.GetMonthName(props.CurrentMonth),
-					Stats:      props.StatusCount,
-					Email:      props.Email,
-					StatusText: props.StatusText,
-					FirstName:  props.FirstName,
-					LastName:   props.LastName,
-					Position:   props.Position,
-					IsAdmin:    props.IsAdmin,
-					IsActive:   props.IsActive,
-					Department: props.Department,
+					MonthName:       viewutils.GetMonthName(props.CurrentMonth),
+					Stats:           props.StatusCount,
+					Email:           props.Email,
+					StatusText:      props.StatusText,
+					FirstName:       props.FirstName,
+					LastName:        props.LastName,
+					Position:        props.Position,
+					IsAdmin:         props.IsAdmin,
+					IsActive:        props.IsActive,
+					Department:      props.Department,
+					LatelyMin:       props.LatelyMin,
+					LatelyCount:     props.LatelyCount,
+					EarlyLeaveMin:   props.EarlyLeaveMin,
+					EarlyLeaveCount: props.EarlyLeaveCount,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -140,8 +149,8 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus, LastTimeEvents: props.LastTimeEvents},
-				true).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus, LastTimeEvents: props.LastTimeEvents,
+				IsAdmin: props.IsAdmin}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

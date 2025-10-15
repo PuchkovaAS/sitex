@@ -326,6 +326,29 @@ func (repo *UserRepository) GetCurrentStatus(email string, date time.Time) (stri
 	return statusName, err
 }
 
+func (repo *UserRepository) DeleteTimeEvent(timeEventID int, email string) error {
+	// 1. Находим сотрудника по email
+	var employee Employee
+	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
+		return fmt.Errorf("сотрудник не найден: %w", err)
+	}
+
+	// 2. Удаляем запись TimeEvent, принадлежащую этому сотруднику
+	result := repo.DataBase.DB.
+		Where("id = ? AND employee_id = ?", timeEventID, employee.ID).
+		Delete(&TimeEvent{})
+
+	if result.Error != nil {
+		return fmt.Errorf("ошибка при удалении события: %w", result.Error)
+	}
+
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("событие не найдено или нет прав для удаления")
+	}
+
+	return nil
+}
+
 func (repo *UserRepository) DeleteStatus(statusID int, email string) error {
 	// Находим сотрудника
 	var employee Employee
@@ -339,13 +362,12 @@ func (repo *UserRepository) DeleteStatus(statusID int, email string) error {
 		Delete(&StatusPeriod{})
 
 	if result.Error != nil {
-		return result.Error
+		return fmt.Errorf("ошибка при удалении события: %w", result.Error)
 	}
 
 	if result.RowsAffected == 0 {
 		return fmt.Errorf("статус не найден или нет прав для удаления")
 	}
-	// Добавляем логирование SQL запроса
 
 	return nil
 }
@@ -601,6 +623,101 @@ func (repo *UserRepository) GetUsersByParam(searchParam SearchParam) ([]Employee
 	}
 
 	return employees, totalCount, nil
+}
+
+type TimeEventStat struct {
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
+}
+
+func (repo *UserRepository) GetYearTimeEventStat(email string) (TimeEventStat, error) {
+	var stat TimeEventStat
+
+	// Текущий год
+	year := time.Now().Year()
+	startOfYear := time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
+	endOfYear := time.Date(year, 12, 31, 23, 59, 59, 0, time.UTC)
+
+	// Находим сотрудника
+	var employee Employee
+	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
+		return stat, fmt.Errorf("сотрудник не найден: %w", err)
+	}
+
+	// Загружаем все временные события за год для этого сотрудника
+	var events []TimeEvent
+	err := repo.DataBase.DB.
+		Preload("EventType").
+		Where("employee_id = ? AND date BETWEEN ? AND ?", employee.ID, startOfYear, endOfYear).
+		Find(&events).Error
+	if err != nil {
+		return stat, fmt.Errorf("ошибка загрузки событий за год: %w", err)
+	}
+
+	// Подсчитываем в Go
+	for _, event := range events {
+		switch event.EventType.Code {
+		case "late":
+			stat.LatelyCount++
+			if event.DifferenceMin > 0 {
+				stat.LatelyMin += event.DifferenceMin
+			}
+		case "early_leave":
+			stat.EarlyLeaveCount++
+			if event.DifferenceMin > 0 {
+				stat.EarlyLeaveMin += event.DifferenceMin // делаем положительным
+			}
+		}
+	}
+
+	return stat, nil
+}
+
+func (repo *UserRepository) GetTimeEventStat(month int, email string) (TimeEventStat, error) {
+	var stat TimeEventStat
+
+	// Текущий год
+	year := time.Now().Year()
+
+	// Начало и конец месяца
+	startOfMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+	endOfMonth := startOfMonth.AddDate(0, 1, 0).Add(-time.Second) // последняя секунда месяца
+
+	// Находим ID сотрудника
+	var employee Employee
+	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
+		return stat, fmt.Errorf("сотрудник не найден: %w", err)
+	}
+
+	// Загружаем ВСЕ временные события за месяц для этого сотрудника
+	var events []TimeEvent
+	err := repo.DataBase.DB.
+		Preload("EventType").
+		Where("employee_id = ? AND date BETWEEN ? AND ?", employee.ID, startOfMonth, endOfMonth).
+		Find(&events).Error
+	if err != nil {
+		return stat, fmt.Errorf("ошибка загрузки событий: %w", err)
+	}
+
+	// Подсчитываем в Go
+	for _, event := range events {
+		switch event.EventType.Code {
+		case "late":
+			stat.LatelyCount++
+			if event.DifferenceMin > 0 {
+				stat.LatelyMin += event.DifferenceMin
+			}
+		case "early_leave":
+			stat.EarlyLeaveCount++
+			if event.DifferenceMin > 0 {
+				stat.EarlyLeaveMin += event.DifferenceMin
+			}
+		}
+	}
+
+	return stat, nil
 }
 
 func (repo *UserRepository) IsAdmin(email string) bool {

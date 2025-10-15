@@ -15,6 +15,11 @@ type ActivityPageProps struct {
 	LastAddStatus  []user.StatusPeriod
 	LastTimeEvents []user.TimeEvent
 
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
+
 	Email      string
 	StatusText string
 	FirstName  string
@@ -34,16 +39,20 @@ templ ActivityPage(props ActivityPageProps) {
 		<div class="space-y-1">
 			@widgets.TimeStatistics(
 				widgets.TimeStatisticsProps{
-					MonthName:  viewutils.GetMonthName(props.CurrentMonth),
-					Stats:      props.StatusCount,
-					Email:      props.Email,
-					StatusText: props.StatusText,
-					FirstName:  props.FirstName,
-					LastName:   props.LastName,
-					Position:   props.Position,
-					IsAdmin:    props.IsAdmin,
-					IsActive:   props.IsActive,
-					Department: props.Department,
+					MonthName:       viewutils.GetMonthName(props.CurrentMonth),
+					Stats:           props.StatusCount,
+					Email:           props.Email,
+					StatusText:      props.StatusText,
+					FirstName:       props.FirstName,
+					LastName:        props.LastName,
+					Position:        props.Position,
+					IsAdmin:         props.IsAdmin,
+					IsActive:        props.IsActive,
+					Department:      props.Department,
+					LatelyMin:       props.LatelyMin,
+					LatelyCount:     props.LatelyCount,
+					EarlyLeaveMin:   props.EarlyLeaveMin,
+					EarlyLeaveCount: props.EarlyLeaveCount,
 				})
 			<!-- Кнопка раскрытия -->
 			<div class="flex justify-center">
@@ -118,8 +127,8 @@ templ ActivityPage(props ActivityPageProps) {
 		<div class="my-2 p-2 ">
 			<h3 class="text-lg font-semibold text-gray-900">Последние добавленные события</h3>
 		</div>
-		@widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus, LastTimeEvents: props.LastTimeEvents},
-			true)
+		@widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus, LastTimeEvents: props.LastTimeEvents,
+			IsAdmin: props.IsAdmin})
 		@ActivityPageScript()
 	}
 }

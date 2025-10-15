@@ -1,11 +1,7 @@
 package viewutils
 
 import (
-	"fmt"
-	"net/url"
 	"strings"
-
-	"github.com/a-h/templ"
 )
 
 func GetMonthName(monthNum int) string {
@@ -159,7 +155,7 @@ func GetInitals(firstName, lastName string) string {
 func GetTimeEventClass(eventType string) string {
 	switch eventType {
 	case "late":
-		return "text-orange-600 bg-orange-100 border border-orange-200"
+		return "text-orange-700 bg-orange-100 border border-orange-200"
 	case "early_leave":
 		return "text-rose-700 bg-rose-100 border border-rose-200"
 	default:
