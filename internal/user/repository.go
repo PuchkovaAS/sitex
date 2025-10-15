@@ -529,6 +529,27 @@ func (repo *UserRepository) GetStatusHistory(
 	return history, err
 }
 
+func (repo *UserRepository) GetTimeEventHistory(
+	email string,
+	timeStart, timeEnd time.Time,
+) ([]TimeEvent, error) {
+	var history []TimeEvent
+
+	err := repo.DataBase.DB.
+		Preload("Employee").
+		Preload("WhoAdded").
+		Preload("EventType"). // Загружаем связанный EventType
+		Joins("INNER JOIN employees ON time_events.employee_id = employees.id").
+		Where("employees.email = ?", email).
+		Where("time_events.date >= ?", timeStart).
+		Where("time_events.date <= ?", timeEnd).
+		Order("time_events.date DESC").
+		Find(&history).
+		Error
+
+	return history, err
+}
+
 type UserUpdateData struct {
 	FirstName  string
 	LastName   string
