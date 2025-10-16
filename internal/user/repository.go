@@ -400,6 +400,87 @@ func (repo *UserRepository) getStatusPeriodsCount(searchParams SearchParam, star
 	return totalCount, err
 }
 
+func (repo *UserRepository) getTimeEventsCount(searchParams SearchParam, start, end time.Time) (int64, error) {
+	var count int64
+
+	query := repo.DataBase.DB.Model(&TimeEvent{}).
+		Joins("INNER JOIN employees ON time_events.employee_id = employees.id").
+		Where("time_events.date BETWEEN ? AND ?", start, end).
+		Where("time_events.deleted_at IS NULL").
+		Where("employees.deleted_at IS NULL")
+
+	if searchParams.Email != "" {
+		query = query.Where("employees.email = ?", searchParams.Email)
+	}
+	if searchParams.DepartmentID != 0 {
+		query = query.Where("employees.department_id = ?", searchParams.DepartmentID)
+	}
+	if searchParams.SearchQuery != "" {
+		searchPattern := "%" + searchParams.SearchQuery + "%"
+		query = query.Where("employees.first_name ILIKE ? OR employees.last_name ILIKE ?",
+			searchPattern, searchPattern)
+	}
+
+	err := query.Count(&count).Error
+	return count, err
+}
+
+func (repo *UserRepository) GetLastAddTimeEvents(searchParams SearchParam) ([]TimeEvent, int64, error) {
+	var events []TimeEvent
+
+	currentYear := time.Now().Year()
+	startOfYear := time.Date(currentYear, 1, 1, 0, 0, 0, 0, time.UTC)
+	endOfYear := time.Date(currentYear, 12, 31, 23, 59, 59, 0, time.UTC)
+
+	// Получаем общее количество
+	totalCount, err := repo.getTimeEventsCount(searchParams, startOfYear, endOfYear)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Основной запрос с Preload
+	query := repo.DataBase.DB.
+		Preload("Employee", func(db *gorm.DB) *gorm.DB {
+			return db.Where("deleted_at IS NULL")
+		}).
+		Preload("WhoAdded", func(db *gorm.DB) *gorm.DB {
+			return db.Where("deleted_at IS NULL")
+		}).
+		Preload("EventType", func(db *gorm.DB) *gorm.DB {
+			return db.Where("deleted_at IS NULL")
+		}).
+		Joins("INNER JOIN employees ON time_events.employee_id = employees.id").
+		Where("time_events.date BETWEEN ? AND ?", startOfYear, endOfYear).
+		Where("time_events.deleted_at IS NULL").
+		Where("employees.deleted_at IS NULL")
+
+	// Применяем фильтры
+	if searchParams.Email != "" {
+		query = query.Where("employees.email = ?", searchParams.Email)
+	}
+	if searchParams.DepartmentID != 0 {
+		query = query.Where("employees.department_id = ?", searchParams.DepartmentID)
+	}
+	if searchParams.SearchQuery != "" {
+		searchPattern := "%" + searchParams.SearchQuery + "%"
+		query = query.Where("employees.first_name ILIKE ? OR employees.last_name ILIKE ?",
+			searchPattern, searchPattern)
+	}
+
+	// Сортировка и пагинация
+	query = query.Order("time_events.updated_at DESC").
+		Offset(searchParams.Offset).
+		Limit(searchParams.Limit)
+
+	// Выполняем запрос
+	err = query.Find(&events).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return events, totalCount, nil
+}
+
 func (repo *UserRepository) GetLastAddEvents(searchParams SearchParam) ([]StatusPeriod, int64, error) {
 	var history []StatusPeriod
 

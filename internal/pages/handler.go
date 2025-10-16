@@ -57,6 +57,7 @@ func (h *PagesHandler) SetupAdminRoutes(adminGroup fiber.Router) {
 func (h *PagesHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
 	privetGroup.Get("/", h.home)
 	privetGroup.Get("/history_status", h.historyStatus)
+	privetGroup.Get("/history_time_event", h.historyTimeEvent)
 	privetGroup.Get("/year_statistics", h.yearStatistic)
 	privetGroup.Get("/profile", h.profile)
 }
@@ -298,6 +299,40 @@ func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
 		Email:         emailUser,
 		LastAddStatus: lastAddStatus,
 		TotalItems:    int(TotalEvents),
+	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) historyTimeEvent(c *fiber.Ctx) error {
+	page := c.QueryInt("page", 1)
+	PAGE_ITEMS := 20
+
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+	emailUser := h.getEmailForChangeUser(email, c)
+
+	lastTimeEvents, TotalEvents, err := h.repository.GetLastAddTimeEvents(user.SearchParam{
+		Email:        emailUser,
+		DepartmentID: 0,
+		SearchQuery:  "",
+		Offset:       (page - 1) * PAGE_ITEMS,
+		Limit:        PAGE_ITEMS,
+	})
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+	TotalPages := int(math.Ceil(float64(TotalEvents) / float64(PAGE_ITEMS)))
+
+	isAdmin := h.repository.IsAdmin(email)
+
+	component := views.HistoryTimeEventPage(views.HistoryTimeEventProps{
+		TotalPage:      TotalPages,
+		CurrentPage:    page,
+		Email:          emailUser,
+		LastTimeEvents: lastTimeEvents,
+		TotalItems:     int(TotalEvents),
+		IsAdmin:        isAdmin,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
