@@ -150,7 +150,6 @@ func (repo *UserRepository) AddTimeEvent(event timeEventAddInfo) error {
 
 	// 6. Рассчитываем разницу в минутах
 	var diffMinutes int
-
 	switch eventType.Code {
 	case "late":
 		diffMinutes = int(actual.Sub(scheduled).Minutes())
@@ -164,19 +163,41 @@ func (repo *UserRepository) AddTimeEvent(event timeEventAddInfo) error {
 		}
 	}
 
-	// 7. Создаём новую запись (всегда создаём, не обновляем — события уникальны по дате+типу+сотруднику?)
-	newEvent := TimeEvent{
-		EmployeeID:    employee.ID,
-		WhoAddedID:    whoAdded.ID,
-		EventTypeID:   eventType.ID,
-		Date:          eventDate,
-		ScheduledTime: event.ScheduledTime, // сохраняем как строку "HH:MM"
-		ActualTime:    event.ActualTime,    // сохраняем как строку "HH:MM"
-		Description:   event.Description,
-		DifferenceMin: diffMinutes,
+	// 7. Проверяем, существует ли уже событие с такими employee_id, date, event_type_id
+	var existingEvent TimeEvent
+	result := repo.DataBase.DB.
+		Where("employee_id = ? AND date = ? AND event_type_id = ?", employee.ID, eventDate, eventType.ID).
+		First(&existingEvent)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			// Записи нет — создаём новую
+			newEvent := TimeEvent{
+				EmployeeID:    employee.ID,
+				WhoAddedID:    whoAdded.ID,
+				EventTypeID:   eventType.ID,
+				Date:          eventDate,
+				ScheduledTime: event.ScheduledTime,
+				ActualTime:    event.ActualTime,
+				Description:   event.Description,
+				DifferenceMin: diffMinutes,
+			}
+			return repo.DataBase.DB.Create(&newEvent).Error
+		}
+		return fmt.Errorf("ошибка при поиске существующего события: %w", result.Error)
 	}
 
-	return repo.DataBase.DB.Create(&newEvent).Error
+	// Запись существует — обновляем
+	updates := map[string]interface{}{
+		"who_added_id":   whoAdded.ID,
+		"scheduled_time": event.ScheduledTime,
+		"actual_time":    event.ActualTime,
+		"description":    event.Description,
+		"difference_min": diffMinutes,
+		"updated_at":     time.Now(),
+	}
+
+	return repo.DataBase.DB.Model(&existingEvent).Updates(updates).Error
 }
 
 func (repo *UserRepository) AddStatus(status statusAddInfo) error {

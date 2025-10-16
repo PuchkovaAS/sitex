@@ -13,20 +13,22 @@ import (
 	"sitex/internal/user"
 	"sitex/views/components"
 	"sitex/views/layout"
+	"sitex/views/view_utils"
 	"sitex/views/widgets"
 )
 
-type UsersHistoryStatusProps struct {
-	TotalItems    int
-	TotalPage     int
-	CurrentPage   int
-	LastAddStatus []user.StatusPeriod
-	Depatrments   []user.Department
-	DepartmentId  int
-	QueryParams   map[string]string
+type UsersHistoryTimeEventProps struct {
+	TotalItems     int
+	TotalPage      int
+	CurrentPage    int
+	LastTimeEvents []user.TimeEvent
+	Depatrments    []user.Department
+	DepartmentId   int
+	QueryParams    map[string]string
+	IsAdmin        bool
 }
 
-func UsersHistoryStatusPage(props UsersHistoryStatusProps) templ.Component {
+func UsersHistoryTimeEventPage(props UsersHistoryTimeEventProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -66,7 +68,7 @@ func UsersHistoryStatusPage(props UsersHistoryStatusProps) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.DepartmentId == 0)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_history_status_page.templ`, Line: 42, Col: 60}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_history_time_event_page.templ`, Line: 44, Col: 60}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -85,7 +87,7 @@ func UsersHistoryStatusPage(props UsersHistoryStatusProps) templ.Component {
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", department.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_history_status_page.templ`, Line: 45, Col: 58}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_history_time_event_page.templ`, Line: 47, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
@@ -98,7 +100,7 @@ func UsersHistoryStatusPage(props UsersHistoryStatusProps) templ.Component {
 					var templ_7745c5c3_Var5 string
 					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", department.Name))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_history_status_page.templ`, Line: 46, Col: 47}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_history_time_event_page.templ`, Line: 48, Col: 47}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 					if templ_7745c5c3_Err != nil {
@@ -116,7 +118,7 @@ func UsersHistoryStatusPage(props UsersHistoryStatusProps) templ.Component {
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", department.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_history_status_page.templ`, Line: 49, Col: 58}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_history_time_event_page.templ`, Line: 51, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
@@ -129,7 +131,7 @@ func UsersHistoryStatusPage(props UsersHistoryStatusProps) templ.Component {
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", department.Name))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_history_status_page.templ`, Line: 50, Col: 47}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_history_time_event_page.templ`, Line: 52, Col: 47}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {
@@ -149,7 +151,7 @@ func UsersHistoryStatusPage(props UsersHistoryStatusProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div></div><div class=\"my-2 p-2 \"><h3 class=\"mb-4 text-lg font-semibold text-gray-900\">Добавленные события за текущий год</h3><div class=\"flex space-x-2 mb-4 border-b border-gray-200\"><a href=\"users_status_history\" id=\"last-tab-status\" class=\"pb-2 px-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap\">Последние статусы</a> <a href=\"users_time_event_history\" id=\"last-tab-time\" class=\"pb-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap transition-colors\">Последние временные события</a></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div></div><div class=\"my-2 p-2 \"><h3 class=\"mb-4 text-lg font-semibold text-gray-900\">Добавленные события за текущий год</h3><div class=\"flex space-x-2 mb-4 border-b border-gray-200\"><a href=\"users_status_history\" id=\"last-tab-status\" class=\"pb-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap transition-colors\">Последние статусы</a> <a href=\"users_time_event_history\" id=\"last-tab-time\" class=\"pb-2 px-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap\">Последние временные события</a></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -165,21 +167,25 @@ func UsersHistoryStatusPage(props UsersHistoryStatusProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, item := range props.LastAddStatus {
+			for _, item := range props.LastTimeEvents {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"mb-2\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = widgets.StatusEventWidget(widgets.StatusEventProps{
-					ID:           int(item.ID),
-					Status:       item.StatusType.Name,
-					Date:         item.StartDate,
-					Description:  item.Comment,
-					UserName:     item.Employee.LastName + " " + item.Employee.FirstName,
-					OneTimeEvent: item.OneTimeEvent,
-					DateAdd:      item.UpdatedAt,
-					WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
-					Email:        item.Employee.Email,
+				templ_7745c5c3_Err = widgets.TimeEventWidget(widgets.TimeEventProps{
+					ID:            int(item.ID),
+					EventType:     item.EventType.Code,
+					EventTypeName: item.EventType.Name,
+					Date:          item.Date,
+					ScheduledTime: viewutils.FormatTimeWithoutSeconds(item.ScheduledTime),
+					ActualTime:    viewutils.FormatTimeWithoutSeconds(item.ActualTime),
+					DifferenceMin: item.DifferenceMin,
+					Description:   item.Description,
+					UserName:      item.Employee.LastName + " " + item.Employee.FirstName,
+					Email:         item.Employee.Email,
+					WhoAddEvent:   item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
+					DateAdd:       item.UpdatedAt,
+					IsAdmin:       props.IsAdmin,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -194,7 +200,7 @@ func UsersHistoryStatusPage(props UsersHistoryStatusProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = components.PaginationNum(components.PaginationNumProps{
-				UrlPath:     "/users_status_history?",
+				UrlPath:     "/users_time_event_history?",
 				TotalPage:   props.TotalPage,
 				CurrentPage: props.CurrentPage,
 				QueryParams: props.QueryParams,
@@ -217,35 +223,6 @@ func UsersHistoryStatusPage(props UsersHistoryStatusProps) templ.Component {
 			MetaDescription: "Страница добавления событий",
 			IsAuthenticated: true,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func UsersHistoryStatusScript() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<script>\n    function changeDepartment(deptId) {\n        const searchInput = document.getElementById('search');\n        const searchQuery = searchInput ? searchInput.value.trim() : '';\n        const url = new URL(window.location.href);\n\n        // Удаляем параметры поиска и пагинации\n        url.searchParams.set('department', deptId);\n        url.searchParams.set('page', '1');\n\n        // Добавляем search только если он не пустой\n        if (searchQuery) {\n            url.searchParams.set('search', searchQuery);\n        } else {\n            url.searchParams.delete('search'); // Удаляем пустой search\n        }\n\n        window.location.href = url.toString();\n    }\n\n    function performSearch() {\n        const searchInput = document.getElementById('search');\n        const deptSelect = document.getElementById('department');\n\n        if (!searchInput || !deptSelect) return;\n\n        const searchQuery = searchInput.value.trim();\n        const deptId = deptSelect.value;\n        const url = new URL(window.location.href);\n\n        // Устанавливаем параметры\n        url.searchParams.set('page', '1');\n        url.searchParams.set('department', deptId);\n\n        // Добавляем search только если не пустой\n        if (searchQuery) {\n            url.searchParams.set('search', searchQuery);\n        } else {\n            url.searchParams.delete('search'); // Удаляем пустой search\n        }\n\n        window.location.href = url.toString();\n    }\n\n    // Обработка нажатия Enter в поле поиска\n    document.addEventListener('DOMContentLoaded', function () {\n        const searchInput = document.getElementById('search');\n        if (searchInput) {\n            searchInput.addEventListener('keypress', function (e) {\n                if (e.key === 'Enter') {\n                    performSearch();\n                }\n            });\n        }\n    });\n\n    // Функция для формирования URL с текущими параметрами\n    function buildPageURL(page) {\n        const url = new URL(window.location.href);\n        url.searchParams.set('page', page.toString());\n\n        // Удаляем search если он пустой\n        const searchParam = url.searchParams.get('search');\n        if (!searchParam || searchParam.trim() === '') {\n            url.searchParams.delete('search');\n        }\n\n        return url.toString();\n    }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

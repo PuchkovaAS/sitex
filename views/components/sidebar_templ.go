@@ -205,7 +205,8 @@ func Sidebar() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 = []any{"flex items-center p-3 text-sm font-medium rounded-lg transition-colors",
-				viewutils.IsActive(currentPath, "/users")}
+				viewutils.IsActive(currentPath, "/users_status_history"),
+				viewutils.IsActive(currentPath, "/users_time_event_history")}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

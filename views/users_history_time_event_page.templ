@@ -1,0 +1,119 @@
+package views
+
+import (
+	"fmt"
+	"sitex/internal/user"
+	"sitex/views/components"
+	"sitex/views/layout"
+	"sitex/views/view_utils"
+	"sitex/views/widgets"
+)
+
+type UsersHistoryTimeEventProps struct {
+	TotalItems     int
+	TotalPage      int
+	CurrentPage    int
+	LastTimeEvents []user.TimeEvent
+	Depatrments    []user.Department
+	DepartmentId   int
+	QueryParams    map[string]string
+	IsAdmin        bool
+}
+
+templ UsersHistoryTimeEventPage(props UsersHistoryTimeEventProps) {
+	@layout.Layout(layout.LayoutProps{
+		Title:           "История событий",
+		MetaDescription: "Страница добавления событий",
+		IsAuthenticated: true,
+	}) {
+		<div class="space-y-3">
+			<!-- Фильтры и поиск -->
+			<div class="bg-white rounded-lg shadow p-4">
+				<div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+					<!-- Левая часть: отдел и месяц -->
+					<div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+						<!-- Выбор отдела -->
+						<div class="w-full md:w-auto">
+							<label for="department" class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
+							<select
+								id="department"
+								name="department"
+								onchange="changeDepartment(this.value)"
+								class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+							>
+								<option value="0" selected={ props.DepartmentId == 0 }>Все отделы</option>
+								for _, department := range props.Depatrments {
+									if department.ID == uint(props.DepartmentId) {
+										<option value={ fmt.Sprintf("%d", department.ID) } selected>
+											{ fmt.Sprintf("%s", department.Name) }
+										</option>
+									} else {
+										<option value={ fmt.Sprintf("%d", department.ID) }>
+											{ fmt.Sprintf("%s", department.Name) }
+										</option>
+									}
+								}
+							</select>
+						</div>
+					</div>
+					<!-- Правая часть: поиск -->
+					<div class="w-full md:w-auto">
+						@components.FindUser()
+					</div>
+				</div>
+			</div>
+			<div class="my-2 p-2 ">
+				<h3 class="mb-4 text-lg font-semibold text-gray-900">Добавленные события за текущий год</h3>
+				<div class="flex space-x-2 mb-4 border-b border-gray-200">
+					<a
+						href="users_status_history"
+						id="last-tab-status"
+						class="pb-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap transition-colors"
+					>
+						Последние статусы
+					</a>
+					<a
+						href="users_time_event_history"
+						id="last-tab-time"
+						class="pb-2 px-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap"
+					>
+						Последние временные события
+					</a>
+				</div>
+				@components.CounterItemsPage(components.CounterItemsProps{
+					CurrentPage: props.CurrentPage,
+					TotalItems:  props.TotalItems,
+					TotalPages:  props.TotalPage,
+				})
+			</div>
+			<div class="flex flex-col  mt-2">
+				for _, item := range props.LastTimeEvents {
+					<div class="mb-2">
+						@widgets.TimeEventWidget(widgets.TimeEventProps{
+							ID:            int(item.ID),
+							EventType:     item.EventType.Code,
+							EventTypeName: item.EventType.Name,
+							Date:          item.Date,
+							ScheduledTime: viewutils.FormatTimeWithoutSeconds(item.ScheduledTime),
+							ActualTime:    viewutils.FormatTimeWithoutSeconds(item.ActualTime),
+							DifferenceMin: item.DifferenceMin,
+							Description:   item.Description,
+							UserName:      item.Employee.LastName + " " + item.Employee.FirstName,
+							Email:         item.Employee.Email,
+							WhoAddEvent:   item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
+							DateAdd:       item.UpdatedAt,
+							IsAdmin:       props.IsAdmin,
+						})
+					</div>
+				}
+			</div>
+			@components.PaginationNum(components.PaginationNumProps{
+				UrlPath:     "/users_time_event_history?",
+				TotalPage:   props.TotalPage,
+				CurrentPage: props.CurrentPage,
+				QueryParams: props.QueryParams,
+			})
+		</div>
+		@UsersHistoryStatusScript()
+	}
+}

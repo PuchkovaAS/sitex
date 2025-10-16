@@ -95,7 +95,8 @@ templ Sidebar() {
 							<a
 								href="/users_status_history"
 								class={ "flex items-center p-3 text-sm font-medium rounded-lg transition-colors" ,
-                        viewutils.IsActive(currentPath, "/users" ) }
+                        viewutils.IsActive(currentPath, "/users_status_history" ),
+                        viewutils.IsActive(currentPath, "/users_time_event_history" ) }
 							>
 								<span>Истории пользователей</span>
 							</a>

@@ -52,6 +52,7 @@ func (h *PagesHandler) SetupAdminRoutes(adminGroup fiber.Router) {
 	adminGroup.Get("/profile_update", h.updateUser)
 	adminGroup.Get("/change_password", h.changePassword)
 	adminGroup.Get("/users_status_history", h.usersStatusHistory)
+	adminGroup.Get("/users_time_event_history", h.usersTimeEventHistory)
 }
 
 func (h *PagesHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
@@ -228,6 +229,49 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 		LatelyCount:     timeEventStat.LatelyCount,
 		EarlyLeaveMin:   timeEventStat.EarlyLeaveMin,
 		EarlyLeaveCount: timeEventStat.EarlyLeaveCount,
+	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) usersTimeEventHistory(c *fiber.Ctx) error {
+	page := c.QueryInt("page", 1)
+	PAGE_ITEMS := 20
+	departmentID := c.QueryInt("department", 0)
+
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	searchQuery := c.Query("search", "")
+	departments, err := h.repository.GetAllDepartments()
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
+	lastAddStatus, TotalEvents, err := h.repository.GetLastAddTimeEvents(user.SearchParam{
+		Email:        "",
+		DepartmentID: uint(departmentID),
+		SearchQuery:  searchQuery,
+		Offset:       (page - 1) * PAGE_ITEMS,
+		Limit:        PAGE_ITEMS,
+	})
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+	TotalPages := int(math.Ceil(float64(TotalEvents) / float64(PAGE_ITEMS)))
+
+	isAdmin := h.repository.IsAdmin(email)
+
+	component := views.UsersHistoryTimeEventPage(views.UsersHistoryTimeEventProps{
+		TotalPage:      TotalPages,
+		CurrentPage:    page,
+		LastTimeEvents: lastAddStatus,
+		Depatrments:    departments,
+		DepartmentId:   departmentID,
+		QueryParams:    c.Queries(),
+		TotalItems:     int(TotalEvents),
+		IsAdmin:        isAdmin,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
