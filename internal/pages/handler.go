@@ -52,11 +52,13 @@ func (h *PagesHandler) SetupAdminRoutes(adminGroup fiber.Router) {
 	adminGroup.Get("/profile_update", h.updateUser)
 	adminGroup.Get("/change_password", h.changePassword)
 	adminGroup.Get("/users_status_history", h.usersStatusHistory)
+	adminGroup.Get("/users_time_event_history", h.usersTimeEventHistory)
 }
 
 func (h *PagesHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
 	privetGroup.Get("/", h.home)
 	privetGroup.Get("/history_status", h.historyStatus)
+	privetGroup.Get("/history_time_event", h.historyTimeEvent)
 	privetGroup.Get("/year_statistics", h.yearStatistic)
 	privetGroup.Get("/profile", h.profile)
 }
@@ -200,6 +202,12 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 		return c.SendStatus(500)
 	}
 
+	timeEventStat, err := h.repository.GetYearTimeEventStat(emailUser)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
 	employeeData, err := h.getEmployeeData(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
@@ -207,16 +215,63 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 	}
 
 	component := views.YearStatisticPage(views.YearStatisticProps{
-		StatusCount: statusCount,
-		YearHistory: yearHistory,
-		Email:       emailUser,
-		StatusText:  employeeData.StatusText,
-		FirstName:   employeeData.FirstName,
-		LastName:    employeeData.LastName,
-		Position:    employeeData.Position,
-		IsAdmin:     employeeData.IsAdmin,
-		IsActive:    employeeData.IsActive,
-		Department:  employeeData.Department,
+		StatusCount:     statusCount,
+		YearHistory:     yearHistory,
+		Email:           emailUser,
+		StatusText:      employeeData.StatusText,
+		FirstName:       employeeData.FirstName,
+		LastName:        employeeData.LastName,
+		Position:        employeeData.Position,
+		IsAdmin:         employeeData.IsAdmin,
+		IsActive:        employeeData.IsActive,
+		Department:      employeeData.Department,
+		LatelyMin:       timeEventStat.LatelyMin,
+		LatelyCount:     timeEventStat.LatelyCount,
+		EarlyLeaveMin:   timeEventStat.EarlyLeaveMin,
+		EarlyLeaveCount: timeEventStat.EarlyLeaveCount,
+	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) usersTimeEventHistory(c *fiber.Ctx) error {
+	page := c.QueryInt("page", 1)
+	PAGE_ITEMS := 20
+	departmentID := c.QueryInt("department", 0)
+
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	searchQuery := c.Query("search", "")
+	departments, err := h.repository.GetAllDepartments()
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
+	lastAddStatus, TotalEvents, err := h.repository.GetLastAddTimeEvents(user.SearchParam{
+		Email:        "",
+		DepartmentID: uint(departmentID),
+		SearchQuery:  searchQuery,
+		Offset:       (page - 1) * PAGE_ITEMS,
+		Limit:        PAGE_ITEMS,
+	})
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+	TotalPages := int(math.Ceil(float64(TotalEvents) / float64(PAGE_ITEMS)))
+
+	isAdmin := h.repository.IsAdmin(email)
+
+	component := views.UsersHistoryTimeEventPage(views.UsersHistoryTimeEventProps{
+		TotalPage:      TotalPages,
+		CurrentPage:    page,
+		LastTimeEvents: lastAddStatus,
+		Depatrments:    departments,
+		DepartmentId:   departmentID,
+		QueryParams:    c.Queries(),
+		TotalItems:     int(TotalEvents),
+		IsAdmin:        isAdmin,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -292,6 +347,40 @@ func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
 	return templeadapter.Render(c, component, http.StatusOK)
 }
 
+func (h *PagesHandler) historyTimeEvent(c *fiber.Ctx) error {
+	page := c.QueryInt("page", 1)
+	PAGE_ITEMS := 20
+
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+	emailUser := h.getEmailForChangeUser(email, c)
+
+	lastTimeEvents, TotalEvents, err := h.repository.GetLastAddTimeEvents(user.SearchParam{
+		Email:        emailUser,
+		DepartmentID: 0,
+		SearchQuery:  "",
+		Offset:       (page - 1) * PAGE_ITEMS,
+		Limit:        PAGE_ITEMS,
+	})
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+	TotalPages := int(math.Ceil(float64(TotalEvents) / float64(PAGE_ITEMS)))
+
+	isAdmin := h.repository.IsAdmin(email)
+
+	component := views.HistoryTimeEventPage(views.HistoryTimeEventProps{
+		TotalPage:      TotalPages,
+		CurrentPage:    page,
+		Email:          emailUser,
+		LastTimeEvents: lastTimeEvents,
+		TotalItems:     int(TotalEvents),
+		IsAdmin:        isAdmin,
+	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
 func (h *PagesHandler) home(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
@@ -309,25 +398,42 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		return c.SendStatus(500)
 	}
 
+	lastAddTimeEvent, err := h.repository.GetLastTimeEvents(emailUser, 6)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
 	employeeData, err := h.getEmployeeData(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
 	}
 
+	timeEventStat, err := h.repository.GetTimeEventStat(month, emailUser)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
 	component := views.ActivityPage(views.ActivityPageProps{
-		StatusCount:   statusCount,
-		MonthHistory:  monthHistory,
-		CurrentMonth:  month,
-		LastAddStatus: lastAddStatus,
-		Email:         emailUser,
-		StatusText:    employeeData.StatusText,
-		FirstName:     employeeData.FirstName,
-		LastName:      employeeData.LastName,
-		Position:      employeeData.Position,
-		IsAdmin:       employeeData.IsAdmin,
-		IsActive:      employeeData.IsActive,
-		Department:    employeeData.Department,
+		StatusCount:     statusCount,
+		MonthHistory:    monthHistory,
+		CurrentMonth:    month,
+		LastAddStatus:   lastAddStatus,
+		LastTimeEvents:  lastAddTimeEvent,
+		Email:           emailUser,
+		StatusText:      employeeData.StatusText,
+		FirstName:       employeeData.FirstName,
+		LastName:        employeeData.LastName,
+		Position:        employeeData.Position,
+		IsAdmin:         employeeData.IsAdmin,
+		IsActive:        employeeData.IsActive,
+		Department:      employeeData.Department,
+		LatelyMin:       timeEventStat.LatelyMin,
+		LatelyCount:     timeEventStat.LatelyCount,
+		EarlyLeaveMin:   timeEventStat.EarlyLeaveMin,
+		EarlyLeaveCount: timeEventStat.EarlyLeaveCount,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -374,15 +480,25 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 			return c.SendStatus(500)
 		}
 
+		timeEventStat, err := h.repository.GetTimeEventStat(month, employee.Email)
+		if err != nil {
+			h.customLogger.Error().Msg(err.Error())
+			return c.SendStatus(500)
+		}
+
 		status, err := h.repository.GetCurrentStatus(employee.Email, today)
 
 		// Создаем и добавляем ActivityInfo в срез
 		usersInfo = append(usersInfo, user.ActivityInfo{
-			Employee:     employee,
-			StatusCount:  statusCount,
-			MonthHistory: monthHistory,
-			CurrentMonth: month,
-			StatusText:   status,
+			Employee:        employee,
+			StatusCount:     statusCount,
+			MonthHistory:    monthHistory,
+			CurrentMonth:    month,
+			StatusText:      status,
+			LatelyMin:       timeEventStat.LatelyMin,
+			LatelyCount:     timeEventStat.LatelyCount,
+			EarlyLeaveMin:   timeEventStat.EarlyLeaveMin,
+			EarlyLeaveCount: timeEventStat.EarlyLeaveCount,
 		},
 		)
 	}

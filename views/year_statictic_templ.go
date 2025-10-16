@@ -25,6 +25,11 @@ type YearStatisticProps struct {
 	Department  string
 	IsAdmin     bool
 	IsActive    bool
+
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
 }
 
 func YearStatisticPage(props YearStatisticProps) templ.Component {
@@ -76,6 +81,11 @@ func YearStatisticPage(props YearStatisticProps) templ.Component {
 					IsAdmin:    props.IsAdmin,
 					IsActive:   props.IsActive,
 					Department: props.Department,
+
+					LatelyMin:       props.LatelyMin,
+					LatelyCount:     props.LatelyCount,
+					EarlyLeaveMin:   props.EarlyLeaveMin,
+					EarlyLeaveCount: props.EarlyLeaveCount,
 				},
 			).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

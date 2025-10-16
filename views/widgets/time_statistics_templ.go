@@ -23,6 +23,11 @@ type TimeStatisticsProps struct {
 	Department string
 	IsAdmin    bool
 	IsActive   bool
+
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
 }
 
 func TimeStatistics(props TimeStatisticsProps) templ.Component {
@@ -49,14 +54,22 @@ func TimeStatistics(props TimeStatisticsProps) templ.Component {
 
 		year := time.Now().Year()
 		statuses := []string{
-			"Отпуск",
-			"Выходной",
+			// ───────────── РАБОТА ─────────────
 			"В офисе",
-			"Больничный",
-			"Отгул",
+			"Командировка",
 			"Удаленная работа",
 			"Работа в выходной день",
-			"Командировка",
+
+			// ───────────── ОТПУСК / ОТДЫХ ─────────────
+			"Отпуск",
+			"Отпуск за свой счёт",
+			"Выходной",
+
+			// ───────────── ОТСУТСТВИЕ ─────────────
+			"Больничный",
+
+			// ───────────── ДОПОЛНИТЕЛЬНО ─────────────
+			"Отгул",
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg shadow-sm border border-gray-100 p-6\"><!-- Заголовок --><div class=\"flex items-center justify-between mb-6\"><h2 class=\"text-lg font-semibold text-gray-900\">Статистика активности за <span class=\"text-blue-600\">")
 		if templ_7745c5c3_Err != nil {
@@ -65,7 +78,7 @@ func TimeStatistics(props TimeStatisticsProps) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.MonthName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 38, Col: 96}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 51, Col: 96}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -78,13 +91,13 @@ func TimeStatistics(props TimeStatisticsProps) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 38, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 51, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</span></h2></div><div class=\"flex items-center gap-6 bg-white \"><!-- Аватар и основная информация в одной линии --><div class=\"flex items-center  flex-shrink-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</span></h2></div><div class=\"flex items-center gap-6 bg-white\"><!-- Аватар и основная информация --><div class=\"flex items-center flex-shrink-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -104,7 +117,7 @@ func TimeStatistics(props TimeStatisticsProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- Статистика --><div class=\"flex-1\"><div class=\"grid grid-cols-8 gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- Статистика по статусам --><div class=\"flex-1\"><div class=\"grid grid-cols-9 gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -114,7 +127,20 @@ func TimeStatistics(props TimeStatisticsProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></div><!-- 🔹 Блок учёта времени — гармонично внизу карточки -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = TimeWatch(TimeWatchProps{
+			LatelyMin:       props.LatelyMin,
+			LatelyCount:     props.LatelyCount,
+			EarlyLeaveMin:   props.EarlyLeaveMin,
+			EarlyLeaveCount: props.EarlyLeaveCount,
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -152,7 +178,7 @@ func StatusCard(status string, count int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -165,7 +191,7 @@ func StatusCard(status string, count int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -174,7 +200,7 @@ func StatusCard(status string, count int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -187,20 +213,20 @@ func StatusCard(status string, count int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(count)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 76, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 96, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -209,7 +235,7 @@ func StatusCard(status string, count int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -222,20 +248,20 @@ func StatusCard(status string, count int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(displayName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 77, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/widgets/time_statistics.templ`, Line: 97, Col: 108}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

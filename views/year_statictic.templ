@@ -17,6 +17,11 @@ type YearStatisticProps struct {
 	Department  string
 	IsAdmin     bool
 	IsActive    bool
+
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
 }
 
 templ YearStatisticPage(props YearStatisticProps) {
@@ -38,6 +43,11 @@ templ YearStatisticPage(props YearStatisticProps) {
 					IsAdmin:    props.IsAdmin,
 					IsActive:   props.IsActive,
 					Department: props.Department,
+			
+					LatelyMin:       props.LatelyMin,
+					LatelyCount:     props.LatelyCount,
+					EarlyLeaveMin:   props.EarlyLeaveMin,
+					EarlyLeaveCount: props.EarlyLeaveCount,
 				},
 			)
 			<!-- Блок активности пользователя -->

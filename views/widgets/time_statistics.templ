@@ -15,20 +15,33 @@ type TimeStatisticsProps struct {
 	Department string
 	IsAdmin    bool
 	IsActive   bool
+
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
 }
 
 templ TimeStatistics(props TimeStatisticsProps) {
 	{{
 year := time.Now().Year()
 statuses := []string{
-	"Отпуск",
-	"Выходной",
+	// ───────────── РАБОТА ─────────────
 	"В офисе",
-	"Больничный",
-	"Отгул",
+	"Командировка",
 	"Удаленная работа",
 	"Работа в выходной день",
-	"Командировка",
+
+	// ───────────── ОТПУСК / ОТДЫХ ─────────────
+	"Отпуск",
+	"Отпуск за свой счёт",
+	"Выходной",
+
+	// ───────────── ОТСУТСТВИЕ ─────────────
+	"Больничный",
+
+	// ───────────── ДОПОЛНИТЕЛЬНО ─────────────
+	"Отгул",
 }
 	}}
 	<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
@@ -38,9 +51,9 @@ statuses := []string{
 				Статистика активности за <span class="text-blue-600">{ props.MonthName } { year }</span>
 			</h2>
 		</div>
-		<div class="flex items-center gap-6 bg-white ">
-			<!-- Аватар и основная информация в одной линии -->
-			<div class="flex items-center  flex-shrink-0">
+		<div class="flex items-center gap-6 bg-white">
+			<!-- Аватар и основная информация -->
+			<div class="flex items-center flex-shrink-0">
 				@components.EmployeerAvatar(props.FirstName, props.LastName, props.IsActive)
 				@components.EmployeeInfo(components.EmployeeInfoProps{
 					Email:      props.Email,
@@ -52,15 +65,22 @@ statuses := []string{
 					Department: props.Department,
 				})
 			</div>
-			<!-- Статистика -->
+			<!-- Статистика по статусам -->
 			<div class="flex-1">
-				<div class="grid grid-cols-8 gap-4">
+				<div class="grid grid-cols-9 gap-4">
 					for _, status := range statuses {
 						@StatusCard(status, props.Stats[status])
 					}
 				</div>
 			</div>
 		</div>
+		<!-- 🔹 Блок учёта времени — гармонично внизу карточки -->
+		@TimeWatch(TimeWatchProps{
+			LatelyMin:       props.LatelyMin,
+			LatelyCount:     props.LatelyCount,
+			EarlyLeaveMin:   props.EarlyLeaveMin,
+			EarlyLeaveCount: props.EarlyLeaveCount,
+		})
 	</div>
 }
 

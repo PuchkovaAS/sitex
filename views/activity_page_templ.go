@@ -17,10 +17,16 @@ import (
 )
 
 type ActivityPageProps struct {
-	StatusCount   map[string]int
-	MonthHistory  []user.MonthHistory
-	CurrentMonth  int
-	LastAddStatus []user.StatusPeriod
+	StatusCount    map[string]int
+	MonthHistory   []user.MonthHistory
+	CurrentMonth   int
+	LastAddStatus  []user.StatusPeriod
+	LastTimeEvents []user.TimeEvent
+
+	LatelyMin       int
+	LatelyCount     int
+	EarlyLeaveMin   int
+	EarlyLeaveCount int
 
 	Email      string
 	StatusText string
@@ -71,16 +77,20 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			}
 			templ_7745c5c3_Err = widgets.TimeStatistics(
 				widgets.TimeStatisticsProps{
-					MonthName:  viewutils.GetMonthName(props.CurrentMonth),
-					Stats:      props.StatusCount,
-					Email:      props.Email,
-					StatusText: props.StatusText,
-					FirstName:  props.FirstName,
-					LastName:   props.LastName,
-					Position:   props.Position,
-					IsAdmin:    props.IsAdmin,
-					IsActive:   props.IsActive,
-					Department: props.Department,
+					MonthName:       viewutils.GetMonthName(props.CurrentMonth),
+					Stats:           props.StatusCount,
+					Email:           props.Email,
+					StatusText:      props.StatusText,
+					FirstName:       props.FirstName,
+					LastName:        props.LastName,
+					Position:        props.Position,
+					IsAdmin:         props.IsAdmin,
+					IsActive:        props.IsActive,
+					Department:      props.Department,
+					LatelyMin:       props.LatelyMin,
+					LatelyCount:     props.LatelyCount,
+					EarlyLeaveMin:   props.EarlyLeaveMin,
+					EarlyLeaveCount: props.EarlyLeaveCount,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -93,7 +103,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Правая часть: Добавить статус --><div class=\"w-sm\"><h2 class=\"text-lg font-semibold text-gray-900\">Добавить статус</h2></div></div><div><div class=\"grid grid-cols-1 lg:grid-cols-4 gap-6\"><!-- Два календаря (занимают 3 колонки) --><div class=\"lg:col-span-3\"><div class=\"flex flex-col items-center justify-center h-full\"><!-- Добавлено justify-center и h-full --><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto\"><!-- Календари --><div class=\"flex items-center justify-center\"><!-- Добавлен контейнер с центрированием -->")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Правая часть: Добавить статус --><div class=\"w-sm\"><h2 class=\"text-lg font-semibold text-gray-900\">Добавить событие</h2></div></div><div><div class=\"grid grid-cols-1 lg:grid-cols-4 gap-6\"><!-- Два календаря (занимают 3 колонки) --><div class=\"lg:col-span-3\"><div class=\"flex flex-col items-center justify-center h-full\"><!-- Добавлено justify-center и h-full --><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto\"><!-- Календари --><div class=\"flex items-center justify-center\"><!-- Добавлен контейнер с центрированием -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -131,39 +141,20 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = widgets.AddStatus(props.Email).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = widgets.AddEventTabs(props.Email, props.IsAdmin).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></div></div><div class=\"my-2 p-2 \"><h3 class=\"text-lg font-semibold text-gray-900\">Последние добавленные события</h3></div><div class=\"flex flex-col  mt-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></div></div><div class=\"my-2 p-2 \"><h3 class=\"text-lg font-semibold text-gray-900\">Последние добавленные события</h3></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, item := range props.LastAddStatus {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"mb-2\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = widgets.StatusEventWidget(widgets.StatusEventProps{
-					ID:           int(item.ID),
-					Status:       item.StatusType.Name,
-					Date:         item.StartDate,
-					Description:  item.Comment,
-					UserName:     item.Employee.LastName + " " + item.Employee.FirstName,
-					OneTimeEvent: item.OneTimeEvent,
-					DateAdd:      item.UpdatedAt,
-					WhoAddEvent:  item.WhoAdded.LastName + " " + item.WhoAdded.FirstName,
-					Email:        item.Employee.Email,
-				}).Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
+			templ_7745c5c3_Err = widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus, LastTimeEvents: props.LastTimeEvents,
+				IsAdmin: props.IsAdmin}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -206,7 +197,7 @@ func ActivityPageScript() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<script>\n    function toggleActivity() {\n        const block = document.getElementById('activity-block');\n        const icon = document.getElementById('toggle-icon');\n\n        block.classList.toggle('hidden');\n        icon.classList.toggle('rotate-0');\n        icon.classList.toggle('rotate-180');\n    }\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n    function toggleActivity() {\n        const block = document.getElementById('activity-block');\n        const icon = document.getElementById('toggle-icon');\n\n        block.classList.toggle('hidden');\n        icon.classList.toggle('rotate-0');\n        icon.classList.toggle('rotate-180');\n    }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

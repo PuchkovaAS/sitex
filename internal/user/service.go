@@ -2,6 +2,8 @@ package user
 
 import (
 	"sitex/pkg/calendar"
+	"sort"
+	"strings"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -27,6 +29,59 @@ func NewUserService(deps *UserServiceDeps) *UserService {
 	}
 }
 
+func (service *UserService) getTimeEventHistory(
+	email string,
+	timeStart, timeEnd time.Time,
+) ([]TimeEventHistoryResponse, error) {
+	history, err := service.userRepository.GetTimeEventHistory(email, timeStart, timeEnd)
+	if err != nil {
+		return nil, err
+	}
+
+	// Мапа: дата → агрегированная запись
+	eventMap := make(map[string]*TimeEventHistoryResponse)
+
+	for _, event := range history {
+		key := event.Date.Format("2006-01-02")
+
+		if existing, ok := eventMap[key]; ok {
+			// Уже есть запись на эту дату — объединяем
+			if event.Description != "" {
+				if existing.Description != "" {
+					existing.Description += "\n" + event.Description
+				} else {
+					existing.Description = event.Description
+				}
+			}
+			// Опционально: объединить EventName
+			if event.EventType.Name != "" && !strings.Contains(existing.EventName, event.EventType.Name) {
+				if existing.EventName != "" {
+					existing.EventName += "\n" + event.EventType.Name
+				} else {
+					existing.EventName = event.EventType.Name
+				}
+			}
+		} else {
+			// Первая запись на эту дату
+			resp := event.ToTimeEventHistoryResponse()
+			eventMap[key] = &resp
+		}
+	}
+
+	// Преобразуем мапу в слайс и сортируем по дате (опционально)
+	var response []TimeEventHistoryResponse
+	for _, event := range eventMap {
+		response = append(response, *event)
+	}
+
+	// Сортировка по дате (от новых к старым)
+	sort.Slice(response, func(i, j int) bool {
+		return response[i].Date.After(response[j].Date)
+	})
+
+	return response, nil
+}
+
 func (service *UserService) getHistory(
 	email string,
 	timeStart, timeEnd time.Time,
@@ -50,18 +105,21 @@ type DayStatus struct {
 	Comment      string
 	OneTimeEvent bool
 	IsAddStatus  bool
+	IsTimeEvent  bool
 }
 
 type CalcDaysDeps struct {
-	Email         string
-	TimeStart     time.Time
-	TimeEnd       time.Time
-	HistoryStatus []StatusHistoryResponse
+	Email            string
+	TimeStart        time.Time
+	TimeEnd          time.Time
+	HistoryStatus    []StatusHistoryResponse
+	TimeEventHistory []TimeEventHistoryResponse
 }
 
 func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string]int) {
 	// Используем полную дату как ключ (год-месяц-день)
 	statusMap := make(map[string]DayStatus)
+	timeEventMap := make(map[string]DayStatus)
 
 	// Заполняем мапу данными из истории
 	for _, status := range deps.HistoryStatus {
@@ -72,6 +130,15 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 			Comment:      status.Comment,
 			OneTimeEvent: status.OneTimeEvent,
 			IsAddStatus:  true,
+		}
+	}
+
+	// Заполняем мапу данными из истории
+	for _, status := range deps.TimeEventHistory {
+		key := status.Date.Format("2006-01-02")
+		timeEventMap[key] = DayStatus{
+			Comment:     status.EventName + "\t" + status.Description,
+			IsTimeEvent: true,
 		}
 	}
 
@@ -110,12 +177,18 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 
 		// Если день есть в мапе - берем его статус
 		if status, ok := statusMap[key]; ok {
-			result = append(result, status)
+
 			if !status.OneTimeEvent {
 
 				lastStatus = status.Status
 				lastComment = status.Comment
 			}
+
+			if timeEvent, ok := timeEventMap[key]; ok {
+				status.IsTimeEvent = true
+				status.Comment = status.Comment + "\n" + timeEvent.Comment
+			}
+			result = append(result, status)
 		} else {
 			// Если статуса нет - определяем статус по умолчанию
 			statusName := lastStatus
@@ -130,12 +203,23 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 				statusComment = statusComment + "\n" + comment
 			}
 
-			result = append(result, DayStatus{
-				Date:        currentDate.Day(),
-				Status:      statusName,
-				Comment:     statusComment,
-				IsAddStatus: isAddStatus,
-			})
+			if timeEvent, ok := timeEventMap[key]; ok {
+				result = append(result, DayStatus{
+					Date:        currentDate.Day(),
+					Status:      statusName,
+					Comment:     statusComment + "\n" + timeEvent.Comment,
+					IsTimeEvent: true,
+					IsAddStatus: isAddStatus,
+				})
+			} else {
+				result = append(result, DayStatus{
+					Date:        currentDate.Day(),
+					Status:      statusName,
+					Comment:     statusComment,
+					IsAddStatus: isAddStatus,
+				})
+			}
+
 		}
 
 		currentDate = currentDate.AddDate(0, 0, 1) // Следующий день
@@ -155,14 +239,16 @@ func (service *UserService) GetDaysStatus(
 	timeStart, timeEnd time.Time,
 ) ([]DayStatus, map[string]int, error) {
 	history, err := service.getHistory(email, timeStart, timeEnd)
+	timeEvents, err := service.getTimeEventHistory(email, timeStart, timeEnd)
 	if err != nil {
 		return nil, nil, err
 	}
 	dayStatus, statusCount := service.calcDays(CalcDaysDeps{
-		Email:         email,
-		TimeStart:     timeStart,
-		TimeEnd:       timeEnd,
-		HistoryStatus: history,
+		Email:            email,
+		TimeStart:        timeStart,
+		TimeEnd:          timeEnd,
+		HistoryStatus:    history,
+		TimeEventHistory: timeEvents,
 	})
 	return dayStatus, statusCount, nil
 }

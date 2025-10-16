@@ -1,11 +1,7 @@
 package viewutils
 
 import (
-	"fmt"
-	"net/url"
 	"strings"
-
-	"github.com/a-h/templ"
 )
 
 func GetMonthName(monthNum int) string {
@@ -18,37 +14,33 @@ func GetMonthName(monthNum int) string {
 
 func GetStatusClass(status string) string {
 	switch status {
-	// Отдых - спокойные синие
+	// ──────────────── ОТДЫХ / ОТПУСК ────────────────
 	case "Отпуск":
 		return "text-blue-700 bg-blue-100 border border-blue-200"
-
+	case "Отпуск за свой счёт":
+		return "text-violet-700 bg-violet-100 border border-violet-200"
 	case "Выходной":
 		return "text-gray-500 bg-gray-100 border border-gray-200"
 
-	// Работа - естественные зеленые
+	// ──────────────── РАБОТА ────────────────
 	case "В офисе":
 		return "text-emerald-700 bg-emerald-100 border border-emerald-200"
-
-	// Больничный - мягкие красные
-	case "Больничный":
-		return "text-rose-700 bg-rose-100 border border-rose-200"
-
-	// Отгул - теплые янтарные
-	case "Отгул":
-		return "text-amber-700 bg-amber-100 border border-amber-200"
-
-	// Удаленная работа - терракотовые
 	case "Удаленная работа":
 		return "text-orange-600 bg-orange-100 border border-orange-200"
-
-	// Работа в выходной - лавандовые
 	case "Работа в выходной день":
 		return "text-indigo-600 bg-indigo-100 border border-indigo-200"
 
-	// Командировка - коралловые
+	// ──────────────── ОТСУТСТВИЕ (не по желанию) ────────────────
+	case "Больничный":
+		return "text-rose-700 bg-rose-100 border border-rose-200"
+
+	// ──────────────── ДОПОЛНИТЕЛЬНЫЕ ДНИ / КОМПЕНСАЦИИ ────────────────
+	case "Отгул":
+		return "text-amber-700 bg-amber-100 border border-amber-200"
 	case "Командировка":
 		return "text-coral-600 bg-coral-100 border border-coral-200"
 
+	// ──────────────── ПО УМОЛЧАНИЮ ────────────────
 	default:
 		return "text-gray-400 bg-white border border-gray-200"
 	}
@@ -71,35 +63,49 @@ func IsActivePrefix(currentPath, targetPath string) string {
 }
 
 // Вспомогательные функции (можно вынести в view_utils если нужно)
+// GetDisplayName возвращает краткое или адаптированное отображаемое имя статуса.
 func GetDisplayName(status string) string {
 	switch status {
 	case "Удаленная работа":
 		return "Удалённо"
 	case "Работа в выходной день":
 		return "Выходной\nработа"
+	case "Отпуск за свой счёт":
+		return "За свой счёт"
 	default:
 		return status
 	}
 }
 
+// Используется, например, в иконках или компактных метках.
 func GetTextColorClass(status string) string {
 	switch status {
+	// Отдых
 	case "Отпуск":
 		return "text-blue-700"
+	case "Отпуск за свой счёт":
+		return "text-violet-700"
 	case "Выходной":
 		return "text-gray-500"
+
+	// Работа
 	case "В офисе":
 		return "text-emerald-700"
-	case "Больничный":
-		return "text-rose-700"
-	case "Отгул":
-		return "text-amber-700"
 	case "Удаленная работа":
 		return "text-orange-600"
 	case "Работа в выходной день":
 		return "text-indigo-600"
+
+	// Отсутствие
+	case "Больничный":
+		return "text-rose-700"
+
+	// Дополнительно
+	case "Отгул":
+		return "text-amber-700"
 	case "Командировка":
 		return "text-coral-600"
+
 	default:
 		return "text-gray-400"
 	}
@@ -135,13 +141,32 @@ func GetInitals(firstName, lastName string) string {
 	return initials
 }
 
-// Вспомогательные функции (должны быть реализованы в Go коде)
-func buildPageURL(page, deptID int, searchQuery string) string {
-	// Реализация построения URL с параметрами
-	return fmt.Sprintf("/activity?page=%d&department=%d&search=%s", page, deptID, url.QueryEscape(searchQuery))
+// // Вспомогательные функции (должны быть реализованы в Go коде)
+// func buildPageURL(page, deptID int, searchQuery string) string {
+// 	// Реализация построения URL с параметрами
+// 	return fmt.Sprintf("/activity?page=%d&department=%d&search=%s", page, deptID, url.QueryEscape(searchQuery))
+// }
+//
+// func generatePaginationLinks() templ.Component {
+// 	// Реализация генерации ссылок пагинации
+// 	return templ.Raw("") // Заглушка
+// }
+
+func GetTimeEventClass(eventType string) string {
+	switch eventType {
+	case "late":
+		return "text-orange-700 bg-orange-100 border border-orange-200"
+	case "early_leave":
+		return "text-rose-700 bg-rose-100 border border-rose-200"
+	default:
+		return "text-gray-400 bg-gray-100 border border-gray-200"
+	}
 }
 
-func generatePaginationLinks() templ.Component {
-	// Реализация генерации ссылок пагинации
-	return templ.Raw("") // Заглушка
+// FormatTimeWithoutSeconds обрезает секунды из строки времени "HH:MM:SS" → "HH:MM"
+func FormatTimeWithoutSeconds(timeStr string) string {
+	if len(timeStr) >= 5 {
+		return timeStr[:5] // берём первые 5 символов: "14:30"
+	}
+	return timeStr
 }

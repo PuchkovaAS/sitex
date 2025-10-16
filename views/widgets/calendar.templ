@@ -38,12 +38,16 @@ weekdays = []string{"Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"}
 	statusClass := viewutils.GetStatusClass(day.Status)
 				}}
 				<div
-					class={ "h-7 rounded text-xs flex items-center justify-center relative cursor-help " + statusClass, }
+					class={ "h-7 rounded text-xs flex items-center justify-center relative cursor-help " + statusClass }
 					title={ day.Status + ":  " + day.Comment }
 				>
 					<!-- Число дня -->
 					<span>{ day.Date }</span>
-					<!-- Точечка для добавленных статусов -->
+					<!-- 🔴 Красная точка для временного события (слева сверху) -->
+					if day.IsTimeEvent {
+						<div class="absolute top-0.5 left-0.5 w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+					}
+					<!-- 🔵 Синяя точка для добавленного статуса (справа сверху) -->
 					if day.IsAddStatus {
 						<div class="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
 					}

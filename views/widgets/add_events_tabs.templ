@@ -1,0 +1,74 @@
+package widgets
+
+templ AddEventTabs(email string, isAdmin bool) {
+	<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 max-w-md mx-auto">
+		<!-- Переключатели -->
+		<div class="flex space-x-2 mb-4 border-b border-gray-200">
+			<button
+				type="button"
+				onclick="showForm('status')"
+				id="tab-status"
+				class="pb-2 px-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap"
+			>
+				Статус
+			</button>
+			if isAdmin {
+				<button
+					type="button"
+					onclick="showForm('time')"
+					id="tab-time"
+					class="pb-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap transition-colors"
+				>
+					Время
+				</button>
+			}
+		</div>
+		<!-- Формы -->
+		<div id="form-status" class="block">
+			@AddStatus(email)
+		</div>
+		if isAdmin {
+			<div id="form-time" class="hidden">
+				@AddTimeEvent(email)
+			</div>
+		}
+	</div>
+	<script>
+    function showForm(tab) {
+        const formStatus = document.getElementById('form-status');
+        const formTime = document.getElementById('form-time'); // может быть null
+        const tabStatus = document.getElementById('tab-status');
+        const tabTime = document.getElementById('tab-time');     // может быть null
+
+        // Скрываем формы
+        formStatus.classList.add('hidden');
+        if (formTime) formTime.classList.add('hidden');
+
+        // Сбрасываем активный стиль (если элементы существуют)
+        if (tabStatus) {
+            tabStatus.classList.replace('text-blue-600', 'text-gray-500');
+            tabStatus.classList.replace('border-blue-600', 'border-transparent');
+        }
+        if (tabTime) {
+            tabTime.classList.replace('text-blue-600', 'text-gray-500');
+            tabTime.classList.replace('border-blue-600', 'border-transparent');
+        }
+
+        // Активируем нужную вкладку
+        if (tab === 'status' && tabStatus) {
+            formStatus.classList.remove('hidden');
+            tabStatus.classList.replace('text-gray-500', 'text-blue-600');
+            tabStatus.classList.replace('border-transparent', 'border-blue-600');
+        } else if (tab === 'time' && tabTime && formTime) {
+            formTime.classList.remove('hidden');
+            tabTime.classList.replace('text-gray-500', 'text-blue-600');
+            tabTime.classList.replace('border-transparent', 'border-blue-600');
+        }
+    }
+
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', () => {
+        showForm('status');
+    });
+</script>
+}
