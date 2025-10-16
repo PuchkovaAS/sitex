@@ -58,7 +58,8 @@ templ Sidebar() {
 						<a
 							href="/history_status"
 							class={ "flex items-center p-3 text-sm font-medium rounded-lg transition-colors" ,
-                        viewutils.IsActive(currentPath, "/history" ) }
+                        viewutils.IsActive(currentPath, "/history_status" ),
+                        viewutils.IsActive(currentPath, "/history_time_event" ) }
 						>
 							<span>История записей</span>
 						</a>
@@ -66,8 +67,10 @@ templ Sidebar() {
 					<li>
 						<a
 							href="/profile"
-							class={ "flex items-center p-3 text-sm font-medium rounded-lg transition-colors" ,
-                        viewutils.IsActive(currentPath, "/profile" ) }
+							class={
+								"flex items-center p-3 text-sm font-medium rounded-lg transition-colors",
+								viewutils.IsActive(currentPath, "/profile"),
+							}
 						>
 							<span>Профиль</span>
 						</a>

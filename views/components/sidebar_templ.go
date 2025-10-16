@@ -129,7 +129,8 @@ func Sidebar() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 = []any{"flex items-center p-3 text-sm font-medium rounded-lg transition-colors",
-			viewutils.IsActive(currentPath, "/history")}
+			viewutils.IsActive(currentPath, "/history_status"),
+			viewutils.IsActive(currentPath, "/history_time_event")}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -152,7 +153,8 @@ func Sidebar() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 = []any{"flex items-center p-3 text-sm font-medium rounded-lg transition-colors",
-			viewutils.IsActive(currentPath, "/profile")}
+			viewutils.IsActive(currentPath, "/profile"),
+		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
