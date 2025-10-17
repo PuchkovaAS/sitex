@@ -53,12 +53,12 @@ func (h *PagesHandler) SetupAdminRoutes(adminGroup fiber.Router) {
 	adminGroup.Get("/change_password", h.changePassword)
 	adminGroup.Get("/users_status_history", h.usersStatusHistory)
 	adminGroup.Get("/users_time_event_history", h.usersTimeEventHistory)
+	adminGroup.Get("/history_time_event", h.historyTimeEvent)
 }
 
 func (h *PagesHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
 	privetGroup.Get("/", h.home)
 	privetGroup.Get("/history_status", h.historyStatus)
-	privetGroup.Get("/history_time_event", h.historyTimeEvent)
 	privetGroup.Get("/year_statistics", h.yearStatistic)
 	privetGroup.Get("/profile", h.profile)
 }
@@ -157,14 +157,15 @@ func (h *PagesHandler) profile(c *fiber.Ctx) error {
 }
 
 type EmployeeData struct {
-	Email      string
-	StatusText string
-	FirstName  string
-	LastName   string
-	Position   string
-	Department string
-	IsAdmin    bool
-	IsActive   bool
+	Email          string
+	StatusText     string
+	FirstName      string
+	LastName       string
+	Position       string
+	Department     string
+	IsAdmin        bool
+	IsActive       bool
+	ShowTimeEvents bool
 }
 
 func (h *PagesHandler) getEmployeeData(employeerEmail string) (EmployeeData, error) {
@@ -180,14 +181,15 @@ func (h *PagesHandler) getEmployeeData(employeerEmail string) (EmployeeData, err
 	}
 
 	return EmployeeData{
-		Email:      employeerEmail,
-		StatusText: status,
-		FirstName:  employeerInfo.FirstName,
-		LastName:   employeerInfo.LastName,
-		Position:   employeerInfo.Position,
-		IsAdmin:    employeerInfo.IsAdmin,
-		IsActive:   employeerInfo.IsActive,
-		Department: employeerInfo.Department,
+		Email:          employeerEmail,
+		StatusText:     status,
+		FirstName:      employeerInfo.FirstName,
+		LastName:       employeerInfo.LastName,
+		Position:       employeerInfo.Position,
+		IsAdmin:        employeerInfo.IsAdmin,
+		IsActive:       employeerInfo.IsActive,
+		Department:     employeerInfo.Department,
+		ShowTimeEvents: employeerInfo.ShowTimeEvents,
 	}, nil
 }
 
@@ -229,6 +231,7 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 		LatelyCount:     timeEventStat.LatelyCount,
 		EarlyLeaveMin:   timeEventStat.EarlyLeaveMin,
 		EarlyLeaveCount: timeEventStat.EarlyLeaveCount,
+		ShowTimeEvents:  employeeData.ShowTimeEvents,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -337,12 +340,15 @@ func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
 	}
 	TotalPages := int(math.Ceil(float64(TotalEvents) / float64(PAGE_ITEMS)))
 
+	isAdmin := h.repository.IsAdmin(email)
+
 	component := views.HistoryStatusPage(views.HistoryStatusProps{
 		TotalPage:     TotalPages,
 		CurrentPage:   page,
 		Email:         emailUser,
 		LastAddStatus: lastAddStatus,
 		TotalItems:    int(TotalEvents),
+		IsAdmin:       isAdmin,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -437,6 +443,7 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		EarlyLeaveMin:   timeEventStat.EarlyLeaveMin,
 		EarlyLeaveCount: timeEventStat.EarlyLeaveCount,
 		UserIsAdmin:     userIsAdmin,
+		ShowTimeEvents:  employeeData.ShowTimeEvents,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

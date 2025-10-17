@@ -181,16 +181,17 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				templ_7745c5c3_Err = widgets.TimeStatistics(widgets.TimeStatisticsProps{
-					MonthName:  viewutils.GetMonthName(currentUser.CurrentMonth),
-					Stats:      currentUser.StatusCount,
-					Email:      currentUser.Employee.Email,
-					StatusText: currentUser.StatusText,
-					FirstName:  currentUser.Employee.FirstName,
-					LastName:   currentUser.Employee.LastName,
-					Position:   currentUser.Employee.Position,
-					IsAdmin:    currentUser.Employee.IsAdmin,
-					IsActive:   currentUser.Employee.IsActive,
-					Department: currentUser.Employee.Department.Name,
+					MonthName:      viewutils.GetMonthName(currentUser.CurrentMonth),
+					Stats:          currentUser.StatusCount,
+					Email:          currentUser.Employee.Email,
+					StatusText:     currentUser.StatusText,
+					FirstName:      currentUser.Employee.FirstName,
+					LastName:       currentUser.Employee.LastName,
+					Position:       currentUser.Employee.Position,
+					IsAdmin:        currentUser.Employee.IsAdmin,
+					IsActive:       currentUser.Employee.IsActive,
+					Department:     currentUser.Employee.Department.Name,
+					ShowTimeEvents: currentUser.Employee.ShowTimeEvents,
 
 					LatelyMin:       currentUser.LatelyMin,
 					LatelyCount:     currentUser.LatelyCount,
@@ -207,7 +208,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(currentUser.Employee.LastName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 105, Col: 43}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 106, Col: 43}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -221,7 +222,7 @@ func MultiUserActivityPage(props MultiUserActivityPageProps) templ.Component {
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(
 					currentUser.Employee.FirstName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 106, Col: 66}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/users_active_page.templ`, Line: 107, Col: 66}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {

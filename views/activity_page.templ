@@ -20,15 +20,16 @@ type ActivityPageProps struct {
 	EarlyLeaveMin   int
 	EarlyLeaveCount int
 
-	Email       string
-	StatusText  string
-	FirstName   string
-	LastName    string
-	Position    string
-	Department  string
-	IsAdmin     bool
-	IsActive    bool
-	UserIsAdmin bool
+	Email          string
+	StatusText     string
+	FirstName      string
+	LastName       string
+	Position       string
+	Department     string
+	IsAdmin        bool
+	IsActive       bool
+	UserIsAdmin    bool
+	ShowTimeEvents bool
 }
 
 templ ActivityPage(props ActivityPageProps) {
@@ -54,6 +55,7 @@ templ ActivityPage(props ActivityPageProps) {
 					LatelyCount:     props.LatelyCount,
 					EarlyLeaveMin:   props.EarlyLeaveMin,
 					EarlyLeaveCount: props.EarlyLeaveCount,
+					ShowTimeEvents:  props.ShowTimeEvents,
 				})
 			<!-- Кнопка раскрытия -->
 			<div class="flex justify-center">

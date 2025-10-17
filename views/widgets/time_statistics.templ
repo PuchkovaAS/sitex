@@ -20,6 +20,7 @@ type TimeStatisticsProps struct {
 	LatelyCount     int
 	EarlyLeaveMin   int
 	EarlyLeaveCount int
+	ShowTimeEvents  bool
 }
 
 templ TimeStatistics(props TimeStatisticsProps) {
@@ -75,12 +76,14 @@ statuses := []string{
 			</div>
 		</div>
 		<!-- 🔹 Блок учёта времени — гармонично внизу карточки -->
-		@TimeWatch(TimeWatchProps{
-			LatelyMin:       props.LatelyMin,
-			LatelyCount:     props.LatelyCount,
-			EarlyLeaveMin:   props.EarlyLeaveMin,
-			EarlyLeaveCount: props.EarlyLeaveCount,
-		})
+		if props.ShowTimeEvents {
+			@TimeWatch(TimeWatchProps{
+				LatelyMin:       props.LatelyMin,
+				LatelyCount:     props.LatelyCount,
+				EarlyLeaveMin:   props.EarlyLeaveMin,
+				EarlyLeaveCount: props.EarlyLeaveCount,
+			})
+		}
 	</div>
 }
 

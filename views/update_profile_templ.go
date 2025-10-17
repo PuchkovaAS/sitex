@@ -235,20 +235,30 @@ func UpdateProfilePage(props UpdateProfileProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600\"></div></label></div></div><!-- Кнопки действий --><div class=\"border-t border-gray-200 pt-6 flex space-x-4 justify-end\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600\"></div></label></div><!-- Статус TimeEvent --><div class=\"flex items-center justify-between pb-2\"><div><label class=\"text-sm font-medium text-gray-700\">Показать статистику по времени</label><p class=\"text-xs text-gray-500\">Включить отображение или отключить</p></div><label class=\"relative inline-flex items-center cursor-pointer\"><input type=\"checkbox\" name=\"show_time_events\" value=\"true\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if props.Employee.ShowTimeEvents {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " checked")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, " class=\"sr-only peer\"><div class=\"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600\"></div></label></div></div><!-- Кнопки действий --><div class=\"border-t border-gray-200 pt-6 flex space-x-4 justify-end\"><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 templ.SafeURL
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/profile?email=%s", props.Employee.Email))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 183, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update_profile.templ`, Line: 204, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" class=\"px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium\">Отмена</a> <button type=\"submit\" class=\"px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium\">Сохранить изменения</button></div></form></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\" class=\"px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium\">Отмена</a> <button type=\"submit\" class=\"px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium\">Сохранить изменения</button></div></form></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -291,7 +301,7 @@ func UpdateProfilePageScripts() templ.Component {
 			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<script>\n    function toggleNewDepartment() {\n        const newDeptField = document.getElementById('new-department-field');\n        const deptSelect = document.querySelector('select[name=\"department_id\"]');\n\n        if (newDeptField.classList.contains('hidden')) {\n            newDeptField.classList.remove('hidden');\n            deptSelect.disabled = true;\n            deptSelect.value = '';\n        } else {\n            newDeptField.classList.add('hidden');\n            deptSelect.disabled = false;\n            document.querySelector('input[name=\"new_department\"]').value = '';\n        }\n    }\n\n    // Валидация формы - либо выбран отдел, либо введен новый\n    document.addEventListener('DOMContentLoaded', function () {\n        const form = document.querySelector('form');\n        if (form) {\n            form.addEventListener('submit', function (e) {\n                const deptSelect = document.querySelector('select[name=\"department_id\"]');\n                const newDeptInput = document.querySelector('input[name=\"new_department\"]');\n\n                if (!deptSelect.disabled && !deptSelect.value) {\n                    e.preventDefault();\n                    alert('Пожалуйста, выберите отдел или добавьте новый');\n                    return false;\n                }\n\n                if (deptSelect.disabled && !newDeptInput.value.trim()) {\n                    e.preventDefault();\n                    alert('Пожалуйста, введите название нового отдела');\n                    return false;\n                }\n            });\n        }\n    });\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<script>\n    function toggleNewDepartment() {\n        const newDeptField = document.getElementById('new-department-field');\n        const deptSelect = document.querySelector('select[name=\"department_id\"]');\n\n        if (newDeptField.classList.contains('hidden')) {\n            newDeptField.classList.remove('hidden');\n            deptSelect.disabled = true;\n            deptSelect.value = '';\n        } else {\n            newDeptField.classList.add('hidden');\n            deptSelect.disabled = false;\n            document.querySelector('input[name=\"new_department\"]').value = '';\n        }\n    }\n\n    // Валидация формы - либо выбран отдел, либо введен новый\n    document.addEventListener('DOMContentLoaded', function () {\n        const form = document.querySelector('form');\n        if (form) {\n            form.addEventListener('submit', function (e) {\n                const deptSelect = document.querySelector('select[name=\"department_id\"]');\n                const newDeptInput = document.querySelector('input[name=\"new_department\"]');\n\n                if (!deptSelect.disabled && !deptSelect.value) {\n                    e.preventDefault();\n                    alert('Пожалуйста, выберите отдел или добавьте новый');\n                    return false;\n                }\n\n                if (deptSelect.disabled && !newDeptInput.value.trim()) {\n                    e.preventDefault();\n                    alert('Пожалуйста, введите название нового отдела');\n                    return false;\n                }\n            });\n        }\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

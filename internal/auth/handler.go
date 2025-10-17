@@ -211,6 +211,7 @@ func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 	// Конвертируем строки в boolean
 	isActive := form.IsActive == "true"
 	isAdmin := form.IsAdmin == "true"
+	showTimeEvents := form.ShowTimeEvent == "true"
 
 	// Валидация
 	error := validate.Validate(
@@ -245,12 +246,13 @@ func (h *AuthHandler) apiUpdateUser(c *fiber.Ctx) error {
 	}
 
 	if err := h.repository.UpdateUserProfile(form.Email, user.UserUpdateData{
-		FirstName:  strings.TrimSpace(form.FirstName),
-		LastName:   strings.TrimSpace(form.LastName),
-		Position:   strings.TrimSpace(form.Position),
-		Department: departmentName,
-		IsActive:   isActive,
-		IsAdmin:    isAdmin,
+		FirstName:      strings.TrimSpace(form.FirstName),
+		LastName:       strings.TrimSpace(form.LastName),
+		Position:       strings.TrimSpace(form.Position),
+		Department:     departmentName,
+		IsActive:       isActive,
+		IsAdmin:        isAdmin,
+		ShowTimeEvents: showTimeEvents,
 	}); err != nil {
 		component = components.Notification(
 			err.Error(),

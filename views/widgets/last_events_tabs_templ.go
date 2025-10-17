@@ -38,12 +38,22 @@ func LastEventsTabs(props EventsProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg shadow-sm border border-gray-100 p-4 mx-auto\"><!-- Переключатели --><div class=\"flex space-x-2 mb-4 border-b border-gray-200\"><button type=\"button\" onclick=\"showLastEventsTab('status')\" id=\"last-tab-status\" class=\"pb-2 px-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap\">Последние статусы</button> <button type=\"button\" onclick=\"showLastEventsTab('time')\" id=\"last-tab-time\" class=\"pb-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap transition-colors\">Последние временные события</button></div><!-- Секции событий --><div id=\"last-events-status\" class=\"block\"><div class=\"flex flex-col mt-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white rounded-lg shadow-sm border border-gray-100 p-4 mx-auto\"><!-- Переключатели --><div class=\"flex space-x-2 mb-4 border-b border-gray-200\"><button type=\"button\" onclick=\"showLastEventsTab('status')\" id=\"last-tab-status\" class=\"pb-2 px-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap\">Последние статусы</button> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if props.IsAdmin {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button type=\"button\" onclick=\"showLastEventsTab('time')\" id=\"last-tab-time\" class=\"pb-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap transition-colors\">Последние временные события</button>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Секции событий --><div id=\"last-events-status\" class=\"block\"><div class=\"flex flex-col mt-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, item := range props.LastAddStatus {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"mb-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"mb-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -61,17 +71,17 @@ func LastEventsTabs(props EventsProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><div id=\"last-events-time\" class=\"hidden\"><div class=\"flex flex-col mt-2\"><div class=\"mb-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div><div id=\"last-events-time\" class=\"hidden\"><div class=\"flex flex-col mt-2\"><div class=\"mb-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, item := range props.LastTimeEvents {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"mb-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"mb-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -93,12 +103,12 @@ func LastEventsTabs(props EventsProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div></div></div><script>\n    function showLastEventsTab(tab) {\n        const statusSection = document.getElementById('last-events-status');\n        const timeSection = document.getElementById('last-events-time');\n        const tabStatus = document.getElementById('last-tab-status');\n        const tabTime = document.getElementById('last-tab-time');\n\n        // Скрыть все секции\n        if (statusSection) statusSection.classList.add('hidden');\n        if (timeSection) timeSection.classList.add('hidden');\n\n        // Сбросить активный стиль\n        if (tabStatus) {\n            tabStatus.classList.replace('text-blue-600', 'text-gray-500');\n            tabStatus.classList.replace('border-blue-600', 'border-transparent');\n        }\n        if (tabTime) {\n            tabTime.classList.replace('text-blue-600', 'text-gray-500');\n            tabTime.classList.replace('border-blue-600', 'border-transparent');\n        }\n\n        // Показать выбранную вкладку\n        if (tab === 'status' && tabStatus && statusSection) {\n            statusSection.classList.remove('hidden');\n            tabStatus.classList.replace('text-gray-500', 'text-blue-600');\n            tabStatus.classList.replace('border-transparent', 'border-blue-600');\n        } else if (tab === 'time' && tabTime && timeSection) {\n            timeSection.classList.remove('hidden');\n            tabTime.classList.replace('text-gray-500', 'text-blue-600');\n            tabTime.classList.replace('border-transparent', 'border-blue-600');\n        }\n    }\n\n    document.addEventListener('DOMContentLoaded', () => {\n        showLastEventsTab('status');\n    });\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div></div></div><script>\n    function showLastEventsTab(tab) {\n        const statusSection = document.getElementById('last-events-status');\n        const timeSection = document.getElementById('last-events-time');\n        const tabStatus = document.getElementById('last-tab-status');\n        const tabTime = document.getElementById('last-tab-time');\n\n        // Скрыть все секции\n        if (statusSection) statusSection.classList.add('hidden');\n        if (timeSection) timeSection.classList.add('hidden');\n\n        // Сбросить активный стиль\n        if (tabStatus) {\n            tabStatus.classList.replace('text-blue-600', 'text-gray-500');\n            tabStatus.classList.replace('border-blue-600', 'border-transparent');\n        }\n        if (tabTime) {\n            tabTime.classList.replace('text-blue-600', 'text-gray-500');\n            tabTime.classList.replace('border-blue-600', 'border-transparent');\n        }\n\n        // Показать выбранную вкладку\n        if (tab === 'status' && tabStatus && statusSection) {\n            statusSection.classList.remove('hidden');\n            tabStatus.classList.replace('text-gray-500', 'text-blue-600');\n            tabStatus.classList.replace('border-transparent', 'border-blue-600');\n        } else if (tab === 'time' && tabTime && timeSection) {\n            timeSection.classList.remove('hidden');\n            tabTime.classList.replace('text-gray-500', 'text-blue-600');\n            tabTime.classList.replace('border-transparent', 'border-blue-600');\n        }\n    }\n\n    document.addEventListener('DOMContentLoaded', () => {\n        showLastEventsTab('status');\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

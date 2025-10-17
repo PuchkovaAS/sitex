@@ -79,6 +79,8 @@ type Employee struct {
 	IsActive      bool           `gorm:"default:true;index:idx_employees_active"`
 	IsAdmin       bool           `gorm:"default:false;index:idx_employees_admin"`
 	StatusPeriods []StatusPeriod `gorm:"foreignKey:EmployeeID"`
+
+	ShowTimeEvents bool `gorm:"default:false"`
 }
 
 type TimeEvent struct {

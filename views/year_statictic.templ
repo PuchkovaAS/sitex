@@ -7,16 +7,17 @@ import (
 )
 
 type YearStatisticProps struct {
-	StatusCount map[string]int
-	YearHistory []user.MonthHistory
-	Email       string
-	StatusText  string
-	FirstName   string
-	LastName    string
-	Position    string
-	Department  string
-	IsAdmin     bool
-	IsActive    bool
+	StatusCount    map[string]int
+	YearHistory    []user.MonthHistory
+	Email          string
+	StatusText     string
+	FirstName      string
+	LastName       string
+	Position       string
+	Department     string
+	IsAdmin        bool
+	IsActive       bool
+	ShowTimeEvents bool
 
 	LatelyMin       int
 	LatelyCount     int
@@ -48,6 +49,7 @@ templ YearStatisticPage(props YearStatisticProps) {
 					LatelyCount:     props.LatelyCount,
 					EarlyLeaveMin:   props.EarlyLeaveMin,
 					EarlyLeaveCount: props.EarlyLeaveCount,
+					ShowTimeEvents:  props.ShowTimeEvents,
 				},
 			)
 			<!-- Блок активности пользователя -->

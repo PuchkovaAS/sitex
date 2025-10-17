@@ -28,15 +28,16 @@ type ActivityPageProps struct {
 	EarlyLeaveMin   int
 	EarlyLeaveCount int
 
-	Email       string
-	StatusText  string
-	FirstName   string
-	LastName    string
-	Position    string
-	Department  string
-	IsAdmin     bool
-	IsActive    bool
-	UserIsAdmin bool
+	Email          string
+	StatusText     string
+	FirstName      string
+	LastName       string
+	Position       string
+	Department     string
+	IsAdmin        bool
+	IsActive       bool
+	UserIsAdmin    bool
+	ShowTimeEvents bool
 }
 
 func ActivityPage(props ActivityPageProps) templ.Component {
@@ -92,6 +93,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 					LatelyCount:     props.LatelyCount,
 					EarlyLeaveMin:   props.EarlyLeaveMin,
 					EarlyLeaveCount: props.EarlyLeaveCount,
+					ShowTimeEvents:  props.ShowTimeEvents,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

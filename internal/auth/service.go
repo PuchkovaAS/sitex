@@ -73,6 +73,7 @@ func (service *AuthService) Register(
 	// Конвертируем строки в boolean
 	isActive := form.IsActive == "true"
 	isAdmin := form.IsAdmin == "true"
+	showTimeEvents := form.ShowTimeEvent == "true"
 
 	err = service.UserRepository.CreateUserWithDepartment(
 		form.FirstName,
@@ -83,6 +84,7 @@ func (service *AuthService) Register(
 		string(hashedPassword),
 		isActive,
 		isAdmin,
+		showTimeEvents,
 	)
 	if err != nil {
 		return err

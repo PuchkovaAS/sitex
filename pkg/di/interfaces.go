@@ -6,6 +6,6 @@ type IUserRepository interface {
 	GetEmployeeInfo(email string) (user.Employee, error)
 	ChangePassword(email, password string) error
 	EmailExists(email string) bool
-	CreateUserWithDepartment(firstName, lastName, email, department, position, password string, isActive, isAdmin bool) error
+	CreateUserWithDepartment(FirstName, LastName, Email, Department, Position, Password string, IsActive, IsAdmin, ShowTimeEvents bool) error
 	IsAdmin(email string) bool
 }

@@ -15,16 +15,17 @@ import (
 )
 
 type YearStatisticProps struct {
-	StatusCount map[string]int
-	YearHistory []user.MonthHistory
-	Email       string
-	StatusText  string
-	FirstName   string
-	LastName    string
-	Position    string
-	Department  string
-	IsAdmin     bool
-	IsActive    bool
+	StatusCount    map[string]int
+	YearHistory    []user.MonthHistory
+	Email          string
+	StatusText     string
+	FirstName      string
+	LastName       string
+	Position       string
+	Department     string
+	IsAdmin        bool
+	IsActive       bool
+	ShowTimeEvents bool
 
 	LatelyMin       int
 	LatelyCount     int
@@ -86,6 +87,7 @@ func YearStatisticPage(props YearStatisticProps) templ.Component {
 					LatelyCount:     props.LatelyCount,
 					EarlyLeaveMin:   props.EarlyLeaveMin,
 					EarlyLeaveCount: props.EarlyLeaveCount,
+					ShowTimeEvents:  props.ShowTimeEvents,
 				},
 			).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

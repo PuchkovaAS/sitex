@@ -20,16 +20,19 @@ type userUpdateForm struct {
 	IsAdmin       string `form:"is_admin"`  // будет "true" если отмечен, либо пустая строка
 	Email         string `form:"email"`
 	NewDepartment string `form:"new_department"`
+	ShowTimeEvent string `form:"show_time_events"` // будет "true" если отмечен, либо пустая строка
 }
 
 type userCreateForm struct {
-	FirstName       string `form:"first_name"`
-	LastName        string `form:"last_name"`
-	Position        string `form:"position"`
-	Department      string `form:"department_id"`
-	NewDepartment   string `form:"new_department"`
-	IsActive        string `form:"is_active"` // будет "true" если отмечен, либо пустая строка
-	IsAdmin         string `form:"is_admin"`  // будет "true" если отмечен, либо пустая строка
+	FirstName     string `form:"first_name"`
+	LastName      string `form:"last_name"`
+	Position      string `form:"position"`
+	Department    string `form:"department_id"`
+	NewDepartment string `form:"new_department"`
+	IsActive      string `form:"is_active"` // будет "true" если отмечен, либо пустая строка
+	IsAdmin       string `form:"is_admin"`  // будет "true" если отмечен, либо пустая строка
+
+	ShowTimeEvent   string `form:"show_time_events"` // будет "true" если отмечен, либо пустая строка
 	Email           string `form:"email"`
 	Password        string `form:"password"`
 	ConfirmPassword string `form:"confirm_password"`

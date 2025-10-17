@@ -73,19 +73,20 @@ func (repo *UserRepository) FindOrCreateDepartment(departmentName string) (Depar
 }
 
 func (repo *UserRepository) CreateUserWithDepartment(
-	firstName, lastName, email, departmentName, position, password string,
-	isActive, isAdmin bool,
+	FirstName, LastName, Email, DepartmentName, Position, Password string,
+	IsActive, IsAdmin, ShowTimeEvents bool,
 ) error {
 	user := &Employee{
-		FirstName:    firstName,
-		LastName:     lastName,
-		Position:     position,
-		IsAdmin:      isAdmin,
-		IsActive:     isActive,
-		PasswordHash: password,
-		Email:        email,
+		FirstName:      FirstName,
+		LastName:       LastName,
+		Position:       Position,
+		IsAdmin:        IsAdmin,
+		IsActive:       IsActive,
+		PasswordHash:   Password,
+		Email:          Email,
+		ShowTimeEvents: ShowTimeEvents,
 	}
-	department, err := repo.FindOrCreateDepartment(departmentName)
+	department, err := repo.FindOrCreateDepartment(DepartmentName)
 	if err != nil {
 		return err
 	}
@@ -268,7 +269,7 @@ func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
 	err := repo.DataBase.DB.
 		Preload("Department").
 		Where("email = ?", email).
-		Select("first_name, last_name, email, position, is_admin, is_active, department_id").
+		Select("first_name, last_name, email, position, is_admin, is_active, department_id, show_time_events").
 		First(&user).Error
 	if err != nil {
 		return dt.UserInfo{}, err
@@ -276,11 +277,12 @@ func (repo *UserRepository) GetUserInfo(email string) (dt.UserInfo, error) {
 
 	// Создаем UserInfo
 	userInfo := dt.UserInfo{
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Position:  user.Position,
-		IsAdmin:   user.IsAdmin,
-		IsActive:  user.IsActive,
+		FirstName:      user.FirstName,
+		LastName:       user.LastName,
+		Position:       user.Position,
+		IsAdmin:        user.IsAdmin,
+		IsActive:       user.IsActive,
+		ShowTimeEvents: user.ShowTimeEvents,
 	}
 
 	// Проверяем, загружен ли отдел (DepartmentID != 0 и Department.Name не пустое)
@@ -653,12 +655,13 @@ func (repo *UserRepository) GetTimeEventHistory(
 }
 
 type UserUpdateData struct {
-	FirstName  string
-	LastName   string
-	Position   string
-	Department string
-	IsActive   bool
-	IsAdmin    bool
+	FirstName      string
+	LastName       string
+	Position       string
+	Department     string
+	IsActive       bool
+	IsAdmin        bool
+	ShowTimeEvents bool
 }
 
 func (repo *UserRepository) UpdateUserProfile(email string, data UserUpdateData) error {
@@ -675,13 +678,14 @@ func (repo *UserRepository) UpdateUserProfile(email string, data UserUpdateData)
 	return repo.DataBase.Model(&Employee{}).
 		Where("email = ?", email).
 		Updates(map[string]any{
-			"first_name":    data.FirstName,
-			"last_name":     data.LastName,
-			"position":      data.Position,
-			"department_id": departmentID,
-			"is_active":     data.IsActive,
-			"is_admin":      data.IsAdmin,
-			"updated_at":    time.Now(),
+			"first_name":       data.FirstName,
+			"last_name":        data.LastName,
+			"position":         data.Position,
+			"department_id":    departmentID,
+			"is_active":        data.IsActive,
+			"is_admin":         data.IsAdmin,
+			"updated_at":       time.Now(),
+			"show_time_events": data.ShowTimeEvents,
 		}).Error
 }
 

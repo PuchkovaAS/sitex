@@ -78,16 +78,17 @@ templ MultiUserActivityPage(props MultiUserActivityPageProps) {
 						<div class="p-4">
 							<!-- Статистика пользователя -->
 							@widgets.TimeStatistics(widgets.TimeStatisticsProps{
-								MonthName:  viewutils.GetMonthName(currentUser.CurrentMonth),
-								Stats:      currentUser.StatusCount,
-								Email:      currentUser.Employee.Email,
-								StatusText: currentUser.StatusText,
-								FirstName:  currentUser.Employee.FirstName,
-								LastName:   currentUser.Employee.LastName,
-								Position:   currentUser.Employee.Position,
-								IsAdmin:    currentUser.Employee.IsAdmin,
-								IsActive:   currentUser.Employee.IsActive,
-								Department: currentUser.Employee.Department.Name,
+								MonthName:      viewutils.GetMonthName(currentUser.CurrentMonth),
+								Stats:          currentUser.StatusCount,
+								Email:          currentUser.Employee.Email,
+								StatusText:     currentUser.StatusText,
+								FirstName:      currentUser.Employee.FirstName,
+								LastName:       currentUser.Employee.LastName,
+								Position:       currentUser.Employee.Position,
+								IsAdmin:        currentUser.Employee.IsAdmin,
+								IsActive:       currentUser.Employee.IsActive,
+								Department:     currentUser.Employee.Department.Name,
+								ShowTimeEvents: currentUser.Employee.ShowTimeEvents,
 							
 								LatelyMin:       currentUser.LatelyMin,
 								LatelyCount:     currentUser.LatelyCount,
