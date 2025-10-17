@@ -416,6 +416,8 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		return c.SendStatus(500)
 	}
 
+	userIsAdmin := h.repository.IsAdmin(email)
+
 	component := views.ActivityPage(views.ActivityPageProps{
 		StatusCount:     statusCount,
 		MonthHistory:    monthHistory,
@@ -434,6 +436,7 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 		LatelyCount:     timeEventStat.LatelyCount,
 		EarlyLeaveMin:   timeEventStat.EarlyLeaveMin,
 		EarlyLeaveCount: timeEventStat.EarlyLeaveCount,
+		UserIsAdmin:     userIsAdmin,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
