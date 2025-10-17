@@ -197,8 +197,9 @@ func (h *PagesHandler) yearStatistic(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
 	emailUser := h.getEmailForChangeUser(email, c)
+	showTimeEvents := h.repository.GetShowTimeEvents(emailUser)
 
-	yearHistory, statusCount, err := h.userService.GetYearHistory(emailUser)
+	yearHistory, statusCount, err := h.userService.GetYearHistory(emailUser, showTimeEvents)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
@@ -391,9 +392,10 @@ func (h *PagesHandler) home(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
 	emailUser := h.getEmailForChangeUser(email, c)
+	showTimeEvents := h.repository.GetShowTimeEvents(emailUser)
 
 	month := c.QueryInt("month", int(time.Now().Month()))
-	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, emailUser, 2)
+	monthHistory, statusCount, err := h.userService.GetMonthHistory(month, emailUser, 2, showTimeEvents)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
@@ -484,7 +486,9 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 	today := time.Now().Truncate(24 * time.Hour)
 	for _, employee := range employees {
 
-		monthHistory, statusCount, err := h.userService.GetMonthHistory(month, employee.Email, 3)
+		showTimeEvents := h.repository.GetShowTimeEvents(employee.Email)
+
+		monthHistory, statusCount, err := h.userService.GetMonthHistory(month, employee.Email, 3, showTimeEvents)
 		if err != nil {
 			h.customLogger.Error().Msg(err.Error())
 			return c.SendStatus(500)

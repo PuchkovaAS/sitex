@@ -869,3 +869,26 @@ func (repo *UserRepository) IsAdmin(email string) bool {
 
 	return user.IsAdmin
 }
+
+func (repo *UserRepository) GetShowTimeEvents(email string) bool {
+	var user Employee
+
+	// Выполняем запрос к базе данных
+	result := repo.DataBase.Model(&Employee{}).
+		Select("show_time_events").
+		Where("email = ?", email).
+		First(&user)
+
+	// Если произошла ошибка или пользователь не найден, возвращаем false
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			// Пользователь не найден
+			return false
+		}
+		// Другая ошибка базы данных
+		// Можно залогировать ошибку: log.Printf("Database error: %v", result.Error)
+		return false
+	}
+
+	return user.ShowTimeEvents
+}

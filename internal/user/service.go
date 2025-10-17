@@ -256,11 +256,19 @@ func (service *UserService) calcDays(deps CalcDaysDeps) ([]DayStatus, map[string
 func (service *UserService) GetDaysStatus(
 	email string,
 	timeStart, timeEnd time.Time,
+	ShowTimeEvents bool,
 ) ([]DayStatus, map[string]int, error) {
 	history, err := service.getHistory(email, timeStart, timeEnd)
-	timeEvents, err := service.getTimeEventHistory(email, timeStart, timeEnd)
 	if err != nil {
 		return nil, nil, err
+	}
+	var timeEvents []TimeEventHistoryResponse
+	if ShowTimeEvents {
+
+		timeEvents, err = service.getTimeEventHistory(email, timeStart, timeEnd)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 	dayStatus, statusCount := service.calcDays(CalcDaysDeps{
 		Email:            email,
@@ -284,6 +292,7 @@ func (service *UserService) GetDateRange(now time.Time) (time.Time, time.Time) {
 
 func (service *UserService) GetYearHistory(
 	email string,
+	ShowTimeEvents bool,
 ) ([]MonthHistory, map[string]int, error) {
 	var resultHistory []MonthHistory
 	statusCount := make(map[string]int)
@@ -296,7 +305,7 @@ func (service *UserService) GetYearHistory(
 
 		timeStart, timeEnd := service.GetDateRange(startOfMonth)
 
-		daysStatus, monthStatusCount, err := service.GetDaysStatus(email, timeStart, timeEnd)
+		daysStatus, monthStatusCount, err := service.GetDaysStatus(email, timeStart, timeEnd, ShowTimeEvents)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -323,6 +332,7 @@ func (service *UserService) GetMonthHistory(
 	month int,
 	email string,
 	countMonth int,
+	ShowTimeEvents bool,
 ) ([]MonthHistory, map[string]int, error) {
 	var resultHistory []MonthHistory
 	statusCount := make(map[string]int)
@@ -339,7 +349,7 @@ func (service *UserService) GetMonthHistory(
 
 		timeStart, timeEnd := service.GetDateRange(startOfMonth)
 
-		daysStatus, monthStatusCount, err := service.GetDaysStatus(email, timeStart, timeEnd)
+		daysStatus, monthStatusCount, err := service.GetDaysStatus(email, timeStart, timeEnd, ShowTimeEvents)
 		if err != nil {
 			return nil, nil, err
 		}
