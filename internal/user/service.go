@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"sitex/pkg/calendar"
 	"sort"
 	"strings"
@@ -37,6 +38,12 @@ func (service *UserService) getTimeEventHistory(
 	if err != nil {
 		return nil, err
 	}
+	formatTime := func(t string) string {
+		if len(t) >= 5 {
+			return t[:5] // "09:15:30" → "09:15"
+		}
+		return t
+	}
 
 	// Мапа: дата → агрегированная запись
 	eventMap := make(map[string]*TimeEventHistoryResponse)
@@ -53,18 +60,30 @@ func (service *UserService) getTimeEventHistory(
 					existing.Description = event.Description
 				}
 			}
+
+			desc := fmt.Sprintf("%s, План: %s, Факт: %s",
+				event.EventType.Name,
+				formatTime(event.ScheduledTime),
+				formatTime(event.ActualTime),
+			)
 			// Опционально: объединить EventName
 			if event.EventType.Name != "" && !strings.Contains(existing.EventName, event.EventType.Name) {
 				if existing.EventName != "" {
-					existing.EventName += "\n" + event.EventType.Name
+					existing.EventName += "\n" + desc
 				} else {
-					existing.EventName = event.EventType.Name
+					existing.EventName = desc
 				}
 			}
 		} else {
 			// Первая запись на эту дату
 			resp := event.ToTimeEventHistoryResponse()
 			eventMap[key] = &resp
+			desc := fmt.Sprintf("%s, План: %s, Факт: %s",
+				event.EventType.Name,
+				formatTime(event.ScheduledTime),
+				formatTime(event.ActualTime),
+			)
+			eventMap[key].EventName = desc
 		}
 	}
 
