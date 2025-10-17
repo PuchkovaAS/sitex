@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS employees (
     department_id BIGINT REFERENCES departments(id) ON DELETE SET NULL,
     is_active BOOLEAN DEFAULT true,
     is_admin BOOLEAN DEFAULT false,
+    show_time_events BOOLEAN DEFAULT false,  -- ← ДОБАВЛЕНО
     who_added_id BIGINT -- временно без внешнего ключа
 );
 
@@ -43,6 +44,8 @@ CREATE INDEX IF NOT EXISTS idx_employees_active ON employees(is_active);
 CREATE INDEX IF NOT EXISTS idx_employees_admin ON employees(is_admin);
 CREATE INDEX IF NOT EXISTS idx_employees_department_id ON employees(department_id);
 CREATE INDEX IF NOT EXISTS idx_employees_who_added_id ON employees(who_added_id);
+
+
 
 CREATE TABLE IF NOT EXISTS status_types (
     id BIGSERIAL PRIMARY KEY,
