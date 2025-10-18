@@ -17,12 +17,13 @@ import (
 )
 
 type HistoryStatusProps struct {
-	Email         string
-	TotalPage     int
-	CurrentPage   int
-	TotalItems    int
-	LastAddStatus []user.StatusPeriod
-	IsAdmin       bool
+	Email          string
+	TotalPage      int
+	CurrentPage    int
+	TotalItems     int
+	LastAddStatus  []user.StatusPeriod
+	IsAdmin        bool
+	ShowTimeEvents bool
 }
 
 func HistoryStatusPage(props HistoryStatusProps) templ.Component {
@@ -65,7 +66,7 @@ func HistoryStatusPage(props HistoryStatusProps) templ.Component {
 			var templ_7745c5c3_Var3 templ.SafeURL
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/history_status?email=%s", props.Email))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/history_status_page.templ`, Line: 30, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/history_status_page.templ`, Line: 32, Col: 64}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -75,7 +76,7 @@ func HistoryStatusPage(props HistoryStatusProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if props.IsAdmin {
+			if props.IsAdmin || props.ShowTimeEvents {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -83,7 +84,7 @@ func HistoryStatusPage(props HistoryStatusProps) templ.Component {
 				var templ_7745c5c3_Var4 templ.SafeURL
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/history_time_event?email=%s", props.Email))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/history_status_page.templ`, Line: 35, Col: 74}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/history_status_page.templ`, Line: 40, Col: 69}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {

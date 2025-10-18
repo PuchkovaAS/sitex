@@ -53,12 +53,12 @@ func (h *PagesHandler) SetupAdminRoutes(adminGroup fiber.Router) {
 	adminGroup.Get("/change_password", h.changePassword)
 	adminGroup.Get("/users_status_history", h.usersStatusHistory)
 	adminGroup.Get("/users_time_event_history", h.usersTimeEventHistory)
-	adminGroup.Get("/history_time_event", h.historyTimeEvent)
 }
 
 func (h *PagesHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
 	privetGroup.Get("/", h.home)
 	privetGroup.Get("/history_status", h.historyStatus)
+	privetGroup.Get("/history_time_event", h.historyTimeEvent)
 	privetGroup.Get("/year_statistics", h.yearStatistic)
 	privetGroup.Get("/profile", h.profile)
 }
@@ -343,13 +343,16 @@ func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
 
 	isAdmin := h.repository.IsAdmin(email)
 
+	showTimeEvents := h.repository.GetShowTimeEvents(email)
+
 	component := views.HistoryStatusPage(views.HistoryStatusProps{
-		TotalPage:     TotalPages,
-		CurrentPage:   page,
-		Email:         emailUser,
-		LastAddStatus: lastAddStatus,
-		TotalItems:    int(TotalEvents),
-		IsAdmin:       isAdmin,
+		TotalPage:      TotalPages,
+		CurrentPage:    page,
+		Email:          emailUser,
+		LastAddStatus:  lastAddStatus,
+		TotalItems:     int(TotalEvents),
+		IsAdmin:        isAdmin,
+		ShowTimeEvents: showTimeEvents,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

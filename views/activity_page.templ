@@ -131,7 +131,7 @@ templ ActivityPage(props ActivityPageProps) {
 			<h3 class="text-lg font-semibold text-gray-900">Последние добавленные события</h3>
 		</div>
 		@widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus, LastTimeEvents: props.LastTimeEvents,
-			IsAdmin: props.UserIsAdmin})
+			IsAdmin: props.UserIsAdmin, ShowTimeEvents: props.ShowTimeEvents})
 		@ActivityPageScript()
 	}
 }

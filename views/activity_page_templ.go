@@ -153,7 +153,7 @@ func ActivityPage(props ActivityPageProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = widgets.LastEventsTabs(widgets.EventsProps{LastAddStatus: props.LastAddStatus, LastTimeEvents: props.LastTimeEvents,
-				IsAdmin: props.UserIsAdmin}).Render(ctx, templ_7745c5c3_Buffer)
+				IsAdmin: props.UserIsAdmin, ShowTimeEvents: props.ShowTimeEvents}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

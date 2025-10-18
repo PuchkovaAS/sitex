@@ -15,6 +15,7 @@ type EventsProps struct {
 	LastAddStatus  []user.StatusPeriod
 	LastTimeEvents []user.TimeEvent
 	IsAdmin        bool
+	ShowTimeEvents bool
 }
 
 func LastEventsTabs(props EventsProps) templ.Component {
@@ -42,7 +43,7 @@ func LastEventsTabs(props EventsProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if props.IsAdmin {
+		if props.ShowTimeEvents || props.IsAdmin {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button type=\"button\" onclick=\"showLastEventsTab('time')\" id=\"last-tab-time\" class=\"pb-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap transition-colors\">Последние временные события</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
