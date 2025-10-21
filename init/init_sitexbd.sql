@@ -96,6 +96,7 @@ CREATE TABLE IF NOT EXISTS time_events (
     deleted_at TIMESTAMP WITH TIME ZONE,
     employee_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE RESTRICT,
     who_added_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE RESTRICT,
+ who_deleted_id BIGINT REFERENCES employees(id) ON DELETE SET NULL,
     event_type_id BIGINT NOT NULL REFERENCES time_event_types(id) ON DELETE RESTRICT,
     date DATE NOT NULL,
     scheduled_time TIME NOT NULL,

@@ -85,10 +85,12 @@ type Employee struct {
 
 type TimeEvent struct {
 	gorm.Model
-	EmployeeID uint     `gorm:"not null"`
-	Employee   Employee `gorm:"foreignKey:EmployeeID"`
-	WhoAddedID uint     `gorm:"not null"`
-	WhoAdded   Employee `gorm:"foreignKey:WhoAddedID"`
+	EmployeeID   uint     `gorm:"not null"`
+	Employee     Employee `gorm:"foreignKey:EmployeeID"`
+	WhoAddedID   uint     `gorm:"not null"`
+	WhoAdded     Employee `gorm:"foreignKey:WhoAddedID"`
+	WhoDeletedID uint     `gorm:"default:null"`
+	WhoDeleted   Employee `gorm:"foreignKey:WhoDeletedID"`
 
 	EventTypeID uint          `gorm:"not null"`
 	EventType   TimeEventType `gorm:"foreignKey:EventTypeID"`

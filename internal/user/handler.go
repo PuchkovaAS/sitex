@@ -75,7 +75,7 @@ func (h *UserHandler) deleteTimeEvent(c *fiber.Ctx) error {
 		)
 	}
 
-	err = h.repository.DeleteTimeEvent(timeEventID, email)
+	err = h.repository.DeleteTimeEvent(timeEventID, email, emailAdmin)
 	if err != nil {
 		return templeadapter.Render(c,
 			components.Notification(

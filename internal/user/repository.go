@@ -185,20 +185,23 @@ func (repo *UserRepository) AddTimeEvent(event timeEventAddInfo) error {
 			}
 			return repo.DataBase.DB.Create(&newEvent).Error
 		}
+		// Другая ошибка (например, проблемы с БД)
 		return fmt.Errorf("ошибка при поиске существующего события: %w", result.Error)
 	}
 
-	// Запись существует — обновляем
-	updates := map[string]interface{}{
-		"who_added_id":   whoAdded.ID,
-		"scheduled_time": event.ScheduledTime,
-		"actual_time":    event.ActualTime,
-		"description":    event.Description,
-		"difference_min": diffMinutes,
-		"updated_at":     time.Now(),
-	}
+	repo.DeleteTimeEvent(int(existingEvent.ID), event.Email, event.WhoAddEmail)
 
-	return repo.DataBase.DB.Model(&existingEvent).Updates(updates).Error
+	newEvent := TimeEvent{
+		EmployeeID:    employee.ID,
+		WhoAddedID:    whoAdded.ID,
+		EventTypeID:   eventType.ID,
+		Date:          eventDate,
+		ScheduledTime: event.ScheduledTime,
+		ActualTime:    event.ActualTime,
+		Description:   event.Description,
+		DifferenceMin: diffMinutes,
+	}
+	return repo.DataBase.DB.Create(&newEvent).Error
 }
 
 func (repo *UserRepository) AddStatus(status statusAddInfo) error {
@@ -349,24 +352,38 @@ func (repo *UserRepository) GetCurrentStatus(email string, date time.Time) (stri
 	return statusName, err
 }
 
-func (repo *UserRepository) DeleteTimeEvent(timeEventID int, email string) error {
+func (repo *UserRepository) DeleteTimeEvent(timeEventID int, emailUser, emailAdmin string) error {
 	// 1. Находим сотрудника по email
 	var employee Employee
-	if err := repo.DataBase.DB.Where("email = ?", email).First(&employee).Error; err != nil {
+	if err := repo.DataBase.DB.Where("email = ?", emailUser).First(&employee).Error; err != nil {
 		return fmt.Errorf("сотрудник не найден: %w", err)
 	}
 
-	// 2. Удаляем запись TimeEvent, принадлежащую этому сотруднику
-	result := repo.DataBase.DB.
+	var employeeAdmin Employee
+	if err := repo.DataBase.DB.Where("email = ?", emailAdmin).First(&employeeAdmin).Error; err != nil {
+		return fmt.Errorf("сотрудник не найден: %w", err)
+	}
+
+	// 2. Находим событие, чтобы проверить права и обновить who_deleted_id
+	var event TimeEvent
+	if err := repo.DataBase.DB.
 		Where("id = ? AND employee_id = ?", timeEventID, employee.ID).
-		Delete(&TimeEvent{})
+		First(&event).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("событие не найдено или нет прав для удаления")
+		}
+		return fmt.Errorf("ошибка при поиске события: %w", err)
+	}
+
+	// 3. Обновляем who_deleted_id и помечаем как удалённое (soft delete)
+	result := repo.DataBase.DB.Model(&event).
+		Updates(map[string]interface{}{
+			"who_deleted_id": employeeAdmin.ID,
+			"deleted_at":     time.Now(),
+		})
 
 	if result.Error != nil {
 		return fmt.Errorf("ошибка при удалении события: %w", result.Error)
-	}
-
-	if result.RowsAffected == 0 {
-		return fmt.Errorf("событие не найдено или нет прав для удаления")
 	}
 
 	return nil
