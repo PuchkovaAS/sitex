@@ -12,6 +12,20 @@ func GetMonthName(monthNum int) string {
 	return months[monthNum-1]
 }
 
+func GetResourceStatusClass(status string) string {
+	switch status {
+	// ──────────────── МАТЕРИАЛЬНЫЕ РЕСУРСЫ ────────────────
+	case "Учтеное":
+		return "text-green-700 bg-green-100 border border-green-200"
+	case "Не учтеное":
+		return "text-orange-700 bg-orange-100 border border-orange-200"
+
+	// ──────────────── ПО УМОЛЧАНИЮ ────────────────
+	default:
+		return "text-gray-400 bg-white border border-gray-200"
+	}
+}
+
 func GetStatusClass(status string) string {
 	switch status {
 	// ──────────────── ОТДЫХ / ОТПУСК ────────────────

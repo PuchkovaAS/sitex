@@ -61,6 +61,7 @@ func (h *PagesHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
 	privetGroup.Get("/history_time_event", h.historyTimeEvent)
 	privetGroup.Get("/year_statistics", h.yearStatistic)
 	privetGroup.Get("/profile", h.profile)
+	privetGroup.Get("/resources", h.resources)
 }
 
 func (h *PagesHandler) createUser(c *fiber.Ctx) error {
@@ -133,6 +134,27 @@ func (h *PagesHandler) updateUser(c *fiber.Ctx) error {
 	component := views.UpdateProfilePage(views.UpdateProfileProps{
 		Departments: departments,
 		Employee:    employee,
+	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) resources(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+
+	page := c.QueryInt("page", 1)
+	// PAGE_ITEMS := 20
+	h.UpdateUserInfo(email, c)
+	emailUser := h.getEmailForChangeUser(email, c)
+
+	isAdmin := h.repository.IsAdmin(email)
+
+	component := views.MaterailResources(views.MaterailResourcesProps{
+		Email:       emailUser,
+		TotalPage:   2,
+		CurrentPage: page,
+		IsAdmin:     isAdmin,
+
+		TotalItems: 20,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

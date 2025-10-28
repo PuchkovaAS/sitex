@@ -1,0 +1,64 @@
+package views
+
+import (
+	"fmt"
+	"sitex/views/components"
+	"sitex/views/layout"
+	"sitex/views/widgets"
+)
+
+type MaterailResourcesProps struct {
+	Email       string
+	TotalPage   int
+	CurrentPage int
+	TotalItems  int
+	IsAdmin     bool
+}
+
+templ MaterailResources(props MaterailResourcesProps) {
+	@layout.Layout(layout.LayoutProps{
+		Title:           "Материальные ресурсы",
+		MetaDescription: "Страница метериальных ресурсов",
+		IsAuthenticated: true,
+	}) {
+		<div class="my-2 p-2">
+			<h3 class="mb-4 text-lg font-semibold text-gray-900">Материальные ресурсы</h3>
+			<div class="flex space-x-2 mb-4 border-b border-gray-200"></div>
+			@components.CounterItemsPage(components.CounterItemsProps{
+				CurrentPage: props.CurrentPage,
+				TotalItems:  props.TotalItems,
+				TotalPages:  props.TotalPage,
+			})
+		</div>
+		if props.IsAdmin {
+			<button
+				type="button"
+				class="inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg  transition-colors"
+				onclick="document.getElementById('add-resource-form-container').classList.toggle('hidden')"
+			>
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+				</svg>
+				Добавить новую запись
+			</button>
+		}
+		@widgets.AddResourceForm(widgets.AddResourceFormProps{Email: props.Email})
+		<div class="flex flex-col  mt-2">
+			@widgets.ResourceStatusWidget(widgets.ResourceStatusProps{
+				ID:           1,
+				Status:       "Не учтеное",
+				ResourceName: " Ноутбук HP 250G5 SN: 123243435 ",
+				Description:  "КИ050881",
+				UserName:     "Nes K",
+				Email:        "a@a.ru",
+				WhoAddEvent:  "Nes.K",
+				IsAdmin:      true,
+			})
+		</div>
+		@components.PaginationNum(components.PaginationNumProps{
+			UrlPath:     fmt.Sprintf("/resources?email=%s&", props.Email),
+			TotalPage:   props.TotalPage,
+			CurrentPage: props.CurrentPage,
+		})
+	}
+}

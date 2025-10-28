@@ -7,6 +7,7 @@ import (
 	"sitex/pkg/calendar"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
 
@@ -30,6 +31,15 @@ func Init() {
 	} else {
 		log.Println("Используется файл конфигурации:", viper.ConfigFileUsed())
 	}
+}
+
+func ApiInit() *fiber.App {
+	prefork := viper.GetBool("PREFORK")
+
+	app := fiber.New(fiber.Config{Prefork: prefork})
+
+	app.Static("/public", "./public")
+	return app
 }
 
 func InitCalendar(filename string) *calendar.HolidayCalendar {

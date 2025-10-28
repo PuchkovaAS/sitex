@@ -34,9 +34,7 @@ func main() {
 	dbConfig := config.NewDatabaseConfig()
 	db := database.NewDb(dbConfig, customLogger)
 
-	app := fiber.New()
-
-	app.Static("/public", "./public")
+	app := config.ApiInit()
 
 	dbpool := database.NewDbPool(dbConfig, customLogger)
 	defer dbpool.Close()
