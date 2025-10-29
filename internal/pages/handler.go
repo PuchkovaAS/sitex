@@ -4,6 +4,7 @@ import (
 	"math"
 	"net/http"
 	"sitex/internal/dt"
+	"sitex/internal/resources"
 	"sitex/internal/user"
 	"sitex/views"
 	"time"
@@ -16,27 +17,30 @@ import (
 )
 
 type PagesHandlerDeps struct {
-	Store        *session.Store
-	Repository   *user.UserRepository
-	CustomLogger *zerolog.Logger
-	UserService  *user.UserService
+	Store              *session.Store
+	Repository         *user.UserRepository
+	CustomLogger       *zerolog.Logger
+	UserService        *user.UserService
+	ResourceRepository *resources.ResourceRepository
 }
 
 type PagesHandler struct {
-	router       fiber.Router
-	store        *session.Store
-	repository   *user.UserRepository
-	customLogger *zerolog.Logger
-	userService  *user.UserService
+	router             fiber.Router
+	store              *session.Store
+	repository         *user.UserRepository
+	customLogger       *zerolog.Logger
+	userService        *user.UserService
+	resourceRepository *resources.ResourceRepository
 }
 
 func NewHandler(router fiber.Router, deps PagesHandlerDeps) *PagesHandler {
 	h := &PagesHandler{
-		router:       router,
-		store:        deps.Store,
-		repository:   deps.Repository,
-		customLogger: deps.CustomLogger,
-		userService:  deps.UserService,
+		router:             router,
+		store:              deps.Store,
+		repository:         deps.Repository,
+		customLogger:       deps.CustomLogger,
+		userService:        deps.UserService,
+		resourceRepository: deps.ResourceRepository,
 	}
 	return h
 }
@@ -142,19 +146,32 @@ func (h *PagesHandler) resources(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 
 	page := c.QueryInt("page", 1)
-	// PAGE_ITEMS := 20
+	PAGE_ITEMS := 20
 	h.UpdateUserInfo(email, c)
 	emailUser := h.getEmailForChangeUser(email, c)
 
 	isAdmin := h.repository.IsAdmin(email)
+	lastResources, totalResources, err := h.resourceRepository.GetLastResources(resources.SearchParam{
+		Email:        emailUser,
+		DepartmentID: 0,
+		SearchQuery:  "",
+		Offset:       (page - 1) * PAGE_ITEMS,
+		Limit:        PAGE_ITEMS,
+	})
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
+	TotalPages := int(math.Ceil(float64(totalResources) / float64(PAGE_ITEMS)))
 
 	component := views.MaterailResources(views.MaterailResourcesProps{
 		Email:       emailUser,
-		TotalPage:   2,
+		TotalPage:   TotalPages,
 		CurrentPage: page,
 		IsAdmin:     isAdmin,
-
-		TotalItems: 20,
+		TotalItems:  int(totalResources),
+		Resources:   lastResources,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }

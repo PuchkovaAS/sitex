@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
+	"sitex/internal/resources"
 	"sitex/views/components"
 	"sitex/views/layout"
 	"sitex/views/widgets"
@@ -21,6 +22,7 @@ type MaterailResourcesProps struct {
 	CurrentPage int
 	TotalItems  int
 	IsAdmin     bool
+	Resources   []resources.Resource
 }
 
 func MaterailResources(props MaterailResourcesProps) templ.Component {
@@ -82,26 +84,30 @@ func MaterailResources(props MaterailResourcesProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = widgets.AddResourceForm(widgets.AddResourceFormProps{Email: props.Email}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = widgets.AddResourceForm(props.Email).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " <div class=\"flex flex-col  mt-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " <div class=\"flex flex-col  my-2 gap-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = widgets.ResourceStatusWidget(widgets.ResourceStatusProps{
-				ID:           1,
-				Status:       "Не учтеное",
-				ResourceName: " Ноутбук HP 250G5 SN: 123243435 ",
-				Description:  "КИ050881",
-				UserName:     "Nes K",
-				Email:        "a@a.ru",
-				WhoAddEvent:  "Nes.K",
-				IsAdmin:      true,
-			}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+			for _, item := range props.Resources {
+				templ_7745c5c3_Err = widgets.ResourceStatusWidget(widgets.ResourceStatusProps{
+					ID:           int(item.ID),
+					Status:       item.Status,
+					ResourceName: item.ResourceName,
+					Description:  item.Description,
+					UserName:     item.Employee.LastName + " " + item.Employee.FirstName,
+					Email:        item.Employee.Email,
+					Quantity:     item.Quantity,
+					WhoAddEvent:  item.AddedBy.LastName + " " + item.AddedBy.FirstName,
+					DateAdd:      item.Date,
+					IsAdmin:      props.IsAdmin,
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 			if templ_7745c5c3_Err != nil {

@@ -3,6 +3,7 @@ package routers
 import (
 	"sitex/internal/auth"
 	"sitex/internal/pages"
+	"sitex/internal/resources"
 	"sitex/internal/user"
 	"sitex/pkg/middleware"
 
@@ -12,18 +13,12 @@ import (
 )
 
 type RouterHandlerDeps struct {
-	CustomLogger *zerolog.Logger
-	Store        *session.Store
-	Repository   *user.UserRepository
-	AuthService  *auth.AuthService
-	UserService  *user.UserService
-}
-
-type RouterHandler struct {
-	router       fiber.Router
-	customLogger *zerolog.Logger
-	store        *session.Store
-	repository   *user.UserHandler
+	CustomLogger       *zerolog.Logger
+	Store              *session.Store
+	Repository         *user.UserRepository
+	ResourceRepository *resources.ResourceRepository
+	AuthService        *auth.AuthService
+	UserService        *user.UserService
 }
 
 func NewHandler(app *fiber.App, deps RouterHandlerDeps) {
@@ -46,19 +41,27 @@ func NewHandler(app *fiber.App, deps RouterHandlerDeps) {
 		Store:        deps.Store,
 		Repository:   deps.Repository,
 	})
+	resourcesHandler := resources.NewHandler(api, resources.ResourceHandlerDeps{
+		CustomLogger:       deps.CustomLogger,
+		UserRepository:     deps.Repository,
+		ResourceRepository: deps.ResourceRepository,
+	})
 	userHandler.SetupPrivateRoutes(privateAPI)
 	authHandler.SetupPrivateRoutes(privateAPI)
+	resourcesHandler.SetupPrivateRoutes(privateAPI)
 
 	// Админские API — IsAdminMiddleware
 	adminAPI := api.Group("", middleware.IsAdminMiddleware(deps.Store, deps.Repository))
 	authHandler.SetupAdminRoutes(adminAPI)
 	userHandler.SetupAdminRoutes(adminAPI)
+	resourcesHandler.SetupPrivateRoutes(adminAPI)
 
 	pagesHandler := pages.NewHandler(app, pages.PagesHandlerDeps{
-		Store:        deps.Store,
-		Repository:   deps.Repository,
-		CustomLogger: deps.CustomLogger,
-		UserService:  deps.UserService,
+		Store:              deps.Store,
+		Repository:         deps.Repository,
+		CustomLogger:       deps.CustomLogger,
+		UserService:        deps.UserService,
+		ResourceRepository: deps.ResourceRepository,
 	})
 	pagesHandler.SetupPublicRoutes()
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sitex/config"
 	"sitex/internal/auth"
+	"sitex/internal/resources"
 	"sitex/internal/routers"
 	"sitex/internal/user"
 	"sitex/pkg/database"
@@ -59,6 +60,7 @@ func main() {
 
 	// Repository
 	userRepository := user.NewUserRepository(db)
+	resourceRepository := resources.NewRepository(db)
 
 	// Service
 	userService := user.NewUserService(&user.UserServiceDeps{
@@ -72,11 +74,12 @@ func main() {
 	// Handler
 
 	routers.NewHandler(app, routers.RouterHandlerDeps{
-		CustomLogger: customLogger,
-		Store:        store,
-		Repository:   userRepository,
-		AuthService:  authService,
-		UserService:  userService,
+		CustomLogger:       customLogger,
+		Store:              store,
+		Repository:         userRepository,
+		AuthService:        authService,
+		UserService:        userService,
+		ResourceRepository: resourceRepository,
 	})
 
 	// Обработчик 404 — должен быть ПОСЛЕ всех других маршрутов
