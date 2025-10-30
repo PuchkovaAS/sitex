@@ -57,6 +57,7 @@ func (h *PagesHandler) SetupAdminRoutes(adminGroup fiber.Router) {
 	adminGroup.Get("/change_password", h.changePassword)
 	adminGroup.Get("/users_status_history", h.usersStatusHistory)
 	adminGroup.Get("/users_time_event_history", h.usersTimeEventHistory)
+	adminGroup.Get("/users_resources", h.usersResources)
 }
 
 func (h *PagesHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
@@ -144,6 +145,7 @@ func (h *PagesHandler) updateUser(c *fiber.Ctx) error {
 
 func (h *PagesHandler) resources(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
+	status := c.Query("status", "")
 
 	page := c.QueryInt("page", 1)
 	PAGE_ITEMS := 20
@@ -157,6 +159,7 @@ func (h *PagesHandler) resources(c *fiber.Ctx) error {
 		SearchQuery:  "",
 		Offset:       (page - 1) * PAGE_ITEMS,
 		Limit:        PAGE_ITEMS,
+		Status:       status,
 	})
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
@@ -172,6 +175,8 @@ func (h *PagesHandler) resources(c *fiber.Ctx) error {
 		IsAdmin:     isAdmin,
 		TotalItems:  int(totalResources),
 		Resources:   lastResources,
+		Status:      status,
+		QueryParams: c.Queries(),
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -316,6 +321,50 @@ func (h *PagesHandler) usersTimeEventHistory(c *fiber.Ctx) error {
 		TotalItems:     int(TotalEvents),
 		IsAdmin:        isAdmin,
 	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) usersResources(c *fiber.Ctx) error {
+	page := c.QueryInt("page", 1)
+	PAGE_ITEMS := 20
+	departmentID := c.QueryInt("department", 0)
+	status := c.Query("status", "")
+
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	searchQuery := c.Query("search", "")
+	departments, err := h.repository.GetAllDepartments()
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
+	lastResources, totalResources, err := h.resourceRepository.GetLastResources(resources.SearchParam{
+		Email:        "",
+		DepartmentID: uint(departmentID),
+		SearchQuery:  searchQuery,
+		Offset:       (page - 1) * PAGE_ITEMS,
+		Limit:        PAGE_ITEMS,
+		Status:       status,
+	})
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+	TotalPages := int(math.Ceil(float64(totalResources) / float64(PAGE_ITEMS)))
+
+	component := views.UsersReources(views.UsersResourcesProps{
+		Resources:    lastResources,
+		TotalPage:    TotalPages,
+		CurrentPage:  page,
+		Depatrments:  departments,
+		DepartmentId: departmentID,
+		QueryParams:  c.Queries(),
+		TotalItems:   int(totalResources),
+		Status:       status,
+	})
+
 	return templeadapter.Render(c, component, http.StatusOK)
 }
 

@@ -41,22 +41,6 @@ func (repo *ResourceRepository) AddResource(resource resourcesAddInfo) error {
 		return fmt.Errorf("неверный формат даты %s: %w", resource.Date, err)
 	}
 
-	// 4. Проверяем, существует ли уже ресурс с такими employee_id, date и status
-	var existing Resource
-	result := repo.DataBase.DB.
-		Where("employee_id = ? AND date = ? AND status = ?", employee.ID, date, resource.Status).
-		First(&existing)
-
-	if result.Error == nil {
-		// Запись найдена — удаляем её (логическое удаление)
-		if err := repo.deleteResourceByID(existing.ID, whoAdded.ID); err != nil {
-			return fmt.Errorf("не удалось удалить существующую запись: %w", err)
-		}
-	} else if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		// Неизвестная ошибка БД
-		return fmt.Errorf("ошибка при проверке дубликата: %w", result.Error)
-	}
-
 	// 5. Создаём новую запись
 	newResource := Resource{
 		EmployeeID:   employee.ID,
@@ -126,6 +110,7 @@ type SearchParam struct {
 	SearchQuery  string
 	Offset       int
 	Limit        int
+	Status       string
 }
 
 func (repo *ResourceRepository) getResourcesCount(searchParams SearchParam, start, end time.Time) (int64, error) {
@@ -143,10 +128,15 @@ func (repo *ResourceRepository) getResourcesCount(searchParams SearchParam, star
 	if searchParams.DepartmentID != 0 {
 		query = query.Where("employees.department_id = ?", searchParams.DepartmentID)
 	}
+	if searchParams.Status != "" {
+		query = query.Where("resources.status = ?", searchParams.Status)
+	}
 	if searchParams.SearchQuery != "" {
 		searchPattern := "%" + searchParams.SearchQuery + "%"
-		query = query.Where("employees.first_name ILIKE ? OR employees.last_name ILIKE ?",
-			searchPattern, searchPattern)
+		query = query.Where(
+			"employees.first_name ILIKE ? OR employees.last_name ILIKE ? OR resources.resource_name ILIKE ? OR resources.description ILIKE ?",
+			searchPattern, searchPattern, searchPattern, searchPattern,
+		)
 	}
 
 	err := query.Count(&count).Error
@@ -174,7 +164,6 @@ func (repo *ResourceRepository) GetLastResources(searchParams SearchParam) ([]Re
 		Preload("AddedBy", func(db *gorm.DB) *gorm.DB {
 			return db.Where("deleted_at IS NULL")
 		}).
-		// Preload("DeletedBy" можно добавить, если нужно отображать, кто удалил
 		Joins("INNER JOIN employees ON resources.employee_id = employees.id").
 		Where("resources.date BETWEEN ? AND ?", startOfYear, endOfYear).
 		Where("resources.deleted_at IS NULL").
@@ -187,10 +176,15 @@ func (repo *ResourceRepository) GetLastResources(searchParams SearchParam) ([]Re
 	if searchParams.DepartmentID != 0 {
 		query = query.Where("employees.department_id = ?", searchParams.DepartmentID)
 	}
+	if searchParams.Status != "" {
+		query = query.Where("resources.status = ?", searchParams.Status)
+	}
 	if searchParams.SearchQuery != "" {
 		searchPattern := "%" + searchParams.SearchQuery + "%"
-		query = query.Where("employees.first_name ILIKE ? OR employees.last_name ILIKE ?",
-			searchPattern, searchPattern)
+		query = query.Where(
+			"employees.first_name ILIKE ? OR employees.last_name ILIKE ? OR resources.resource_name ILIKE ? OR resources.description ILIKE ?",
+			searchPattern, searchPattern, searchPattern, searchPattern,
+		)
 	}
 
 	// Сортировка и пагинация

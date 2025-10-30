@@ -11,6 +11,7 @@ type ResourceStatusProps struct {
 ID int
 Status string
 DateAdd time.Time
+CreatedAt time.Time
 ResourceName string
 Description string
 Quantity int
@@ -39,9 +40,9 @@ emailParam := "?email=" + props.Email
     <!-- ВАЖНО: items-start вместо items-center -->
     <div class="flex items-center justify-between gap-4 flex-wrap">
         <!-- Дата и кто добавил -->
-        <div class="flex flex-col text-center bg-gray-50 rounded-lg p-2 min-w-[100px]">
-            <div class="text-xs text-gray-500">добавлено: { props.DateAdd.Format("02.01.2006") }</div>
-            <p class="text-xs text-gray-500 mt-1">добавил(а): { props.WhoAddEvent }</p>
+        <div class="flex flex-col text-center bg-gray-50 rounded-lg p-2 min-w-[120px]">
+            <div class="text-sm font-medium text-gray-700">{ props.DateAdd.Format("02.01.2006") }</div>
+            <div class="text-xs text-gray-500 mt-1">добавлено: { props.CreatedAt.Format("02.01 15:04") }</div>
         </div>
         <!-- Статус -->
         <div class="flex-col text-center">
@@ -51,41 +52,36 @@ emailParam := "?email=" + props.Email
         </div>
         <!-- Сотрудник -->
         <div class="flex-1 min-w-0">
-            <div class="relative group ">
+            <div class="relative group">
                 <a href={ fmt.Sprintf("/%s", emailParam) }
-                    class="flex flex-col items-start hover:bg-gray-50 p-2 rounded-lg transition-colors -ml-2 -mt-1">
+                    class="flex flex-col items-start hover:bg-gray-50 p-2 rounded-lg transition-colors">
                     <p class="text-sm text-gray-700 font-medium truncate">{ props.UserName }</p>
                 </a>
                 @components.UserLinks(emailParam)
             </div>
+            <p class="text-xs text-gray-500 truncate">добавил(а): { props.WhoAddEvent }</p>
         </div>
         <!-- Наименование -->
-        if props.ResourceName != "" {
         <div class="flex-1 min-w-[140px]">
             <span class="text-xs text-gray-500">Наименование</span>
             <p class="text-xs text-gray-700 font-semibold truncate mt-1">{ props.ResourceName }</p>
         </div>
-        }
         <!-- Описание -->
-        if props.Description != "" {
         <div class="flex-1 min-w-[140px]">
             <span class="text-xs text-gray-500 ">Описание</span>
             <p class="text-xs text-gray-500 font-semibold truncate mt-1">{ props.Description }</p>
         </div>
-        }
         <!-- Количество -->
-        if props.Quantity > 0 {
         <div class="flex flex-col items-end min-w-[60px]">
             <span class="text-xs text-gray-500">Кол-во</span>
             <span class="text-sm font-bold text-gray-800 mt-1">{ fmt.Sprintf("%d", props.Quantity) }</span>
         </div>
-        }
         <!-- Кнопка удаления -->
         if props.ID != 0 && props.IsAdmin {
         <div class="mt-0.5">
             <button type="button"
                 class="flex-shrink-0 text-red-500 hover:text-red-700 transition-colors p-2 rounded-lg hover:bg-red-50"
-                hx-delete={ fmt.Sprintf("/api/user/delete_status/%d%s", props.ID, emailParam) }
+                hx-delete={ fmt.Sprintf("/api/user/delete_resource/%d%s", props.ID, emailParam) }
                 hx-target="#delete-result" hx-swap="outerHTML" hx-confirm={ confirmMessage }>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

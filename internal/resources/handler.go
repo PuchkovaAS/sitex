@@ -45,7 +45,46 @@ func (h *ResourceHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
 }
 
 func (h *ResourceHandler) deleteResource(c *fiber.Ctx) error {
-	return nil
+	resourceId, err := c.ParamsInt("id")
+	if err != nil {
+		return templeadapter.Render(c,
+			components.Notification(
+				"Неверный id статуса",
+				components.NotificationFail,
+			),
+			fiber.StatusOK,
+		)
+	}
+
+	// Проверяем, что пользователь удаляет только свой статус
+	emailAdmin := c.Locals("email").(string)
+	isAdmin := h.userRepository.IsAdmin(emailAdmin)
+
+	email := c.Query("email", emailAdmin)
+
+	if !isAdmin {
+		return templeadapter.Render(c,
+			components.Notification(
+				"Ошибка при удаление статуса, не хватает прав доступа",
+				components.NotificationFail,
+			),
+			fiber.StatusOK,
+		)
+	}
+
+	err = h.repository.DeleteResource(resourceId, email, emailAdmin)
+	if err != nil {
+		return templeadapter.Render(c,
+			components.Notification(
+				"Ошибка при удаление статуса",
+				components.NotificationFail,
+			),
+			fiber.StatusOK,
+		)
+	}
+	redirectURL := fmt.Sprintf("/resources/?email=%s", email)
+	c.Response().Header.Add("Hx-Redirect", redirectURL)
+	return c.Redirect(redirectURL, http.StatusOK)
 }
 
 func (h *ResourceHandler) addResource(c *fiber.Ctx) error {

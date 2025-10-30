@@ -23,6 +23,8 @@ type MaterailResourcesProps struct {
 	TotalItems  int
 	IsAdmin     bool
 	Resources   []resources.Resource
+	Status      string
+	QueryParams map[string]string
 }
 
 func MaterailResources(props MaterailResourcesProps) templ.Component {
@@ -58,7 +60,44 @@ func MaterailResources(props MaterailResourcesProps) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"my-2 p-2\"><h3 class=\"mb-4 text-lg font-semibold text-gray-900\">Материальные ресурсы</h3><div class=\"flex space-x-2 mb-4 border-b border-gray-200\"></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"my-2 p-2\"><h3 class=\"mb-4 text-lg font-semibold text-gray-900\">Материальные ресурсы</h3><!-- Фильтр по статусу --><div class=\"flex flex-col md:flex-row gap-4 w-full md:w-auto mb-4\"><div class=\"w-full md:w-auto\"><label for=\"status\" class=\"block text-sm font-medium text-gray-700 mb-1\">Статус</label> <select id=\"status\" name=\"status\" onchange=\"updateStatusFilter(this.value)\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if props.Status == "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<option value=\"\" selected>Все статусы</option> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<option value=\"\">Все статусы</option> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			if props.Status == "Учтеное" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<option value=\"Учтеное\" selected>Учтеное</option> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<option value=\"Учтеное\">Учтеное</option> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			if props.Status == "Не учтеное" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<option value=\"Не учтеное\" selected>Не учтеное</option>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<option value=\"Не учтеное\">Не учтеное</option>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</select></div></div><div class=\"flex space-x-2 mb-4 border-b border-gray-200\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -70,17 +109,17 @@ func MaterailResources(props MaterailResourcesProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if props.IsAdmin {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<button type=\"button\" class=\"inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg  transition-colors\" onclick=\"document.getElementById('add-resource-form-container').classList.toggle('hidden')\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 6v6m0 0v6m0-6h6m-6 0H6\"></path></svg> Добавить новую запись</button>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<button type=\"button\" class=\"inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors\" onclick=\"document.getElementById('add-resource-form-container').classList.toggle('hidden')\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 6v6m0 0v6m0-6h6m-6 0H6\"></path></svg> Добавить новую запись</button>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -88,7 +127,7 @@ func MaterailResources(props MaterailResourcesProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " <div class=\"flex flex-col  my-2 gap-1\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, " <div class=\"flex flex-col my-2 gap-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -104,12 +143,13 @@ func MaterailResources(props MaterailResourcesProps) templ.Component {
 					WhoAddEvent:  item.AddedBy.LastName + " " + item.AddedBy.FirstName,
 					DateAdd:      item.Date,
 					IsAdmin:      props.IsAdmin,
+					CreatedAt:    item.CreatedAt,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -117,7 +157,16 @@ func MaterailResources(props MaterailResourcesProps) templ.Component {
 				UrlPath:     fmt.Sprintf("/resources?email=%s&", props.Email),
 				TotalPage:   props.TotalPage,
 				CurrentPage: props.CurrentPage,
+				QueryParams: props.QueryParams,
 			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = MaterailResourcesScript().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -125,9 +174,39 @@ func MaterailResources(props MaterailResourcesProps) templ.Component {
 		})
 		templ_7745c5c3_Err = layout.Layout(layout.LayoutProps{
 			Title:           "Материальные ресурсы",
-			MetaDescription: "Страница метериальных ресурсов",
+			MetaDescription: "Страница материальных ресурсов",
 			IsAuthenticated: true,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// Скрипт для обработки изменения статуса
+func MaterailResourcesScript() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<script>\n    function updateStatusFilter(statusValue) {\n        const url = new URL(window.location.href);\n\n        // Удаляем или устанавливаем параметр status\n        if (statusValue) {\n            url.searchParams.set('status', statusValue);\n        } else {\n            url.searchParams.delete('status');\n        }\n\n        // Сбрасываем пагинацию на первую страницу\n        url.searchParams.set('page', '1');\n\n        // Остальные параметры (email и др.) сохраняются автоматически\n\n        window.location.href = url.toString();\n    }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

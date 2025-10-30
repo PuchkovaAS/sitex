@@ -112,6 +112,33 @@ CREATE INDEX IF NOT EXISTS idx_time_events_event_type_id ON time_events (event_t
 CREATE INDEX IF NOT EXISTS idx_time_events_date ON time_events (date);
 CREATE INDEX IF NOT EXISTS idx_time_events_deleted_at ON time_events (deleted_at);
 
+
+-- Resources 
+CREATE TABLE resources (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ,
+
+    employee_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    added_by_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE RESTRICT,
+    deleted_by_id BIGINT REFERENCES employees(id) ON DELETE SET NULL,
+
+    status TEXT NOT NULL CHECK (status IN ('Учтеное', 'Не учтеное')),
+    date DATE NOT NULL,
+    resource_name TEXT NOT NULL,
+    description TEXT,
+    quantity INTEGER NOT NULL DEFAULT 1,
+
+    CONSTRAINT chk_quantity_positive CHECK (quantity >= 1)
+);
+
+CREATE INDEX idx_resources_employee_id ON resources(employee_id);
+CREATE INDEX idx_resources_added_by_id ON resources(added_by_id);
+CREATE INDEX idx_resources_deleted_by_id ON resources(deleted_by_id);
+CREATE INDEX idx_resources_date ON resources(date);
+CREATE INDEX idx_resources_status ON resources(status);
+
 -- === Заполнение данными ===
 
 -- Статусы

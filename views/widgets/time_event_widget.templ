@@ -92,7 +92,7 @@ emailParam := "?email=" + props.Email
 				<button
 					type="button"
 					class="flex-shrink-0 text-red-500 hover:text-red-700 transition-colors p-2 rounded-lg hover:bg-red-50"
-					hx-delete={ fmt.Sprintf("/api/user/delete_time_event/%d%s", props.ID, emailParam) }
+					hx-delete={ fmt.Sprintf("/api/user/delete_resource/%d%s", props.ID, emailParam) }
 					hx-target="#delete-result"
 					hx-swap="outerHTML"
 					hx-confirm={ confirmMessage }
