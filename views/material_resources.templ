@@ -1,112 +1,135 @@
 package views
 
 import (
-"fmt"
-"sitex/internal/resources"
-"sitex/views/components"
-"sitex/views/layout"
-"sitex/views/widgets"
+	"fmt"
+	"sitex/internal/resources"
+	"sitex/views/components"
+	"sitex/views/layout"
+	"sitex/views/widgets"
 )
 
 type MaterailResourcesProps struct {
-Email string
-TotalPage int
-CurrentPage int
-TotalItems int
-IsAdmin bool
-Resources []resources.Resource
-Status string
-QueryParams map[string]string
+	Email       string
+	TotalPage   int
+	CurrentPage int
+	TotalItems  int
+	IsAdmin     bool
+	Resources   []resources.Resource
+	Status      string
+	QueryParams map[string]string
+
+	UserName string
 }
 
 templ MaterailResources(props MaterailResourcesProps) {
-@layout.Layout(layout.LayoutProps{
-Title: "Материальные ресурсы",
-MetaDescription: "Страница материальных ресурсов",
-IsAuthenticated: true,
-}) {
-<div class="my-2 p-2">
-    <h3 class="mb-4 text-lg font-semibold text-gray-900">Материальные ресурсы</h3>
-    <!-- Фильтр по статусу -->
-    <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto mb-4">
-        <div class="w-full md:w-auto">
-            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-            <select id="status" name="status" onchange="updateStatusFilter(this.value)"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                if props.Status == "" {
-                <option value="" selected>Все статусы</option>
-                } else {
-                <option value="">Все статусы</option>
-                }
-                if props.Status == "Учтеное" {
-                <option value="Учтеное" selected>
-                    Учтеное
-                </option>
-                } else {
-                <option value="Учтеное">
-                    Учтеное
-                </option>
-                }
-                if props.Status == "Не учтеное" {
-                <option value="Не учтеное" selected>
-                    Не учтеное
-                </option>
-                } else {
-                <option value="Не учтеное">
-                    Не учтеное
-                </option>
-                }
-            </select>
-        </div>
-    </div>
-    <div class="flex space-x-2 mb-4 border-b border-gray-200"></div>
-    @components.CounterItemsPage(components.CounterItemsProps{
-    CurrentPage: props.CurrentPage,
-    TotalItems: props.TotalItems,
-    TotalPages: props.TotalPage,
-    })
-</div>
-if props.IsAdmin {
-<button type="button"
-    class="inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-    onclick="document.getElementById('add-resource-form-container').classList.toggle('hidden')">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-    </svg>
-    Добавить новую запись
-</button>
-}
-@widgets.AddResourceForm(props.Email)
-<div class="flex flex-col my-2 gap-1">
-    for _, item := range props.Resources {
-    @widgets.ResourceStatusWidget(widgets.ResourceStatusProps{
-    ID: int(item.ID),
-    Status: item.Status,
-    ResourceName: item.ResourceName,
-    Description: item.Description,
-    UserName: item.Employee.LastName + " " + item.Employee.FirstName,
-    Email: item.Employee.Email,
-    Quantity: item.Quantity,
-    WhoAddEvent: item.AddedBy.LastName + " " + item.AddedBy.FirstName,
-    DateAdd: item.Date,
-    IsAdmin: props.IsAdmin,
-    CreatedAt: item.CreatedAt,
-    })
-    }
-</div>
-@components.PaginationNum(components.PaginationNumProps{
-UrlPath: fmt.Sprintf("/resources?email=%s&", props.Email),
-TotalPage: props.TotalPage,
-CurrentPage: props.CurrentPage,
-QueryParams: props.QueryParams,
-})
-@MaterailResourcesScript()
-}
+	@layout.Layout(layout.LayoutProps{
+		Title:           "Материальные ресурсы",
+		MetaDescription: "Страница материальных ресурсов",
+		IsAuthenticated: true,
+	}) {
+		{{
+
+emailParam := "?email=" + props.Email
+		}}
+		<div class="my-2 p-2">
+			<h3 class="mb-4 text-lg font-semibold text-gray-900">
+				Материальные ресурсы,
+				<span class="relative group">
+					<a
+						href={ fmt.Sprintf("/%s", emailParam) }
+						class="text-blue-600 hover:text-blue-800 font-medium hover:underline inline"
+					>
+						{ props.UserName }
+					</a>
+					@components.UserLinks(emailParam)
+				</span>
+			</h3> <!-- Переключатели между историями -->
+			<!-- Фильтр по статусу -->
+			<div class="flex flex-col md:flex-row gap-4 w-full md:w-auto mb-4">
+				<div class="w-full md:w-auto">
+					<label for="status" class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+					<select
+						id="status"
+						name="status"
+						onchange="updateStatusFilter(this.value)"
+						class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+					>
+						if props.Status == "" {
+							<option value="" selected>Все статусы</option>
+						} else {
+							<option value="">Все статусы</option>
+						}
+						if props.Status == "Учтеное" {
+							<option value="Учтеное" selected>
+								Учтеное
+							</option>
+						} else {
+							<option value="Учтеное">
+								Учтеное
+							</option>
+						}
+						if props.Status == "Не учтеное" {
+							<option value="Не учтеное" selected>
+								Не учтеное
+							</option>
+						} else {
+							<option value="Не учтеное">
+								Не учтеное
+							</option>
+						}
+					</select>
+				</div>
+			</div>
+			<div class="flex space-x-2 mb-4 border-b border-gray-200"></div>
+			@components.CounterItemsPage(components.CounterItemsProps{
+				CurrentPage: props.CurrentPage,
+				TotalItems:  props.TotalItems,
+				TotalPages:  props.TotalPage,
+			})
+		</div>
+		if props.IsAdmin {
+			<button
+				type="button"
+				class="inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+				onclick="document.getElementById('add-resource-form-container').classList.toggle('hidden')"
+			>
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+				</svg>
+				Добавить новую запись
+			</button>
+		}
+		@widgets.AddResourceForm(props.Email)
+		<div class="flex flex-col my-2 gap-1">
+			for _, item := range props.Resources {
+				@widgets.ResourceStatusWidget(widgets.ResourceStatusProps{
+					ID:           int(item.ID),
+					Status:       item.Status,
+					ResourceName: item.ResourceName,
+					Description:  item.Description,
+					UserName:     item.Employee.LastName + " " + item.Employee.FirstName,
+					Email:        item.Employee.Email,
+					Quantity:     item.Quantity,
+					WhoAddEvent:  item.AddedBy.LastName + " " + item.AddedBy.FirstName,
+					DateAdd:      item.Date,
+					IsAdmin:      props.IsAdmin,
+					CreatedAt:    item.CreatedAt,
+				})
+			}
+		</div>
+		@components.PaginationNum(components.PaginationNumProps{
+			UrlPath:     fmt.Sprintf("/resources?email=%s&", props.Email),
+			TotalPage:   props.TotalPage,
+			CurrentPage: props.CurrentPage,
+			QueryParams: props.QueryParams,
+		})
+		@MaterailResourcesScript()
+	}
 }
 
 // Скрипт для обработки изменения статуса
 templ MaterailResourcesScript() {
-<script>
+	<script>
     function updateStatusFilter(statusValue) {
         const url = new URL(window.location.href);
 

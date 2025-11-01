@@ -16,6 +16,7 @@ type HistoryStatusProps struct {
 	LastAddStatus  []user.StatusPeriod
 	IsAdmin        bool
 	ShowTimeEvents bool
+	UserName       string
 }
 
 templ HistoryStatusPage(props HistoryStatusProps) {
@@ -24,9 +25,23 @@ templ HistoryStatusPage(props HistoryStatusProps) {
 		MetaDescription: "Страница добавления событий",
 		IsAuthenticated: true,
 	}) {
+		{{
+
+emailParam := "?email=" + props.Email
+		}}
 		<div class="my-2 p-2">
-			<h3 class="mb-4 text-lg font-semibold text-gray-900">Добавленные события за текущий год</h3>
-			<!-- Переключатели между историями -->
+			<h3 class="mb-4 text-lg font-semibold text-gray-900">
+				Добавленные события за текущий год для 
+				<span class="relative group">
+					<a
+						href={ fmt.Sprintf("/%s", emailParam) }
+						class="text-blue-600 hover:text-blue-800 font-medium hover:underline inline"
+					>
+						{ props.UserName }
+					</a>
+					@components.UserLinks(emailParam)
+				</span>
+			</h3> <!-- Переключатели между историями -->
 			<div class="flex space-x-2 mb-4 border-b border-gray-200">
 				<a
 					href={ fmt.Sprintf("/history_status?email=%s", props.Email) }

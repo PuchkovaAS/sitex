@@ -114,6 +114,16 @@ func (repo *UserRepository) GetEmployeeInfo(email string) (Employee, error) {
 	return employee, nil
 }
 
+func (repo *UserRepository) GetEmployeeName(email string) (string, error) {
+	var employee Employee
+	if err := repo.DataBase.DB.
+		Preload("Department").
+		Where("email = ?", email).First(&employee).Error; err != nil {
+		return "", fmt.Errorf("сотрудник не найден: %w", err)
+	}
+	return employee.LastName + " " + employee.FirstName, nil
+}
+
 func (repo *UserRepository) AddTimeEvent(event timeEventAddInfo) error {
 	// 1. Находим сотрудника, для которого добавляется событие
 	var employee Employee

@@ -167,6 +167,11 @@ func (h *PagesHandler) resources(c *fiber.Ctx) error {
 	}
 
 	TotalPages := int(math.Ceil(float64(totalResources) / float64(PAGE_ITEMS)))
+	userName, err := h.repository.GetEmployeeName(email)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
 
 	component := views.MaterailResources(views.MaterailResourcesProps{
 		Email:       emailUser,
@@ -177,6 +182,7 @@ func (h *PagesHandler) resources(c *fiber.Ctx) error {
 		Resources:   lastResources,
 		Status:      status,
 		QueryParams: c.Queries(),
+		UserName:    userName,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -432,6 +438,11 @@ func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
 	isAdmin := h.repository.IsAdmin(email)
 
 	showTimeEvents := h.repository.GetShowTimeEvents(email)
+	userName, err := h.repository.GetEmployeeName(email)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
 
 	component := views.HistoryStatusPage(views.HistoryStatusProps{
 		TotalPage:      TotalPages,
@@ -441,6 +452,8 @@ func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
 		TotalItems:     int(TotalEvents),
 		IsAdmin:        isAdmin,
 		ShowTimeEvents: showTimeEvents,
+
+		UserName: userName,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
@@ -468,6 +481,12 @@ func (h *PagesHandler) historyTimeEvent(c *fiber.Ctx) error {
 
 	isAdmin := h.repository.IsAdmin(email)
 
+	userName, err := h.repository.GetEmployeeName(email)
+	if err != nil {
+		h.customLogger.Error().Msg(err.Error())
+		return c.SendStatus(500)
+	}
+
 	component := views.HistoryTimeEventPage(views.HistoryTimeEventProps{
 		TotalPage:      TotalPages,
 		CurrentPage:    page,
@@ -475,6 +494,7 @@ func (h *PagesHandler) historyTimeEvent(c *fiber.Ctx) error {
 		LastTimeEvents: lastTimeEvents,
 		TotalItems:     int(TotalEvents),
 		IsAdmin:        isAdmin,
+		UserName:       userName,
 	})
 	return templeadapter.Render(c, component, http.StatusOK)
 }
