@@ -6,7 +6,7 @@ services:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: my_pass
         volumes:
-            - ./db_data:/var/lib/postgresql
+            - pgdata:/var/lib/postgresql/data # ← стандартный путь
             - ./init:/docker-entrypoint-initdb.d/
         ports:
             - '5432:5432'

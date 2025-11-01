@@ -167,7 +167,7 @@ func (h *PagesHandler) resources(c *fiber.Ctx) error {
 	}
 
 	TotalPages := int(math.Ceil(float64(totalResources) / float64(PAGE_ITEMS)))
-	userName, err := h.repository.GetEmployeeName(email)
+	userName, err := h.repository.GetEmployeeName(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
@@ -438,7 +438,7 @@ func (h *PagesHandler) historyStatus(c *fiber.Ctx) error {
 	isAdmin := h.repository.IsAdmin(email)
 
 	showTimeEvents := h.repository.GetShowTimeEvents(email)
-	userName, err := h.repository.GetEmployeeName(email)
+	userName, err := h.repository.GetEmployeeName(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)
@@ -481,7 +481,7 @@ func (h *PagesHandler) historyTimeEvent(c *fiber.Ctx) error {
 
 	isAdmin := h.repository.IsAdmin(email)
 
-	userName, err := h.repository.GetEmployeeName(email)
+	userName, err := h.repository.GetEmployeeName(emailUser)
 	if err != nil {
 		h.customLogger.Error().Msg(err.Error())
 		return c.SendStatus(500)

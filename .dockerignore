@@ -14,3 +14,6 @@ tmp/
 README.md
 Dockerfile
 docker-compose.yml
+# Запретить включение данных БД в образ
+db_data/
+**/db_data/
