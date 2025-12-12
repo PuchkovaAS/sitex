@@ -53,10 +53,10 @@ func (h *AuthHandler) SetupPublicRoutes() {
 func (h *AuthHandler) SetupAdminRoutes(adminGroup fiber.Router) {
 	adminGroup.Post("/create_user", h.apiCreateUser)
 	adminGroup.Put("/profile_update", h.apiUpdateUser)
-	adminGroup.Put("/change_password", h.apiChangePassword)
 }
 
 func (h *AuthHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
+	privetGroup.Put("/change_password", h.apiChangePassword)
 	privetGroup.Get("/logout", h.apiLogout)
 }
 

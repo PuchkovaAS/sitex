@@ -54,7 +54,6 @@ func (h *PagesHandler) SetupAdminRoutes(adminGroup fiber.Router) {
 	adminGroup.Get("/create_user", h.createUser)
 	adminGroup.Get("/users_activity", h.usersActivity)
 	adminGroup.Get("/profile_update", h.updateUser)
-	adminGroup.Get("/change_password", h.changePassword)
 	adminGroup.Get("/users_status_history", h.usersStatusHistory)
 	adminGroup.Get("/users_time_event_history", h.usersTimeEventHistory)
 	adminGroup.Get("/users_resources", h.usersResources)
@@ -62,6 +61,8 @@ func (h *PagesHandler) SetupAdminRoutes(adminGroup fiber.Router) {
 
 func (h *PagesHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
 	privetGroup.Get("/", h.home)
+
+	privetGroup.Get("/change_password", h.changePassword)
 	privetGroup.Get("/history_status", h.historyStatus)
 	privetGroup.Get("/history_time_event", h.historyTimeEvent)
 	privetGroup.Get("/year_statistics", h.yearStatistic)
