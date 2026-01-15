@@ -113,12 +113,11 @@ type SearchParam struct {
 	Status       string
 }
 
-func (repo *ResourceRepository) getResourcesCount(searchParams SearchParam, start, end time.Time) (int64, error) {
+func (repo *ResourceRepository) getResourcesCount(searchParams SearchParam) (int64, error) {
 	var count int64
 
 	query := repo.DataBase.DB.Model(&Resource{}).
 		Joins("INNER JOIN employees ON resources.employee_id = employees.id").
-		Where("resources.date BETWEEN ? AND ?", start, end).
 		Where("resources.deleted_at IS NULL").
 		Where("employees.deleted_at IS NULL")
 
@@ -146,12 +145,8 @@ func (repo *ResourceRepository) getResourcesCount(searchParams SearchParam, star
 func (repo *ResourceRepository) GetLastResources(searchParams SearchParam) ([]Resource, int64, error) {
 	var resources []Resource
 
-	currentYear := time.Now().Year()
-	startOfYear := time.Date(currentYear, 1, 1, 0, 0, 0, 0, time.UTC)
-	endOfYear := time.Date(currentYear, 12, 31, 23, 59, 59, 0, time.UTC)
-
 	// Получаем общее количество
-	totalCount, err := repo.getResourcesCount(searchParams, startOfYear, endOfYear)
+	totalCount, err := repo.getResourcesCount(searchParams)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -165,7 +160,6 @@ func (repo *ResourceRepository) GetLastResources(searchParams SearchParam) ([]Re
 			return db.Where("deleted_at IS NULL")
 		}).
 		Joins("INNER JOIN employees ON resources.employee_id = employees.id").
-		Where("resources.date BETWEEN ? AND ?", startOfYear, endOfYear).
 		Where("resources.deleted_at IS NULL").
 		Where("employees.deleted_at IS NULL")
 
