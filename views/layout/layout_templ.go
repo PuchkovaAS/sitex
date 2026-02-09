@@ -130,7 +130,7 @@ func Layout(props LayoutProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</body></html><script>\n    document.addEventListener('DOMContentLoaded', function () {\n        const folders = document.querySelectorAll('[data-folder]');\n        folders.forEach(folder => {\n            folder.addEventListener('click', function (e) {\n                const folderPath = this.getAttribute('data-folder');\n                // Перейти в папку\n                window.location.href = '/docs/view/' + encodeURIComponent(folderPath);\n            });\n        });\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

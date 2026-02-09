@@ -41,8 +41,9 @@ templ PaginationNum(props PaginationNumProps) {
             }
             }
             <!-- Кнопка "Вперед" -->
-            if props.CurrentPage < props.TotalPage { 
-                <a href={ viewutils.BuildPageURL(props.UrlPath, props.CurrentPage+1, props.QueryParams) }
+            if props.CurrentPage < props.TotalPage {
+                 <a href=
+            { viewutils.BuildPageURL(props.UrlPath, props.CurrentPage+1, props.QueryParams) }
                 class="px-3 py-2 rounded-md border border-gray-300 text-sm font-medium bg-white text-gray-700 hover:bg-gray-50">
                 Вперед
                 </a>

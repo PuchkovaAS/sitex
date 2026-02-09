@@ -77,6 +77,8 @@
     --text-lg--line-height: calc(1.75 / 1.125);
     --text-xl: 1.25rem;
     --text-xl--line-height: calc(1.75 / 1.25);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
     --text-3xl: 1.875rem;
     --text-3xl--line-height: calc(2.25 / 1.875);
     --text-4xl: 2.25rem;
@@ -327,6 +329,9 @@
   }
   .mt-9 {
     margin-top: calc(var(--spacing) * 9);
+  }
+  .mr-1 {
+    margin-right: calc(var(--spacing) * 1);
   }
   .mr-2 {
     margin-right: calc(var(--spacing) * 2);
@@ -933,6 +938,10 @@
   .font-sans {
     font-family: var(--font-sans);
   }
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
   .text-3xl {
     font-size: var(--text-3xl);
     line-height: var(--tw-leading, var(--text-3xl--line-height));
@@ -1321,6 +1330,13 @@
       }
     }
   }
+  .hover\:text-blue-600 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-blue-600);
+      }
+    }
+  }
   .hover\:text-blue-800 {
     &:hover {
       @media (hover: hover) {
@@ -1472,6 +1488,191 @@ body {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.markdown-content {
+  width: 100% @apply space-y-6 text-gray-800 leading-relaxed;
+}
+.markdown-content h1 {
+  margin-top: calc(var(--spacing) * 8);
+  margin-bottom: calc(var(--spacing) * 4);
+  font-size: var(--text-3xl);
+  line-height: var(--tw-leading, var(--text-3xl--line-height));
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
+}
+.markdown-content h2 {
+  margin-top: calc(var(--spacing) * 6);
+  margin-bottom: calc(var(--spacing) * 3);
+  font-size: var(--text-2xl);
+  line-height: var(--tw-leading, var(--text-2xl--line-height));
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+}
+.markdown-content h3 {
+  margin-top: calc(var(--spacing) * 5);
+  margin-bottom: calc(var(--spacing) * 2);
+  font-size: var(--text-xl);
+  line-height: var(--tw-leading, var(--text-xl--line-height));
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+}
+.markdown-content p {
+  margin-bottom: calc(var(--spacing) * 4);
+}
+.markdown-content ul, .markdown-content ol {
+  margin-bottom: calc(var(--spacing) * 4);
+  :where(& > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  padding-left: calc(var(--spacing) * 6);
+}
+.markdown-content ul {
+  list-style-type: disc;
+}
+.markdown-content ol {
+  list-style-type: decimal;
+}
+.markdown-content li {
+  margin-bottom: calc(var(--spacing) * 1);
+  padding-left: calc(var(--spacing) * 2);
+}
+.markdown-content a {
+  color: var(--color-blue-600);
+  text-decoration-line: underline;
+  &:hover {
+    @media (hover: hover) {
+      color: var(--color-blue-800);
+    }
+  }
+}
+.markdown-content code {
+  border-radius: 0.25rem;
+  background-color: var(--color-gray-100);
+  padding-inline: calc(var(--spacing) * 1.5);
+  padding-block: calc(var(--spacing) * 0.5);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--tw-leading, var(--text-sm--line-height));
+}
+.markdown-content pre {
+  margin-block: calc(var(--spacing) * 6);
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-gray-900);
+  padding: calc(var(--spacing) * 4);
+  color: var(--color-white);
+}
+.markdown-content pre code {
+  background-color: transparent;
+  padding-inline: calc(var(--spacing) * 0);
+  padding-block: calc(var(--spacing) * 0);
+}
+.markdown-content blockquote {
+  margin-block: calc(var(--spacing) * 4);
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  border-left-style: var(--tw-border-style);
+  border-left-width: 4px;
+  border-color: var(--color-blue-500);
+  background-color: var(--color-blue-50);
+  padding-inline: calc(var(--spacing) * 4);
+  padding-block: calc(var(--spacing) * 2);
+  padding-left: calc(var(--spacing) * 4);
+  color: var(--color-gray-700);
+  font-style: italic;
+}
+.markdown-content table {
+  margin-block: calc(var(--spacing) * 6);
+  width: 100%;
+  border-collapse: collapse;
+}
+.markdown-content th, .markdown-content td {
+  border-style: var(--tw-border-style);
+  border-width: 1px;
+  border-color: var(--color-gray-300);
+  padding-inline: calc(var(--spacing) * 4);
+  padding-block: calc(var(--spacing) * 2);
+  text-align: left;
+}
+.markdown-content th {
+  background-color: var(--color-gray-100);
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
+  .docs-tree-node {
+    position: relative;
+    padding-left: 2rem;
+  }
+  .docs-tree-node::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 1px;
+    background-color: #e2e8f0;
+  }
+  .docs-tree-node:last-child::before {
+    display: none;
+  }
+  .docs-tree-node > .docs-tree-node {
+    padding-left: 2rem;
+  }
+  .docs-tree-node > .docs-tree-node::before {
+    left: 0.5rem;
+  }
+  .file-tree {
+    list-style: none;
+    padding-left: 0;
+  }
+  .file-tree li {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .file-tree li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 1px;
+    background-color: #e5e7eb;
+  }
+  .file-tree li:last-child::before {
+    display: none;
+  }
+  .file-tree li > ul {
+    margin-top: 0.5rem;
+  }
+  .file-tree .folder-item::before {
+    content: '📁';
+    margin-right: 0.5rem;
+    font-size: 1rem;
+  }
+  .file-tree .file-item::before {
+    content: '📄';
+    margin-right: 0.5rem;
+    font-size: 1rem;
+  }
+  .file-tree li[data-depth='1'] {
+    padding-left: 2rem;
+  }
+  .file-tree li[data-depth='2'] {
+    padding-left: 4rem;
+  }
+  .file-tree li[data-depth='3'] {
+    padding-left: 6rem;
+  }
+  .file-tree li[data-depth='4'] {
+    padding-left: 8rem;
+  }
+  .file-tree li.last-child::before, .file-tree li[data-last-child]::before {
+    display: none;
+  }
 }
 @property --tw-translate-x {
   syntax: "*";

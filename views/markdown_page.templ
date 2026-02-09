@@ -1,0 +1,42 @@
+package views
+
+import "sitex/views/layout"
+
+type MarkdownPageProps struct {
+	Title    string
+	Content  string
+	FilePath string
+	IsAdmin  bool
+}
+
+templ MarkdownPage(props MarkdownPageProps) {
+	@layout.Layout(layout.LayoutProps{
+		Title:           props.Title,
+		MetaDescription: "Просмотр документации",
+		IsAuthenticated: true,
+	}) {
+		<div class="w-full p-6">
+			<!-- Заголовок -->
+			<div class="mb-6">
+				<h1 class="text-2xl font-semibold text-gray-900">{ props.Title }</h1>
+				if props.FilePath != "" {
+					<p class="text-gray-500 text-sm mt-1">
+						{ props.FilePath }
+					</p>
+				}
+			</div>
+			<!-- Контент -->
+			<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 w-full">
+				<div class="markdown-content">
+					@templ.Raw(props.Content)
+				</div>
+			</div>
+			<!-- Навигация -->
+			<div class="mt-6 flex justify-between items-center">
+				<a href="/docs" class="text-blue-600 hover:text-blue-800 font-medium">
+					← К списку документов
+				</a>
+			</div>
+		</div>
+	}
+}
