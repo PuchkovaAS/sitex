@@ -10,6 +10,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/rs/zerolog"
+
+	mdfiles "sitex/internal/md_files"
 )
 
 type RouterHandlerDeps struct {
@@ -19,6 +21,7 @@ type RouterHandlerDeps struct {
 	ResourceRepository *resources.ResourceRepository
 	AuthService        *auth.AuthService
 	UserService        *user.UserService
+	MdFilesService     *mdfiles.MdFilesService
 }
 
 func NewHandler(app *fiber.App, deps RouterHandlerDeps) {
@@ -62,6 +65,7 @@ func NewHandler(app *fiber.App, deps RouterHandlerDeps) {
 		CustomLogger:       deps.CustomLogger,
 		UserService:        deps.UserService,
 		ResourceRepository: deps.ResourceRepository,
+		MdFilesService:     deps.MdFilesService,
 	})
 	pagesHandler.SetupPublicRoutes()
 

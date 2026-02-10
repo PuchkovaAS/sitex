@@ -2,5 +2,6 @@
 /tmp
 /node_modules
 /migrations
+/files
 TODO.md
 

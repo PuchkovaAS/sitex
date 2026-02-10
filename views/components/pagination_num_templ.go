@@ -137,7 +137,7 @@ func PaginationNum(props PaginationNumProps) templ.Component {
 			var templ_7745c5c3_Var6 templ.SafeURL
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs(viewutils.BuildPageURL(props.UrlPath, props.CurrentPage+1, props.QueryParams))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/pagination_num.templ`, Line: 45, Col: 103}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/pagination_num.templ`, Line: 46, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {

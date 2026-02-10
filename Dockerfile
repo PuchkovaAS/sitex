@@ -22,6 +22,7 @@ RUN templ generate
 # Устанавливаем Tailwind CSS CLI через npm
 RUN npm install -g @tailwindcss/cli
 
+
 # Генерируем CSS
 RUN tailwindcss -i ./public/styles.css -o ./public/output.css
 
@@ -44,5 +45,6 @@ EXPOSE 3000
 
 # Создаём пустую директорию в контейнере (на всякий случай, если volume не примонтируется)
 RUN mkdir -p /app/calendar_data
+RUN mkdir -p /app/files/md_files
 
 CMD ["./main"]

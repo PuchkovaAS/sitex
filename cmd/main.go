@@ -19,6 +19,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/storage/postgres/v3"
 
+	mdfiles "sitex/internal/md_files"
+
 	templeadapter "sitex/pkg/temple_adapter"
 )
 
@@ -26,8 +28,10 @@ func main() {
 	config.Init()
 
 	workCalendar := config.InitCalendar(
-		fmt.Sprintf("%d/calendar.json", time.Now().Year()), // Убрал начальный слеш
+		fmt.Sprintf("%d/calendar.json", time.Now().Year()),
 	)
+
+	mdFilesConfig := config.NewMdFilesConfig()
 
 	logConfig := config.NewLogConfig()
 	customLogger := logger.NewLogger(logConfig)
@@ -71,6 +75,8 @@ func main() {
 
 	authService := auth.NewAuthService(userRepository)
 
+	mdFilesService := mdfiles.NewMdFilesService(mdFilesConfig)
+
 	// Handler
 
 	routers.NewHandler(app, routers.RouterHandlerDeps{
@@ -80,6 +86,7 @@ func main() {
 		AuthService:        authService,
 		UserService:        userService,
 		ResourceRepository: resourceRepository,
+		MdFilesService:     mdFilesService,
 	})
 
 	// Обработчик 404 — должен быть ПОСЛЕ всех других маршрутов

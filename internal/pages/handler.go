@@ -3,15 +3,20 @@ package pages
 import (
 	"math"
 	"net/http"
+	"os"
+	"path/filepath"
 	"sitex/internal/dt"
 	"sitex/internal/resources"
 	"sitex/internal/user"
 	"sitex/views"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/rs/zerolog"
+
+	mdfiles "sitex/internal/md_files"
 
 	templeadapter "sitex/pkg/temple_adapter"
 )
@@ -22,6 +27,7 @@ type PagesHandlerDeps struct {
 	CustomLogger       *zerolog.Logger
 	UserService        *user.UserService
 	ResourceRepository *resources.ResourceRepository
+	MdFilesService     *mdfiles.MdFilesService
 }
 
 type PagesHandler struct {
@@ -31,6 +37,7 @@ type PagesHandler struct {
 	customLogger       *zerolog.Logger
 	userService        *user.UserService
 	resourceRepository *resources.ResourceRepository
+	mdFilesService     *mdfiles.MdFilesService
 }
 
 func NewHandler(router fiber.Router, deps PagesHandlerDeps) *PagesHandler {
@@ -41,6 +48,7 @@ func NewHandler(router fiber.Router, deps PagesHandlerDeps) *PagesHandler {
 		customLogger:       deps.CustomLogger,
 		userService:        deps.UserService,
 		resourceRepository: deps.ResourceRepository,
+		mdFilesService:     deps.MdFilesService,
 	}
 	return h
 }
@@ -68,6 +76,10 @@ func (h *PagesHandler) SetupPrivateRoutes(privetGroup fiber.Router) {
 	privetGroup.Get("/year_statistics", h.yearStatistic)
 	privetGroup.Get("/profile", h.profile)
 	privetGroup.Get("/resources", h.resources)
+
+	// Документация для всех пользователей
+	privetGroup.Get("/docs", h.docsList)
+	privetGroup.Get("/docs/view/*", h.viewMarkdown)
 }
 
 func (h *PagesHandler) createUser(c *fiber.Ctx) error {
@@ -639,5 +651,94 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 		CurrentMonth:      month,
 		QueryParams:       c.Queries(), // Передаем параметры запроса
 	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+func (h *PagesHandler) docsList(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	folder := c.Query("folder", "")
+
+	baseDir := h.mdFilesService.MdFilesBaseDir
+
+	var currentDir string
+
+	if folder == "" {
+		currentDir = baseDir
+	} else {
+		currentDir = filepath.Join(baseDir, folder)
+		absBase, _ := filepath.Abs(baseDir)
+		absCurrent, _ := filepath.Abs(currentDir)
+		if !strings.HasPrefix(absCurrent, absBase) {
+			return c.Status(fiber.StatusForbidden).SendString("Access denied")
+		}
+	}
+
+	entries, err := h.mdFilesService.BuildFileTreeForDirectory(currentDir, folder)
+	if err != nil {
+		h.customLogger.Error().Msgf("Error building file tree: %v", err)
+		entries = []dt.FileEntry{}
+	}
+
+	treeHTML := h.mdFilesService.RenderFileTreeHTML(entries, folder)
+
+	component := views.DocsTreePage(views.DocsTreePageProps{
+		TreeHTML: treeHTML,
+		Folder:   folder,
+	})
+	return templeadapter.Render(c, component, http.StatusOK)
+}
+
+// Страница просмотра конкретного документа
+func (h *PagesHandler) viewMarkdown(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	h.UpdateUserInfo(email, c)
+
+	filename := c.Params("*")
+	if filename == "" {
+		return c.Redirect("/docs")
+	}
+
+	mdFilesBaseDir := h.mdFilesService.MdFilesBaseDir
+
+	filePath := filepath.Join(mdFilesBaseDir, filename)
+
+	absPath, err := filepath.Abs(filePath)
+	if err != nil {
+		h.customLogger.Error().Msgf("Invalid file path: %v", err)
+		return c.Status(fiber.StatusBadRequest).SendString("Invalid file path")
+	}
+
+	contentDir, _ := filepath.Abs(mdFilesBaseDir)
+	if !strings.HasPrefix(absPath, contentDir) {
+		h.customLogger.Warn().Msgf("Attempted directory traversal: %s", filePath)
+		return c.Status(fiber.StatusForbidden).SendString("Access denied")
+	}
+
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		h.customLogger.Warn().Msgf("File not found: %s", filePath)
+		return c.Status(fiber.StatusNotFound).SendString("Document not found")
+	}
+
+	htmlContent, err := h.mdFilesService.GetCachedMarkdown(filePath)
+	if err != nil {
+		h.customLogger.Error().Msgf("Error reading markdown file: %v", err)
+		return c.Status(fiber.StatusInternalServerError).SendString("Error reading document")
+	}
+
+	title := strings.TrimSuffix(filepath.Base(filename), ".md")
+	title = strings.ReplaceAll(title, "_", " ")
+	title = strings.ReplaceAll(title, "-", " ")
+	if len(title) > 0 {
+		title = strings.ToUpper(string(title[0])) + title[1:]
+	}
+
+	component := views.MarkdownPage(views.MarkdownPageProps{
+		Title:    title,
+		Content:  htmlContent,
+		FilePath: filename,
+	})
+
 	return templeadapter.Render(c, component, http.StatusOK)
 }

@@ -317,11 +317,18 @@ func (service *UserService) GetYearHistory(
 
 		// Получаем русское название месяца
 		monthName := getRussianMonthName(startOfMonth.Month())
+		weekday := startOfMonth.Weekday()
+		offset := int(weekday)
+		if offset == 0 { // воскресенье
+			offset = 6
+		} else {
+			offset = offset - 1
+		}
 
 		resultHistory = append(resultHistory, MonthHistory{
 			Name:              monthName,
 			Number:            int(startOfMonth.Month()),
-			WeekdayFirstMonth: int(startOfMonth.Weekday()) - 1,
+			WeekdayFirstMonth: offset,
 			HistoryStatus:     daysStatus,
 		})
 	}
@@ -358,11 +365,18 @@ func (service *UserService) GetMonthHistory(
 
 		// Получаем русское название месяца
 		monthName := getRussianMonthName(startOfMonth.Month())
+		weekday := startOfMonth.Weekday()
+		offset := int(weekday)
+		if offset == 0 { // воскресенье
+			offset = 6
+		} else {
+			offset = offset - 1
+		}
 
 		resultHistory = append(resultHistory, MonthHistory{
 			Name:              monthName,
 			Number:            int(startOfMonth.Month()),
-			WeekdayFirstMonth: int(startOfMonth.Weekday()) - 1,
+			WeekdayFirstMonth: offset,
 			HistoryStatus:     daysStatus,
 		})
 	}

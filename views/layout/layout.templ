@@ -48,4 +48,16 @@ templ Layout(props LayoutProps) {
 			}
 		</body>
 	</html>
+	<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const folders = document.querySelectorAll('[data-folder]');
+        folders.forEach(folder => {
+            folder.addEventListener('click', function (e) {
+                const folderPath = this.getAttribute('data-folder');
+                // Перейти в папку
+                window.location.href = '/docs/view/' + encodeURIComponent(folderPath);
+            });
+        });
+    });
+</script>
 }
