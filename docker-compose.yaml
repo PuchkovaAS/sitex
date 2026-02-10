@@ -22,6 +22,7 @@ services:
         # build: .
         volumes:
             - ./calendar_data:/app/calendar_data
+            - ./files/md_files:/app/files/md_files
         environment:
             CALENDAR_PATH: /app/calendar_data
             MD_FILES_PATH: /app/files/md_files

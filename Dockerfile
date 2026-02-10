@@ -45,5 +45,6 @@ EXPOSE 3000
 
 # Создаём пустую директорию в контейнере (на всякий случай, если volume не примонтируется)
 RUN mkdir -p /app/calendar_data
+RUN mkdir -p /app/files/md_files
 
 CMD ["./main"]
