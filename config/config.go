@@ -56,6 +56,16 @@ func InitCalendar(filename string) *calendar.HolidayCalendar {
 	return calendar
 }
 
+type MdFilesConfig struct {
+	Path string
+}
+
+func NewMdFilesConfig() *MdFilesConfig {
+	return &MdFilesConfig{
+		Path: viper.GetString("MD_FILES_PATH"),
+	}
+}
+
 type DatabaseConfig struct {
 	Url string
 }

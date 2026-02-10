@@ -24,6 +24,7 @@ services:
             - ./calendar_data:/app/calendar_data
         environment:
             CALENDAR_PATH: /app/calendar_data
+            MD_FILES_PATH: /app/files/md_files
             DB_HOST: postgres
             DB_USER: postgres
             DB_PASSWORD: my_pass

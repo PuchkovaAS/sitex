@@ -1,12 +1,8 @@
 package pages
 
 import (
-	"bytes"
-	"fmt"
-	"io/fs"
 	"math"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"sitex/internal/dt"
@@ -14,31 +10,16 @@ import (
 	"sitex/internal/user"
 	"sitex/views"
 	"strings"
-	"sync"
 	"time"
 
-	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
-	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/html"
-	"github.com/gomarkdown/markdown/parser"
 	"github.com/rs/zerolog"
+
+	mdfiles "sitex/internal/md_files"
 
 	templeadapter "sitex/pkg/temple_adapter"
 )
-
-type DocTreeNode struct {
-	Name     string
-	Path     string
-	IsDir    bool
-	Children []DocTreeNode
-}
-
-type cachedMarkdown struct {
-	htmlContent  string
-	lastModified time.Time
-}
 
 type PagesHandlerDeps struct {
 	Store              *session.Store
@@ -46,6 +27,7 @@ type PagesHandlerDeps struct {
 	CustomLogger       *zerolog.Logger
 	UserService        *user.UserService
 	ResourceRepository *resources.ResourceRepository
+	MdFilesService     *mdfiles.MdFilesService
 }
 
 type PagesHandler struct {
@@ -55,10 +37,7 @@ type PagesHandler struct {
 	customLogger       *zerolog.Logger
 	userService        *user.UserService
 	resourceRepository *resources.ResourceRepository
-
-	// Кэш для скомпилированных документов
-	markdownCache map[string]cachedMarkdown
-	cacheMutex    sync.RWMutex
+	mdFilesService     *mdfiles.MdFilesService
 }
 
 func NewHandler(router fiber.Router, deps PagesHandlerDeps) *PagesHandler {
@@ -69,8 +48,7 @@ func NewHandler(router fiber.Router, deps PagesHandlerDeps) *PagesHandler {
 		customLogger:       deps.CustomLogger,
 		userService:        deps.UserService,
 		resourceRepository: deps.ResourceRepository,
-		markdownCache:      make(map[string]cachedMarkdown),
-		cacheMutex:         sync.RWMutex{},
+		mdFilesService:     deps.MdFilesService,
 	}
 	return h
 }
@@ -676,193 +654,14 @@ func (h *PagesHandler) usersActivity(c *fiber.Ctx) error {
 	return templeadapter.Render(c, component, http.StatusOK)
 }
 
-func (h *PagesHandler) convertMarkdownToHTML(content []byte) string {
-	extensions := parser.CommonExtensions |
-		parser.AutoHeadingIDs |
-		parser.NoEmptyLineBeforeBlock |
-		parser.Tables |
-		parser.FencedCode |
-		parser.Strikethrough
-
-	p := parser.NewWithExtensions(extensions)
-	doc := p.Parse(content)
-
-	opts := html.RendererOptions{
-		Flags: html.CommonFlags | html.HrefTargetBlank,
-	}
-	renderer := html.NewRenderer(opts)
-
-	return string(markdown.Render(doc, renderer))
-}
-
-// Получение списка всех md файлов
-func (h *PagesHandler) getMarkdownFiles(dir string) ([]string, error) {
-	var files []string
-
-	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if !d.IsDir() && strings.HasSuffix(strings.ToLower(path), ".md") {
-			relPath, _ := filepath.Rel(dir, path)
-			// Заменяем обратные слеши на прямые для URL
-			relPath = strings.ReplaceAll(relPath, "\\", "/")
-			files = append(files, relPath)
-		}
-		return nil
-	})
-
-	return files, err
-}
-
-// Получение и кэширование контента
-func (h *PagesHandler) getCachedMarkdown(filePath string) (string, error) {
-	h.cacheMutex.RLock()
-	cached, exists := h.markdownCache[filePath]
-	h.cacheMutex.RUnlock()
-
-	if exists {
-		// Проверяем актуальность кэша
-		fileInfo, err := os.Stat(filePath)
-		if err == nil && fileInfo.ModTime().Equal(cached.lastModified) {
-			return cached.htmlContent, nil
-		}
-	}
-
-	// Читаем файл
-	content, err := os.ReadFile(filePath)
-	if err != nil {
-		return "", err
-	}
-
-	// Конвертируем в HTML
-	htmlContent := h.convertMarkdownToHTML(content)
-
-	// Сохраняем в кэш
-	fileInfo, _ := os.Stat(filePath)
-	h.cacheMutex.Lock()
-	h.markdownCache[filePath] = cachedMarkdown{
-		htmlContent:  htmlContent,
-		lastModified: fileInfo.ModTime(),
-	}
-	h.cacheMutex.Unlock()
-
-	return htmlContent, nil
-}
-
-// Строим дерево только для указанной директории (без рекурсии вглубь)
-func (h *PagesHandler) buildFileTreeForDirectory(dir, folderPrefix string) ([]dt.FileEntry, error) {
-	var entries []dt.FileEntry
-
-	files, err := os.ReadDir(dir)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, file := range files {
-		entry := dt.FileEntry{
-			Name: file.Name(),
-		}
-
-		if folderPrefix == "" {
-			entry.Path = file.Name()
-		} else {
-			entry.Path = folderPrefix + "/" + file.Name()
-		}
-
-		if file.IsDir() {
-			entry.IsDir = true
-		} else if strings.HasSuffix(strings.ToLower(file.Name()), ".md") {
-			entry.IsDir = false
-		} else {
-			continue // Пропускаем не-MD файлы
-		}
-
-		entries = append(entries, entry)
-	}
-
-	return entries, nil
-}
-
-// Генерация HTML дерева документов с поддержкой папок
-func (h *PagesHandler) renderFileTreeHTML(entries []dt.FileEntry, currentFolder string) string {
-	if len(entries) == 0 {
-		return "<p class=\"text-gray-500\">Нет доступных документов</p>"
-	}
-
-	var buf bytes.Buffer
-
-	// Кнопка "Назад"
-	if currentFolder != "" {
-		parentFolder := ""
-		parts := strings.Split(currentFolder, "/")
-		if len(parts) > 1 {
-			parentFolder = strings.Join(parts[:len(parts)-1], "/")
-		}
-		backURL := "/docs"
-		if parentFolder != "" {
-			backURL += "?folder=" + url.QueryEscape(parentFolder)
-		}
-		buf.WriteString(
-			fmt.Sprintf("<div class=\"mb-4\"><a href=\"%s\" class=\"inline-flex items-center text-blue-600 hover:text-blue-800\">", backURL),
-		)
-		buf.WriteString(
-			"<svg class=\"w-4 h-4 mr-1\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 19l-7-7 7-7\"></path></svg>",
-		)
-		buf.WriteString("Назад</a></div>\n")
-	}
-
-	buf.WriteString("<ul class=\"file-tree space-y-1\">\n")
-	for _, entry := range entries {
-		indent := "  "
-		liClass := "relative"
-
-		buf.WriteString(fmt.Sprintf("%s<li class=\"%s\">\n", indent, liClass))
-
-		if entry.IsDir {
-			// Для папок используем QueryEscape (нужно для URL с параметром folder)
-			folderURL := "/docs?folder=" + url.QueryEscape(entry.Path)
-			buf.WriteString(
-				fmt.Sprintf(
-					"%s  <a href=\"%s\" class=\"flex items-center text-gray-700 hover:text-blue-600 transition-colors py-1\">\n",
-					indent,
-					folderURL,
-				),
-			)
-			buf.WriteString(fmt.Sprintf("%s    <svg class=\"mr-2 w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n", indent))
-			buf.WriteString(
-				fmt.Sprintf(
-					"%s      <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z\"></path>\n",
-					indent,
-				),
-			)
-			buf.WriteString(fmt.Sprintf("%s    </svg>\n", indent))
-			buf.WriteString(fmt.Sprintf("%s    <span>%s</span>\n", indent, templ.EscapeString(entry.Name)))
-			buf.WriteString(fmt.Sprintf("%s  </a>\n", indent))
-		} else {
-			// Для файлов НЕ используем url.QueryEscape — Fiber сам обработает путь
-			fileURL := "/docs/view/" + entry.Path // ← УБРАЛИ url.QueryEscape!
-			buf.WriteString(fmt.Sprintf("%s  <a href=\"%s\" class=\"flex items-center text-gray-700 hover:text-blue-600 transition-colors py-1\">\n", indent, fileURL))
-			buf.WriteString(fmt.Sprintf("%s    <svg class=\"mr-2 w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n", indent))
-			buf.WriteString(fmt.Sprintf("%s      <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z\"></path>\n", indent))
-			buf.WriteString(fmt.Sprintf("%s    </svg>\n", indent))
-			buf.WriteString(fmt.Sprintf("%s    <span>%s</span>\n", indent, templ.EscapeString(entry.Name)))
-			buf.WriteString(fmt.Sprintf("%s  </a>\n", indent))
-		}
-
-		buf.WriteString(fmt.Sprintf("%s</li>\n", indent))
-	}
-	buf.WriteString("</ul>\n")
-
-	return buf.String()
-}
-
 func (h *PagesHandler) docsList(c *fiber.Ctx) error {
 	email := c.Locals("email").(string)
 	h.UpdateUserInfo(email, c)
 
 	folder := c.Query("folder", "")
-	baseDir := "./md_files"
+
+	baseDir := h.mdFilesService.MdFilesBaseDir
+
 	var currentDir string
 
 	if folder == "" {
@@ -876,13 +675,13 @@ func (h *PagesHandler) docsList(c *fiber.Ctx) error {
 		}
 	}
 
-	entries, err := h.buildFileTreeForDirectory(currentDir, folder)
+	entries, err := h.mdFilesService.BuildFileTreeForDirectory(currentDir, folder)
 	if err != nil {
 		h.customLogger.Error().Msgf("Error building file tree: %v", err)
 		entries = []dt.FileEntry{}
 	}
 
-	treeHTML := h.renderFileTreeHTML(entries, folder)
+	treeHTML := h.mdFilesService.RenderFileTreeHTML(entries, folder)
 
 	component := views.DocsTreePage(views.DocsTreePageProps{
 		TreeHTML: treeHTML,
@@ -901,8 +700,9 @@ func (h *PagesHandler) viewMarkdown(c *fiber.Ctx) error {
 		return c.Redirect("/docs")
 	}
 
-	// ИСПРАВЛЕНО: правильный путь к файлам
-	filePath := filepath.Join("./md_files", filename)
+	mdFilesBaseDir := h.mdFilesService.MdFilesBaseDir
+
+	filePath := filepath.Join(mdFilesBaseDir, filename)
 
 	absPath, err := filepath.Abs(filePath)
 	if err != nil {
@@ -910,7 +710,7 @@ func (h *PagesHandler) viewMarkdown(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid file path")
 	}
 
-	contentDir, _ := filepath.Abs("./md_files")
+	contentDir, _ := filepath.Abs(mdFilesBaseDir)
 	if !strings.HasPrefix(absPath, contentDir) {
 		h.customLogger.Warn().Msgf("Attempted directory traversal: %s", filePath)
 		return c.Status(fiber.StatusForbidden).SendString("Access denied")
@@ -921,7 +721,7 @@ func (h *PagesHandler) viewMarkdown(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).SendString("Document not found")
 	}
 
-	htmlContent, err := h.getCachedMarkdown(filePath)
+	htmlContent, err := h.mdFilesService.GetCachedMarkdown(filePath)
 	if err != nil {
 		h.customLogger.Error().Msgf("Error reading markdown file: %v", err)
 		return c.Status(fiber.StatusInternalServerError).SendString("Error reading document")
@@ -934,13 +734,10 @@ func (h *PagesHandler) viewMarkdown(c *fiber.Ctx) error {
 		title = strings.ToUpper(string(title[0])) + title[1:]
 	}
 
-	isAdmin := h.repository.IsAdmin(email)
-
 	component := views.MarkdownPage(views.MarkdownPageProps{
 		Title:    title,
 		Content:  htmlContent,
 		FilePath: filename,
-		IsAdmin:  isAdmin,
 	})
 
 	return templeadapter.Render(c, component, http.StatusOK)

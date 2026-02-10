@@ -21,7 +21,6 @@ RUN templ generate
 
 # Устанавливаем Tailwind CSS CLI через npm
 RUN npm install -g @tailwindcss/cli
-RUN npm install -D tailwindcss @tailwindcss/typography
 
 
 # Генерируем CSS
